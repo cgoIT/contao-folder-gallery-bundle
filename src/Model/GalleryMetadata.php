@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cgoit\ContaoFolderGalleryBundle\Model;
+
+final readonly class GalleryMetadata
+{
+    public function __construct(
+        public string|null $title = null,
+        public string|null $description = null,
+        public string|null $cover = null,
+        public \DateTimeImmutable|null $publishedFrom = null,
+        public \DateTimeImmutable|null $publishedUntil = null,
+    ) {
+    }
+
+    public function isPublished(\DateTimeImmutable $now = new \DateTimeImmutable()): bool
+    {
+        if (
+            $this->publishedFrom instanceof \DateTimeImmutable
+            && $now < $this->publishedFrom
+        ) {
+            return false;
+        }
+
+        if (
+            $this->publishedUntil instanceof \DateTimeImmutable
+            && $now > $this->publishedUntil
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+}

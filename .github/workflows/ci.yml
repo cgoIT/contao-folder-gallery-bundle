@@ -52,3 +52,6 @@ jobs:
 
             -   name: Install the dependencies
                 run: composer install --no-interaction --no-progress
+
+            -   name: Run PHPUnit
+                run: composer test
