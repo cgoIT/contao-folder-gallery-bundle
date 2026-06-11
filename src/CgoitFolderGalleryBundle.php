@@ -12,13 +12,17 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class CgoitFolderGalleryBundle extends Bundle
+class CgoitFolderGalleryBundle extends AbstractBundle
 {
-    #[\Override]
-    public function getPath(): string
+    /**
+     * @param array<mixed> $config
+     */
+    public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
-        return \dirname(__DIR__);
+        $containerConfigurator->import('../config/services.yaml');
     }
 }

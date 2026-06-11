@@ -2,7 +2,7 @@ services:
    _defaults:
       autoconfigure: true
       autowire: true
-      public: false
 
    Cgoit\ContaoFolderGalleryBundle\:
-      resource: ../src/*
+      resource: ../src
+      exclude: ../src/{ContaoManager,DependencyInjection,CgoitFolderGalleryBundle.php}
