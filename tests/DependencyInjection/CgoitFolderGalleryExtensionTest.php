@@ -13,39 +13,64 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\DependencyInjection;
 
 use Cgoit\ContaoFolderGalleryBundle\DependencyInjection\CgoitFolderGalleryExtension;
+use Cgoit\ContaoFolderGalleryBundle\Loader\ContaoGalleryImageLoader;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\MetadataReader;
+use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
+use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class CgoitFolderGalleryExtensionTest extends TestCase
 {
-    /**
-     * Test that the extension loads config files and registers services.
-     */
-    public function testExtensionLoadsServices(): void
+    private const array SERVICES = [
+        MetadataReader::class,
+        FilesystemGalleryRepository::class,
+        ContaoGalleryImageLoader::class,
+        ContaoFilesModelProvider::class,
+    ];
+
+    private ContainerBuilder $container;
+
+    protected function setUp(): void
     {
-        // 1. Arrange: Create the Extension and an empty ContainerBuilder
         $extension = new CgoitFolderGalleryExtension();
-        $container = new ContainerBuilder();
 
-        // 2. Act: Trigger the load method just like Symfony does at boot
-        $extension->load([], $container);
+        $this->container = new ContainerBuilder();
 
-        // 3. Assert: Verify your services exist in the processed container
-        $serviceId = MetadataReader::class;
+        $extension->load([], $this->container);
+    }
 
+    #[DataProvider('serviceProvider')]
+    public function testExtensionLoadsServices(string $serviceId): void
+    {
         $this->assertTrue(
-            $container->hasDefinition($serviceId),
-            \sprintf('Service "%s" was not registered by the extension.', $serviceId),
+            $this->container->hasDefinition($serviceId),
+            \sprintf(
+                'Service "%s" was not registered by the extension.',
+                $serviceId,
+            ),
         );
 
-        // 4. Assert: Deep-dive into definition configuration
-        $definition = $container->getDefinition($serviceId);
+        $definition = $this->container->getDefinition($serviceId);
 
-        // Ensure the class name is mapped properly
-        $this->assertSame(MetadataReader::class, $definition->getClass());
+        $this->assertSame(
+            $serviceId,
+            $definition->getClass(),
+        );
 
-        // Ensure it is configured for autowiring if applicable
-        $this->assertTrue($definition->isAutowired());
+        $this->assertTrue(
+            $definition->isAutowired(),
+        );
+    }
+
+    /**
+     * @return iterable<string, array{0: string}>
+     */
+    public static function serviceProvider(): iterable
+    {
+        foreach (self::SERVICES as $serviceId) {
+            yield $serviceId => [$serviceId];
+        }
     }
 }

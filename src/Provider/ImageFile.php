@@ -10,15 +10,13 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-namespace Cgoit\ContaoFolderGalleryBundle\Model;
+namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
-final readonly class GalleryImage
+final readonly class ImageFile
 {
     public function __construct(
         public string $uuid,
         public string $path,
-        public string $filename,
-        public bool $isCover,
     ) {
     }
 }

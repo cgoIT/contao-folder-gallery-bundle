@@ -22,9 +22,20 @@ final readonly class GalleryDay
         public string $slug,
         public string $title,
         public string|null $description,
-        public string|null $coverImage,
         public \DateTimeImmutable|null $publishedFrom,
+        public \DateTimeImmutable|null $publishedUntil,
         public array $images,
     ) {
+    }
+
+    public function getCoverImage(): GalleryImage|null
+    {
+        foreach ($this->images as $image) {
+            if ($image->isCover) {
+                return $image;
+            }
+        }
+
+        return $this->images[0] ?? null;
     }
 }

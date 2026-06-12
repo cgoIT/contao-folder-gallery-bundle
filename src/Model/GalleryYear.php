@@ -21,6 +21,7 @@ final readonly class GalleryYear
         public string $slug,
         public string $title,
         public \DateTimeImmutable|null $publishedFrom,
+        public \DateTimeImmutable|null $publishedUntil,
         public array $days,
     ) {
     }

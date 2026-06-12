@@ -21,6 +21,7 @@
     "symfony/config": "^6.0 || ^7.3",
     "symfony/dependency-injection": "^6.0 || ^7.3",
     "symfony/http-kernel": "^6.0 || ^7.3",
+    "symfony/filesystem": "^6.0 || ^7.3",
     "symfony/yaml": "^6.0 || ^7.3"
   },
   "require-dev": {
