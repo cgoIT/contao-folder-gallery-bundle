@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
  *
- * @copyright  Copyright (c) 2026, cgoIT
+ * @copyright  Copyright (c) cgoIT
  * @author     cgoIT <https://cgo-it.de>
  * @license    LGPL-3.0-or-later
  */
@@ -35,6 +35,17 @@ final class MetadataReaderTest extends TestCase
         $this->assertSame('2025-09-10 23:59:59', $metadata->publishedUntil->format('Y-m-d H:i:s'));
     }
 
+    public function testReturnsEmptyMetadataIfFileIsInvalid(): void
+    {
+        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/invalid');
+
+        $this->assertSame('Friday', $metadata->title);
+        $this->assertSame('Test', $metadata->description);
+        $this->assertSame('image.jpg', $metadata->cover);
+        $this->assertNotInstanceOf(\DateTimeImmutable::class, $metadata->publishedFrom);
+        $this->assertNotInstanceOf(\DateTimeImmutable::class, $metadata->publishedUntil);
+    }
+
     public function testReturnsEmptyMetadataIfFileDoesNotExist(): void
     {
         $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/empty');
@@ -44,5 +55,19 @@ final class MetadataReaderTest extends TestCase
         $this->assertNull($metadata->cover);
         $this->assertNotInstanceOf(\DateTimeImmutable::class, $metadata->publishedFrom);
         $this->assertNotInstanceOf(\DateTimeImmutable::class, $metadata->publishedUntil);
+    }
+
+    public function testReturnsPublishedTrueIfDatesHaveCorrespondingValues(): void
+    {
+        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/published');
+
+        $this->assertTrue($metadata->isPublished());
+    }
+
+    public function testReturnsPublishedFalseIfDatesDoNotHaveCorrespondingValues(): void
+    {
+        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/valid');
+
+        $this->assertFalse($metadata->isPublished());
     }
 }

@@ -18,4 +18,9 @@
             <directory>src</directory>
         </include>
     </source>
+
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <server name="APP_ENV" value="test"/>
+    </php>
 </phpunit>
