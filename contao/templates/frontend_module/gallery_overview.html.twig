@@ -1,0 +1,9 @@
+{% for year in overview.years %}
+    <h2>{{ year.title }}</h2>
+
+    <ul>
+        {% for day in year.days %}
+            <li>{{ day.title }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}

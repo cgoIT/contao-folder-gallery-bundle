@@ -10,15 +10,14 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-namespace Cgoit\ContaoFolderGalleryBundle;
+namespace Cgoit\ContaoFolderGalleryBundle\ViewModel;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class CgoitFolderGalleryBundle extends Bundle
+final readonly class GalleryOverviewViewModel
 {
-    #[\Override]
-    public function getPath(): string
+    /**
+     * @param list<GalleryYearViewModel> $years
+     */
+    public function __construct(public array $years)
     {
-        return \dirname(__DIR__);
     }
 }
