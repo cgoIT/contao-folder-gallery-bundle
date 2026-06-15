@@ -17,7 +17,9 @@ use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Twig\FragmentTemplate;
+use Contao\FilesModel;
 use Contao\ModuleModel;
+use Contao\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,9 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
 )]
 final class GalleryOverviewModule extends AbstractFrontendModuleController
 {
-    private const string TYPE = 'gallery_overview';
-
-    private const string GALLERY_ROOT = 'files/gallery';
+    public const string TYPE = 'gallery_overview';
 
     public function __construct(
         private readonly GalleryRepositoryInterface $repository,
@@ -40,17 +40,21 @@ final class GalleryOverviewModule extends AbstractFrontendModuleController
 
     protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
     {
-        $overview = $this->repository->findOverview(
-            self::GALLERY_ROOT,
-        );
+        $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/gallery-overview.css';
 
-        $template->set(
-            'overview',
-            $this->overviewFactory->create(
-                $overview,
-                null,
-            ),
-        );
+        $rootDir = FilesModel::findById($model->galleryRoot);
+
+        if (null !== $rootDir) {
+            $overview = $this->repository->findOverview($rootDir->path);
+
+            $template->set(
+                'overview',
+                $this->overviewFactory->create(
+                    $overview,
+                    $model->galleryCoverSize,
+                ),
+            );
+        }
 
         return $template->getResponse();
     }
