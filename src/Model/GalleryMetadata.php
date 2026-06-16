@@ -20,6 +20,7 @@ final readonly class GalleryMetadata
         public string|null $cover = null,
         public \DateTimeImmutable|null $publishedFrom = null,
         public \DateTimeImmutable|null $publishedUntil = null,
+        public SortOrder $sortOrder = SortOrder::Asc,
     ) {
     }
 

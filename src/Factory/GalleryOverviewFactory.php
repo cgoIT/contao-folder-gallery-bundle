@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryDay;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryYear;
-use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryDayViewModel;
+use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryOverviewViewModel;
-use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryYearViewModel;
 use Contao\Image\PictureConfiguration;
 
 final readonly class GalleryOverviewFactory
@@ -31,45 +29,34 @@ final readonly class GalleryOverviewFactory
      */
     public function create(GalleryOverview $overview, PictureConfiguration|array|int|string|null $coverImageSize): GalleryOverviewViewModel
     {
-        $years = array_map(
-            fn (GalleryYear $year) => $this->toGalleryYearViewModel($year, $coverImageSize),
-            $overview->years,
+        $folders = array_map(
+            fn (GalleryFolder $folder) => $this->toGalleryFolderViewModel($folder, $coverImageSize),
+            $overview->folders,
         );
 
         return new GalleryOverviewViewModel(
-            years: $years,
+            folders: $folders,
         );
     }
 
     /**
      * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
      */
-    private function toGalleryYearViewModel(GalleryYear $year, PictureConfiguration|array|int|string|null $coverImageSize): GalleryYearViewModel
+    private function toGalleryFolderViewModel(GalleryFolder $folder, PictureConfiguration|array|int|string|null $coverImageSize): GalleryFolderViewModel
     {
-        return new GalleryYearViewModel(
-            title: $year->title,
-            slug: $year->slug,
-            days: array_map(
-                fn (GalleryDay $day) => $this->toGalleryDayViewModel($day, $coverImageSize),
-                $year->days,
+        $coverImage = $folder->getCoverImage();
+
+        return new GalleryFolderViewModel(
+            title: $folder->title,
+            slug: $folder->slug,
+            folders: array_map(
+                fn (GalleryFolder $subFolder) => $this->toGalleryFolderViewModel($subFolder, $coverImageSize),
+                $folder->folders,
             ),
-        );
-    }
-
-    /**
-     * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
-     */
-    private function toGalleryDayViewModel(GalleryDay $day, PictureConfiguration|array|int|string|null $coverImageSize): GalleryDayViewModel
-    {
-        $coverImage = $day->getCoverImage();
-
-        return new GalleryDayViewModel(
-            title: $day->title,
-            slug: $day->slug,
             coverFigure: $coverImage
                 ? $this->figureFactory->create($coverImage, $coverImageSize)
                 : null,
-            description: $day->description,
+            description: $folder->description,
         );
     }
 }

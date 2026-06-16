@@ -12,16 +12,17 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Metadata;
 
-use Cgoit\ContaoFolderGalleryBundle\Metadata\MetadataReader;
+use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use PHPUnit\Framework\TestCase;
 
-final class MetadataReaderTest extends TestCase
+final class MetadataLoaderTest extends TestCase
 {
-    private MetadataReader $reader;
+    private MetadataLoader $reader;
 
     protected function setUp(): void
     {
-        $this->reader = new MetadataReader();
+        $this->reader = new MetadataLoader();
     }
 
     public function testReadsValidMetadata(): void
@@ -33,6 +34,7 @@ final class MetadataReaderTest extends TestCase
         $this->assertSame('image.jpg', $metadata->cover);
         $this->assertSame('2025-09-05 20:00:00', $metadata->publishedFrom->format('Y-m-d H:i:s'));
         $this->assertSame('2025-09-10 23:59:59', $metadata->publishedUntil->format('Y-m-d H:i:s'));
+        $this->assertSame(SortOrder::Desc, $metadata->sortOrder);
     }
 
     public function testReturnsEmptyMetadataIfFileIsInvalid(): void

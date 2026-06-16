@@ -14,10 +14,9 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryDay;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryYear;
 use Contao\CoreBundle\Image\Studio\Figure;
 use PHPUnit\Framework\TestCase;
 
@@ -32,8 +31,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             isCover: true,
         );
 
-        $day = new GalleryDay(
-            year: '2025',
+        $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
             description: 'Friday description',
@@ -42,12 +40,13 @@ final class GalleryOverviewFactoryTest extends TestCase
             images: [$image],
         );
 
-        $year = new GalleryYear(
+        $year = new GalleryFolder(
             slug: '2025',
             title: 'Year 2025',
+            description: null,
             publishedFrom: null,
             publishedUntil: null,
-            days: [$day],
+            folders: [$day],
         );
 
         $overview = new GalleryOverview([$year]);
@@ -67,15 +66,15 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $viewModel = $factory->create($overview, 'gallery_cover');
 
-        $this->assertCount(1, $viewModel->years);
+        $this->assertCount(1, $viewModel->folders);
 
-        $yearViewModel = $viewModel->years[0];
+        $yearViewModel = $viewModel->folders[0];
 
         $this->assertSame('Year 2025', $yearViewModel->title);
         $this->assertSame('2025', $yearViewModel->slug);
-        $this->assertCount(1, $yearViewModel->days);
+        $this->assertCount(1, $yearViewModel->folders);
 
-        $dayViewModel = $yearViewModel->days[0];
+        $dayViewModel = $yearViewModel->folders[0];
 
         $this->assertSame('Friday', $dayViewModel->title);
         $this->assertSame('friday', $dayViewModel->slug);
@@ -85,8 +84,7 @@ final class GalleryOverviewFactoryTest extends TestCase
 
     public function testCreatesDayWithoutCoverFigure(): void
     {
-        $day = new GalleryDay(
-            year: '2025',
+        $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
             description: null,
@@ -95,12 +93,13 @@ final class GalleryOverviewFactoryTest extends TestCase
             images: [],
         );
 
-        $year = new GalleryYear(
+        $year = new GalleryFolder(
             slug: '2025',
             title: 'Year 2025',
+            description: null,
             publishedFrom: null,
             publishedUntil: null,
-            days: [$day],
+            folders: [$day],
         );
 
         $overview = new GalleryOverview([$year]);
@@ -115,7 +114,7 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $viewModel = $factory->create($overview, 'gallery_cover');
 
-        $dayViewModel = $viewModel->years[0]->days[0];
+        $dayViewModel = $viewModel->folders[0]->folders[0];
 
         $this->assertNotInstanceOf(Figure::class, $dayViewModel->coverFigure);
     }

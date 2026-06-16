@@ -2,27 +2,43 @@
 {% use '@Contao/component/_figure.html.twig' %}
 
 {% block content %}
-    {% for year in overview.years %}
-        <h2>{{ year.title }}</h2>
+    {% block overview_inner %}
+        {% for folder in overview.folders %}
+            {% if folder.folders is not empty %}
+                <section class="module-gallery-overview__group">
+                    <header class="module-gallery-overview__header">
+                        <div class="module-gallery-overview__title">
+                            {{ folder.title }}
+                        </div>
+                    </header>
 
-        <ul>
-            {% for day in year.days %}
-                <li class="module-gallery-overview__days">
-                    <div>
-                        {% if day.coverFigure %}
-                            {% with { figure: day.coverFigure } %}
-                                {{ block('figure_component') }}
-                            {% endwith %}
-                        {% endif %}
+                    <div class="module-gallery-overview__folders">
+                        {% for subfolder in folder.folders %}
+                            <article class="module-gallery-overview__folder">
+                                {% if subfolder.coverFigure %}
+                                    <div class="module-gallery-overview__image">
+                                        {% with {figure: subfolder.coverFigure} %}
+                                            {{ block('figure_component') }}
+                                        {% endwith %}
+                                    </div>
+                                {% endif %}
 
-                        <h3>{{ day.title }}</h3>
+                                <div class="module-gallery-overview__content">
+                                    <div class="module-gallery-overview__folder-title">
+                                        {{ subfolder.title }}
+                                    </div>
 
-                        {% if day.description %}
-                            <p>{{ day.description }}</p>
-                        {% endif %}
+                                    {% if subfolder.description %}
+                                        <div class="module-gallery-overview__description">
+                                            {{ subfolder.description }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endfor %}
+                </section>
+            {% endif %}
+        {% endfor %}
+    {% endblock %}
 {% endblock %}

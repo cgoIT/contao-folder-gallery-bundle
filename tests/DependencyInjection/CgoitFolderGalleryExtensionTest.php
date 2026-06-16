@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\DependencyInjection;
 
 use Cgoit\ContaoFolderGalleryBundle\DependencyInjection\CgoitFolderGalleryExtension;
-use Cgoit\ContaoFolderGalleryBundle\Metadata\MetadataReader;
+use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 final class CgoitFolderGalleryExtensionTest extends TestCase
 {
     private const array SERVICES = [
-        MetadataReader::class,
+        MetadataLoader::class,
         FilesystemGalleryRepository::class,
         ContaoFilesModelProvider::class,
     ];

@@ -54,7 +54,7 @@
   },
   "scripts": {
     "phpunit": "vendor/bin/phpunit",
-    "test": "@phpunit",
+    "unit-tests": "@phpunit",
     "all": [
       "@phpunit",
       "@ecs",

@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Metadata\MetadataReader;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryDay;
+use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Contao\CoreBundle\Slug\Slug;
@@ -63,7 +63,7 @@ final class FilesystemGalleryRepositoryTest extends TestCase
         ;
 
         $this->repository = new FilesystemGalleryRepository(
-            new MetadataReader(),
+            new MetadataLoader(),
             $imageLoader,
             $slug,
         );
@@ -75,50 +75,27 @@ final class FilesystemGalleryRepositoryTest extends TestCase
             self::FIXTURE_PATH,
         );
 
-        $this->assertCount(2, $overview->years);
+        $this->assertCount(2, $overview->folders);
 
-        $year2025 = $overview->years[1];
+        $year2025 = $overview->folders[1];
 
         $this->assertSame('Year 2025', $year2025->title);
         $this->assertSame('year-2025', $year2025->slug);
-        $this->assertCount(2, $year2025->days);
-        $this->assertFriday2025($year2025->days[0]);
+        $this->assertCount(2, $year2025->folders);
+        $this->assertFriday2025($year2025->folders[1]);
 
-        $year2026 = $overview->years[0];
+        $year2026 = $overview->folders[0];
         $this->assertSame('Year 2026', $year2026->title);
         $this->assertSame('year-2026', $year2026->slug);
-        $this->assertCount(0, $year2026->days);
+        $this->assertCount(0, $year2026->folders);
     }
 
-    public function testFindDay(): void
+    private function assertFriday2025(GalleryFolder $folder): void
     {
-        $day = $this->repository->findDay(
-            self::FIXTURE_PATH,
-            '2025',
-            '01-Friday',
-        );
-
-        $this->assertInstanceOf(GalleryDay::class, $day);
-        $this->assertFriday2025($day);
-    }
-
-    public function testReturnsNullForUnknownDay(): void
-    {
-        $day = $this->repository->findDay(
-            self::FIXTURE_PATH,
-            'unknown-year',
-            'unknown-day',
-        );
-
-        $this->assertNotInstanceOf(GalleryDay::class, $day);
-    }
-
-    private function assertFriday2025(GalleryDay $day): void
-    {
-        $this->assertSame('Friday Year 2025', $day->title);
-        $this->assertSame('friday-year-2025', $day->slug);
-        $this->assertCount(3, $day->images);
-        $this->assertSame('image2.jpg', $day->images[1]->filename);
-        $this->assertTrue($day->images[1]->isCover);
+        $this->assertSame('Friday Year 2025', $folder->title);
+        $this->assertSame('friday-year-2025', $folder->slug);
+        $this->assertCount(3, $folder->images);
+        $this->assertSame('image2.jpg', $folder->images[1]->filename);
+        $this->assertTrue($folder->images[1]->isCover);
     }
 }

@@ -12,19 +12,20 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-final readonly class GalleryDay
+final readonly class GalleryFolder
 {
     /**
-     * @param list<GalleryImage> $images
+     * @param list<GalleryFolder> $folders
+     * @param list<GalleryImage>  $images
      */
     public function __construct(
-        public string $year,
         public string $slug,
         public string $title,
         public string|null $description,
         public \DateTimeImmutable|null $publishedFrom,
         public \DateTimeImmutable|null $publishedUntil,
-        public array $images,
+        public array $folders = [],
+        public array $images = [],
     ) {
     }
 
@@ -37,5 +38,15 @@ final readonly class GalleryDay
         }
 
         return $this->images[0] ?? null;
+    }
+
+    public function hasSubFolders(): bool
+    {
+        return !empty($this->folders);
+    }
+
+    public function hasImages(): bool
+    {
+        return !empty($this->images);
     }
 }
