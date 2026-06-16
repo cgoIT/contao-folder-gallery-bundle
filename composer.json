@@ -25,7 +25,8 @@
     "symfony/http-kernel": "^6.0 || ^7.3",
     "symfony/filesystem": "^6.0 || ^7.3",
     "symfony/security-bundle": "^6.0 || ^7.3",
-    "symfony/yaml": "^6.0 || ^7.3"
+    "symfony/yaml": "^6.0 || ^7.3",
+    "twig/twig": "^3"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",

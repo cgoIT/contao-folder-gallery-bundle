@@ -72,9 +72,9 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $this->assertSame('Year 2025', $yearViewModel->title);
         $this->assertSame('2025', $yearViewModel->slug);
-        $this->assertCount(1, $yearViewModel->folders);
+        $this->assertCount(1, $yearViewModel->children);
 
-        $dayViewModel = $yearViewModel->folders[0];
+        $dayViewModel = $yearViewModel->children[0];
 
         $this->assertSame('Friday', $dayViewModel->title);
         $this->assertSame('friday', $dayViewModel->slug);
@@ -114,7 +114,7 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $viewModel = $factory->create($overview, 'gallery_cover');
 
-        $dayViewModel = $viewModel->folders[0]->folders[0];
+        $dayViewModel = $viewModel->folders[0]->children[0];
 
         $this->assertNotInstanceOf(Figure::class, $dayViewModel->coverFigure);
     }

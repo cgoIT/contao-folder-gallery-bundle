@@ -9,12 +9,12 @@ use Contao\CoreBundle\Image\Studio\Figure;
 final readonly class GalleryFolderViewModel
 {
     /**
-     * @param list<GalleryFolderViewModel> $folders
+     * @param list<GalleryFolderViewModel> $children
      */
     public function __construct(
         public string $title,
         public string $slug,
-        public array $folders,
+        public array $children,
         public Figure|null $coverFigure,
         public string|null $description,
     ) {

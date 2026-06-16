@@ -49,7 +49,7 @@ final readonly class GalleryOverviewFactory
         return new GalleryFolderViewModel(
             title: $folder->title,
             slug: $folder->slug,
-            folders: array_map(
+            children: array_map(
                 fn (GalleryFolder $subFolder) => $this->toGalleryFolderViewModel($subFolder, $coverImageSize),
                 $folder->folders,
             ),
