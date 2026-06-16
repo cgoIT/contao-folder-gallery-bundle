@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Metadata\MetadataReader;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryDay;
+use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryYear;
+use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Contao\CoreBundle\Slug\Slug;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
@@ -17,7 +18,7 @@ use Symfony\Component\Filesystem\Path;
 final readonly class FilesystemGalleryRepository implements GalleryRepositoryInterface
 {
     public function __construct(
-        private MetadataReader $metadataReader,
+        private MetadataLoader $metadataLoader,
         private GalleryImageLoaderInterface $galleryImageLoader,
         private Slug $slug,
     ) {
@@ -25,91 +26,56 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
 
     public function findOverview(string $rootPath): GalleryOverview
     {
-        $years = [];
+        $folders = [];
 
-        foreach ($this->getDirectories($rootPath) as $yearDirectory) {
-            $year = $this->createYear($yearDirectory);
+        foreach ($this->getDirectories($rootPath) as $subFolder) {
+            $folder = $this->createFolder($subFolder);
 
-            if (null !== $year) {
-                $years[] = $year;
+            if (null !== $folder) {
+                $folders[] = $folder;
             }
         }
 
-        usort(
-            $years,
-            static fn (GalleryYear $a, GalleryYear $b): int => strcmp($b->title, $a->title),
-        );
+        $metadata = $this->metadataLoader->read($rootPath);
+        $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryOverview($years);
+        return new GalleryOverview($folders);
     }
 
-    public function findDay(string $rootPath, string $yearSlug, string $daySlug): GalleryDay|null
+    public function findDay(string $rootPath, string $yearSlug, string $daySlug): GalleryFolder|null
     {
-        $directory = Path::join(
-            $rootPath,
-            $yearSlug,
-            $daySlug,
-        );
-
-        if (!is_dir($directory)) {
-            return null;
-        }
-
-        return $this->createDay(
-            $yearSlug,
-            $directory,
-        );
+        return null;
     }
 
-    private function createYear(string $directory): GalleryYear|null
+    private function createFolder(string $directory, bool $recursive = true): GalleryFolder|null
     {
-        $metadata = $this->metadataReader->read($directory);
+        $metadata = $this->metadataLoader->read($directory);
 
         if (!$metadata->isPublished()) {
             return null;
         }
 
-        $days = [];
+        $folders = [];
 
-        foreach ($this->getDirectories($directory) as $dayDirectory) {
-            $day = $this->createDay(
-                basename($directory),
-                $dayDirectory,
-            );
+        if ($recursive) {
+            foreach ($this->getDirectories($directory) as $subFolder) {
+                $folder = $this->createFolder($subFolder);
 
-            if (null !== $day) {
-                $days[] = $day;
+                if (null !== $folder) {
+                    $folders[] = $folder;
+                }
             }
         }
 
-        $yearSlug = $this->slug->generate($metadata->title ?? basename($directory));
+        $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryYear(
-            slug: $yearSlug,
-            title: $metadata->title ?? basename($directory),
-            publishedFrom: $metadata->publishedFrom,
-            publishedUntil: $metadata->publishedUntil,
-            days: $days,
-        );
-    }
-
-    private function createDay(string $year, string $directory): GalleryDay|null
-    {
-        $metadata = $this->metadataReader->read($directory);
-
-        if (!$metadata->isPublished()) {
-            return null;
-        }
-
-        $daySlug = $this->slug->generate($metadata->title ?? basename($directory));
-
-        return new GalleryDay(
-            year: $year,
-            slug: $daySlug,
+        return new GalleryFolder(
+            slug: $this->slug->generate($metadata->title ?? basename($directory)),
             title: $metadata->title ?? basename($directory),
             description: $metadata->description,
             publishedFrom: $metadata->publishedFrom,
             publishedUntil: $metadata->publishedUntil,
+            folders: $folders,
             images: $this->galleryImageLoader->loadImages(
                 $directory,
                 $metadata->cover,
@@ -134,5 +100,23 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         sort($directories);
 
         return $directories;
+    }
+
+    /**
+     * @param list<GalleryFolder> $folders
+     *
+     * @return list<GalleryFolder>
+     */
+    private function sortFoldersByTitle(array $folders, GalleryMetadata $metadata): array
+    {
+        usort(
+            $folders,
+            static fn (GalleryFolder $a, GalleryFolder $b): int => match ($metadata->sortOrder) {
+                SortOrder::Asc => strcmp($a->title, $b->title),
+                SortOrder::Desc => strcmp($b->title, $a->title),
+            },
+        );
+
+        return $folders;
     }
 }

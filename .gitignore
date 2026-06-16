@@ -2,6 +2,10 @@
 /composer.lock
 /vendor/
 
+# NPM
+node_modules/
+package-lock.json
+
 # PhpUnit
 /.phpunit.result.cache
 /.phpunit.cache

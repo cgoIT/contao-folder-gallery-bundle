@@ -12,12 +12,8 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-final readonly class GalleryOverview
+enum SortOrder: string
 {
-    /**
-     * @param list<GalleryFolder> $folders
-     */
-    public function __construct(public array $folders)
-    {
-    }
+    case Asc = 'asc';
+    case Desc = 'desc';
 }

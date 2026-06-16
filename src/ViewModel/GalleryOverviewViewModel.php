@@ -15,9 +15,9 @@ namespace Cgoit\ContaoFolderGalleryBundle\ViewModel;
 final readonly class GalleryOverviewViewModel
 {
     /**
-     * @param list<GalleryYearViewModel> $years
+     * @param list<GalleryFolderViewModel> $folders
      */
-    public function __construct(public array $years)
+    public function __construct(public array $folders)
     {
     }
 }

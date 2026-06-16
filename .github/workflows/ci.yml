@@ -54,4 +54,4 @@ jobs:
                 run: composer install --no-interaction --no-progress
 
             -   name: Run PHPUnit
-                run: composer test
+                run: composer unit-tests
