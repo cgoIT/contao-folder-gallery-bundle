@@ -1,11 +1,11 @@
 {% use '@Contao/component/_figure.html.twig' %}
 
-{% set wrapperAttributes = attrs()
+{% set wrapper_attributes = attrs()
     .addClass(['module-gallery-overview__folder'])
     .mergeWith(wrapperAttributes|default)
 %}
 
-<article{{ wrapperAttributes }}>
+<article{{ wrapper_attributes }}>
     {% if folder.coverFigure %}
         <div class="module-gallery-overview__image">
             {% with {figure: folder.coverFigure} %}

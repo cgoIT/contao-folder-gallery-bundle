@@ -25,7 +25,7 @@ final readonly class GalleryFolderRenderer
     {
         return $this->twig->render("@Contao/$template.html.twig", [
             'folder' => $folder,
-            'wrapperAttributes' => ['class' => 'level-' . $level],
+            'wrapperAttributes' => ['class' => 'level-'.$level],
             'children' => array_map(
                 fn (GalleryFolderViewModel $child) => $this->render($child, $template, ++$level),
                 $folder->children,

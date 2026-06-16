@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\GalleryOverviewModule;
-use Contao\Controller;
 
 /*
  * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
