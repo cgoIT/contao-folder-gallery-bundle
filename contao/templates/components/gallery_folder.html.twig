@@ -1,0 +1,36 @@
+{% use '@Contao/component/_figure.html.twig' %}
+
+{% set wrapper_attributes = attrs()
+    .addClass(['module-gallery-overview__folder'])
+    .mergeWith(wrapperAttributes|default)
+%}
+
+<article{{ wrapper_attributes }}>
+    {% if folder.coverFigure %}
+        <div class="module-gallery-overview__image">
+            {% with {figure: folder.coverFigure} %}
+                {{ block('figure_component') }}
+            {% endwith %}
+        </div>
+    {% endif %}
+
+    <div class="module-gallery-overview__content">
+        <div class="module-gallery-overview__folder-title">
+            {{ folder.title }}
+        </div>
+
+        {% if folder.description %}
+            <div class="module-gallery-overview__description">
+                {{ folder.description }}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if children %}
+        <div class="module-gallery-overview__folders">
+            {% for child in children %}
+                {{ child|raw }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</article>

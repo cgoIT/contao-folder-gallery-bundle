@@ -14,6 +14,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
+use Cgoit\ContaoFolderGalleryBundle\Twig\GalleryFolderRenderer;
+use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Twig\FragmentTemplate;
@@ -34,6 +36,7 @@ final class GalleryOverviewModule extends AbstractFrontendModuleController
     public function __construct(
         private readonly GalleryRepositoryInterface $repository,
         private readonly GalleryOverviewFactory $overviewFactory,
+        private readonly GalleryFolderRenderer $folderRenderer,
     ) {
     }
 
@@ -46,13 +49,17 @@ final class GalleryOverviewModule extends AbstractFrontendModuleController
         if (null !== $rootDir) {
             $overview = $this->repository->findOverview($rootDir->path);
 
-            $template->set(
-                'overview',
-                $this->overviewFactory->create(
-                    $overview,
-                    $model->galleryCoverSize,
+            $overviewViewModel = $this->overviewFactory->create($overview, $model->galleryCoverSize);
+
+            $items = array_map(
+                fn (GalleryFolderViewModel $folder) => $this->folderRenderer->render(
+                    $folder,
+                    $model->galleryFolderTpl ?: 'components/gallery_folder',
                 ),
+                $overviewViewModel->folders,
             );
+
+            $template->set('items', $items);
         }
 
         return $template->getResponse();

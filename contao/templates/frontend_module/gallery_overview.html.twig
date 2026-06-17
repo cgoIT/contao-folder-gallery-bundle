@@ -1,44 +1,7 @@
 {% extends '@Contao/frontend_module/_base.html.twig' %}
-{% use '@Contao/component/_figure.html.twig' %}
 
 {% block content %}
-    {% block overview_inner %}
-        {% for folder in overview.folders %}
-            {% if folder.folders is not empty %}
-                <section class="module-gallery-overview__group">
-                    <header class="module-gallery-overview__header">
-                        <div class="module-gallery-overview__title">
-                            {{ folder.title }}
-                        </div>
-                    </header>
-
-                    <div class="module-gallery-overview__folders">
-                        {% for subfolder in folder.folders %}
-                            <article class="module-gallery-overview__folder">
-                                {% if subfolder.coverFigure %}
-                                    <div class="module-gallery-overview__image">
-                                        {% with {figure: subfolder.coverFigure} %}
-                                            {{ block('figure_component') }}
-                                        {% endwith %}
-                                    </div>
-                                {% endif %}
-
-                                <div class="module-gallery-overview__content">
-                                    <div class="module-gallery-overview__folder-title">
-                                        {{ subfolder.title }}
-                                    </div>
-
-                                    {% if subfolder.description %}
-                                        <div class="module-gallery-overview__description">
-                                            {{ subfolder.description }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </article>
-                        {% endfor %}
-                    </div>
-                </section>
-            {% endif %}
-        {% endfor %}
-    {% endblock %}
+    {% for item in items %}
+        {{ item|raw }}
+    {% endfor %}
 {% endblock %}

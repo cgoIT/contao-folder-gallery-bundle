@@ -16,11 +16,13 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Image\ImageSizes;
+use Contao\CoreBundle\Twig\Finder\FinderFactory;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class ModuleCallbacks extends Backend
 {
     public function __construct(
+        private readonly FinderFactory $finderFactory,
         private readonly Security $security,
         private readonly ImageSizes $imageSizes,
     ) {
@@ -39,5 +41,21 @@ class ModuleCallbacks extends Backend
         }
 
         return $this->imageSizes->getOptionsForUser($user);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    #[AsCallback(table: 'tl_module', target: 'fields.galleryFolderTpl.options')]
+    public function getGalleryFolderTemplates(): array
+    {
+        return $this->finderFactory
+            ->create()
+            ->identifier('components/gallery_folder')
+            ->extension('html.twig')
+            ->withVariants()
+            ->excludePartials()
+            ->asTemplateOptions()
+        ;
     }
 }
