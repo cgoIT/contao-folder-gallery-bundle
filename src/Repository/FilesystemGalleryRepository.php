@@ -47,7 +47,10 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         return null;
     }
 
-    private function createFolder(string $directory, bool $recursive = true): GalleryFolder|null
+    /**
+     * @param array<string> $parentTrail
+     */
+    private function createFolder(string $directory, array $parentTrail = [], bool $recursive = true): GalleryFolder|null
     {
         $metadata = $this->metadataLoader->read($directory);
 
@@ -55,11 +58,17 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
             return null;
         }
 
+        $slug = $this->slug->generate($metadata->title ?? basename($directory));
+        $trail = [
+            ...$parentTrail,
+            $slug,
+        ];
+
         $folders = [];
 
         if ($recursive) {
             foreach ($this->getDirectories($directory) as $subFolder) {
-                $folder = $this->createFolder($subFolder);
+                $folder = $this->createFolder($subFolder, $trail, $recursive);
 
                 if (null !== $folder) {
                     $folders[] = $folder;
@@ -70,8 +79,9 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $folders = $this->sortFoldersByTitle($folders, $metadata);
 
         return new GalleryFolder(
-            slug: $this->slug->generate($metadata->title ?? basename($directory)),
+            slug: $slug,
             title: $metadata->title ?? basename($directory),
+            trail: $trail,
             description: $metadata->description,
             publishedFrom: $metadata->publishedFrom,
             publishedUntil: $metadata->publishedUntil,

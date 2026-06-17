@@ -57,13 +57,13 @@
     "phpunit": "vendor/bin/phpunit",
     "unit-tests": "@phpunit",
     "all": [
-      "@phpunit",
       "@ecs",
       "@rector",
       "@phpstan",
       "@twig-cs-fixer",
       "@yamllint",
-      "@depcheck"
+      "@depcheck",
+      "@phpunit"
     ]
   }
 }

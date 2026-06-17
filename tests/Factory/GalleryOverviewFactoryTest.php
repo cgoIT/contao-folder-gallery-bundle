@@ -34,6 +34,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            trail: ['2025', 'friday'],
             description: 'Friday description',
             publishedFrom: null,
             publishedUntil: null,
@@ -43,6 +44,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $year = new GalleryFolder(
             slug: '2025',
             title: 'Year 2025',
+            trail: ['2025'],
             description: null,
             publishedFrom: null,
             publishedUntil: null,
@@ -87,6 +89,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            trail: ['2025', 'friday'],
             description: null,
             publishedFrom: null,
             publishedUntil: null,
@@ -95,7 +98,8 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $year = new GalleryFolder(
             slug: '2025',
-            title: 'Year 2025',
+            title: 'Year 20425',
+            trail: ['2025'],
             description: null,
             publishedFrom: null,
             publishedUntil: null,

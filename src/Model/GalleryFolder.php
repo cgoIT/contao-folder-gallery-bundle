@@ -14,17 +14,23 @@ namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
 final readonly class GalleryFolder
 {
-    /**
-     * @param list<GalleryFolder> $folders
-     * @param list<GalleryImage>  $images
-     */
     public function __construct(
         public string $slug,
         public string $title,
+        /**
+         * @var list<string>
+         */
+        public array $trail,
         public string|null $description,
         public \DateTimeImmutable|null $publishedFrom,
         public \DateTimeImmutable|null $publishedUntil,
+        /**
+         * @var list<GalleryFolder>
+         */
         public array $folders = [],
+        /**
+         * @var list<GalleryImage>
+         */
         public array $images = [],
     ) {
     }
@@ -38,6 +44,16 @@ final readonly class GalleryFolder
         }
 
         return $this->images[0] ?? null;
+    }
+
+    public function getPath(): string
+    {
+        return implode('/', $this->trail);
+    }
+
+    public function getDepth(): int
+    {
+        return \count($this->trail);
     }
 
     public function hasSubFolders(): bool
