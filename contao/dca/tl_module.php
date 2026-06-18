@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-use Cgoit\ContaoFolderGalleryBundle\FrontendModule\GalleryOverviewModule;
+use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 
 /*
  * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
@@ -20,7 +20,7 @@ use Cgoit\ContaoFolderGalleryBundle\FrontendModule\GalleryOverviewModule;
  * @license    LGPL-3.0-or-later
  */
 
-$GLOBALS['TL_DCA']['tl_module']['palettes'][GalleryOverviewModule::TYPE]
+$GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
     .'{config_legend},galleryRoot,galleryCoverSize;'
     .'{template_legend:collapsed},customTpl,galleryFolderTpl;'

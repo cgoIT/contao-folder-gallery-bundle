@@ -8,11 +8,9 @@
  * @license    LGPL-3.0-or-later
  */
 
-use Cgoit\ContaoFolderGalleryBundle\FrontendModule\GalleryOverviewModule;
+use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 
-$GLOBALS['TL_LANG']['FMD']['folder_gallery'] = 'Folder-based Gallery';
-
-$GLOBALS['TL_LANG']['FMD'][GalleryOverviewModule::TYPE] = [
-    'Galerie Übersicht',
-    'Ein Frontend-Modul, um die Ordner-Galerie anzuzeigen.',
+$GLOBALS['TL_LANG']['FMD'][FolderGalleryModule::TYPE] = [
+    'Ordner-basierte Galerie',
+    'Ein Frontend-Modul, um die Ordner-basierte Galerie anzuzeigen.',
 ];

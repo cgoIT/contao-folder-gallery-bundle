@@ -25,13 +25,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 #[AsFrontendModule(
-    category: 'miscellaneous',
-    template: 'frontend_module/gallery_overview',
+    category: 'application',
+    template: 'frontend_module/folder_gallery',
     type: self::TYPE,
 )]
-final class GalleryOverviewModule extends AbstractFrontendModuleController
+final class FolderGalleryModule extends AbstractFrontendModuleController
 {
-    public const string TYPE = 'gallery_overview';
+    public const string TYPE = 'folder_gallery';
 
     public function __construct(
         private readonly GalleryRepositoryInterface $repository,
