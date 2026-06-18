@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
+use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
@@ -57,14 +58,12 @@ final class GalleryOverviewFactoryTest extends TestCase
         $figureFactory
             ->expects($this->once())
             ->method('create')
-            ->with(
-                $image,
-                'gallery_cover',
-            )
             ->willReturn(null)
         ;
 
-        $factory = new GalleryOverviewFactory($figureFactory);
+        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory);
+
+        $factory = new GalleryOverviewFactory($galleryFolderFactory);
 
         $viewModel = $factory->create($overview, 'gallery_cover');
 
@@ -114,7 +113,9 @@ final class GalleryOverviewFactoryTest extends TestCase
             ->method('create')
         ;
 
-        $factory = new GalleryOverviewFactory($figureFactory);
+        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory);
+
+        $factory = new GalleryOverviewFactory($galleryFolderFactory);
 
         $viewModel = $factory->create($overview, 'gallery_cover');
 
