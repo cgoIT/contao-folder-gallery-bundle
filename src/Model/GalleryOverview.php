@@ -15,9 +15,12 @@ namespace Cgoit\ContaoFolderGalleryBundle\Model;
 final readonly class GalleryOverview
 {
     /**
-     * @param list<GalleryFolder> $folders
+     * @param list<GalleryFolder>          $folders
+     * @param array<string, GalleryFolder> $folderIndex
      */
-    public function __construct(public array $folders)
-    {
+    public function __construct(
+        public array $folders,
+        public array $folderIndex,
+    ) {
     }
 }

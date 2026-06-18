@@ -11,10 +11,8 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Contao\CoreBundle\Slug\Slug;
-use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
 
-#[AsAlias(GalleryRepositoryInterface::class)]
 final readonly class FilesystemGalleryRepository implements GalleryRepositoryInterface
 {
     public function __construct(
@@ -27,9 +25,10 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
     public function findOverview(string $rootPath): GalleryOverview
     {
         $folders = [];
+        $folderIndex = [];
 
         foreach ($this->getDirectories($rootPath) as $subFolder) {
-            $folder = $this->createFolder($subFolder);
+            $folder = $this->createFolder($subFolder, $folderIndex);
 
             if (null !== $folder) {
                 $folders[] = $folder;
@@ -39,18 +38,21 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $metadata = $this->metadataLoader->read($rootPath);
         $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryOverview($folders);
+        return new GalleryOverview($folders, $folderIndex);
     }
 
-    public function findDay(string $rootPath, string $yearSlug, string $daySlug): GalleryFolder|null
+    public function findFolderByPath(string $rootPath, string $path): GalleryFolder|null
     {
-        return null;
+        $overview = $this->findOverview($rootPath);
+
+        return $overview->folderIndex[$path] ?? null;
     }
 
     /**
-     * @param array<string> $parentTrail
+     * @param array<string>                $parentTrail
+     * @param array<string, GalleryFolder> $folderIndex
      */
-    private function createFolder(string $directory, array $parentTrail = [], bool $recursive = true): GalleryFolder|null
+    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true): GalleryFolder|null
     {
         $metadata = $this->metadataLoader->read($directory);
 
@@ -68,7 +70,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
 
         if ($recursive) {
             foreach ($this->getDirectories($directory) as $subFolder) {
-                $folder = $this->createFolder($subFolder, $trail, $recursive);
+                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive);
 
                 if (null !== $folder) {
                     $folders[] = $folder;
@@ -78,7 +80,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
 
         $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryFolder(
+        $folder = new GalleryFolder(
             slug: $slug,
             title: $metadata->title ?? basename($directory),
             trail: $trail,
@@ -91,6 +93,10 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
                 $metadata->cover,
             ),
         );
+
+        $folderIndex[$folder->getPath()] = $folder;
+
+        return $folder;
     }
 
     /**

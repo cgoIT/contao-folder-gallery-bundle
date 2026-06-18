@@ -42,16 +42,16 @@ final class GalleryOverviewFactoryTest extends TestCase
         );
 
         $year = new GalleryFolder(
-            slug: '2025',
+            slug: 'year-2025',
             title: 'Year 2025',
-            trail: ['2025'],
+            trail: ['year-2025'],
             description: null,
             publishedFrom: null,
             publishedUntil: null,
             folders: [$day],
         );
 
-        $overview = new GalleryOverview([$year]);
+        $overview = new GalleryOverview([$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
 
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
@@ -73,7 +73,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $yearViewModel = $viewModel->folders[0];
 
         $this->assertSame('Year 2025', $yearViewModel->title);
-        $this->assertSame('2025', $yearViewModel->slug);
+        $this->assertSame('year-2025', $yearViewModel->slug);
         $this->assertCount(1, $yearViewModel->children);
 
         $dayViewModel = $yearViewModel->children[0];
@@ -89,7 +89,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
-            trail: ['2025', 'friday'],
+            trail: ['year-2025', 'friday'],
             description: null,
             publishedFrom: null,
             publishedUntil: null,
@@ -97,16 +97,16 @@ final class GalleryOverviewFactoryTest extends TestCase
         );
 
         $year = new GalleryFolder(
-            slug: '2025',
+            slug: 'year-2025',
             title: 'Year 20425',
-            trail: ['2025'],
+            trail: ['year-2025'],
             description: null,
             publishedFrom: null,
             publishedUntil: null,
             folders: [$day],
         );
 
-        $overview = new GalleryOverview([$year]);
+        $overview = new GalleryOverview([$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
 
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
