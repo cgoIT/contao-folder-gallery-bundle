@@ -21,9 +21,7 @@ final readonly class GalleryFolder
          * @var list<string>
          */
         public array $trail,
-        public string|null $description,
-        public \DateTimeImmutable|null $publishedFrom,
-        public \DateTimeImmutable|null $publishedUntil,
+        public GalleryMetadata $metadata,
         /**
          * @var list<GalleryFolder>
          */
@@ -64,5 +62,25 @@ final readonly class GalleryFolder
     public function hasImages(): bool
     {
         return !empty($this->images);
+    }
+
+    public function getDescription(): string|null
+    {
+        return $this->metadata->description;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->metadata->isPublished();
+    }
+
+    public function isHiddenInOverview(): bool
+    {
+        return OverviewMode::Hidden === $this->metadata->overviewMode;
+    }
+
+    public function isGroupInOverview(): bool
+    {
+        return OverviewMode::Group === $this->metadata->overviewMode;
     }
 }

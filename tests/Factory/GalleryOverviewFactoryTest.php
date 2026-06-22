@@ -15,10 +15,14 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
+use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
+use Contao\PageModel;
 use PHPUnit\Framework\TestCase;
 
 final class GalleryOverviewFactoryTest extends TestCase
@@ -36,9 +40,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             slug: 'friday',
             title: 'Friday',
             trail: ['2025', 'friday'],
-            description: 'Friday description',
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(description: 'Friday description'),
             images: [$image],
         );
 
@@ -46,9 +48,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             slug: 'year-2025',
             title: 'Year 2025',
             trail: ['year-2025'],
-            description: null,
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(),
             folders: [$day],
         );
 
@@ -61,11 +61,20 @@ final class GalleryOverviewFactoryTest extends TestCase
             ->willReturn(null)
         ;
 
-        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory);
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->willReturn('/parent/child')
+        ;
 
-        $factory = new GalleryOverviewFactory($galleryFolderFactory);
+        $pageModel = $this->createStub(PageModel::class);
 
-        $viewModel = $factory->create($overview, 'gallery_cover');
+        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+
+        $factory = new GalleryOverviewFactory($galleryFolderFactory, new OverviewFolderFlattener());
+
+        $viewModel = $factory->create($overview, $pageModel, 'gallery_cover');
 
         $this->assertCount(1, $viewModel->folders);
 
@@ -89,9 +98,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             slug: 'friday',
             title: 'Friday',
             trail: ['year-2025', 'friday'],
-            description: null,
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(description: 'Friday description'),
             images: [],
         );
 
@@ -99,9 +106,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             slug: 'year-2025',
             title: 'Year 20425',
             trail: ['year-2025'],
-            description: null,
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(description: 'Friday description'),
             folders: [$day],
         );
 
@@ -113,11 +118,20 @@ final class GalleryOverviewFactoryTest extends TestCase
             ->method('create')
         ;
 
-        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory);
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->willReturn('/parent/child')
+        ;
 
-        $factory = new GalleryOverviewFactory($galleryFolderFactory);
+        $pageModel = $this->createStub(PageModel::class);
 
-        $viewModel = $factory->create($overview, 'gallery_cover');
+        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+
+        $factory = new GalleryOverviewFactory($galleryFolderFactory, new OverviewFolderFlattener());
+
+        $viewModel = $factory->create($overview, $pageModel, 'gallery_cover');
 
         $dayViewModel = $viewModel->folders[0]->children[0];
 

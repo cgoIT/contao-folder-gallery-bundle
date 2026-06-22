@@ -21,6 +21,7 @@ final readonly class GalleryMetadata
         public \DateTimeImmutable|null $publishedFrom = null,
         public \DateTimeImmutable|null $publishedUntil = null,
         public SortOrder $sortOrder = SortOrder::Asc,
+        public OverviewMode $overviewMode = OverviewMode::Gallery,
     ) {
     }
 

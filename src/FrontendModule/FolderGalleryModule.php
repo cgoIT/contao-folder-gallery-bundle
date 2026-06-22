@@ -21,10 +21,12 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\Routing\PageFinder;
 use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\FilesModel;
 use Contao\Input;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -42,6 +44,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         private readonly GalleryOverviewFactory $overviewFactory,
         private readonly GalleryContentFactory $contentFactory,
         private readonly GalleryFolderRenderer $folderRenderer,
+        private readonly PageFinder $pageFinder,
         private readonly ContaoFramework $framework,
     ) {
     }
@@ -51,34 +54,37 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/folder-gallery.css';
 
         $rootDir = FilesModel::findById($model->galleryRoot);
-
         if (null === $rootDir) {
+            throw new PageNotFoundException();
+        }
+
+        $page = $this->pageFinder->getCurrentPage();
+        if (null === $page) {
             throw new PageNotFoundException();
         }
 
         $path = trim((string) $request->attributes->get('parameters', ''), '/');
 
-        // Contao interpretiert den rekursiven Galeriepfad als Legacy-Route-Parameter
-        // (z.B. "year-2025" => "friday-year-2025"). Da wir den kompletten Pfad direkt
-        // aus dem Request-Attribut "parameters" auswerten, werden diese Parameter nie
-        // über Input::get() konsumiert und Contao würde eine UnusedArgumentsException
-        // werfen. Die endgültige Lösung erfolgt im Rahmen der Routing-/URL-Integration.
+        // Folder gallery routes use the raw "parameters" attribute.
+        // The legacy InputEnhancer interprets path fragments as
+        // key/value pairs and would otherwise trigger an
+        // UnusedArgumentsException.
         $this->framework
             ->getAdapter(Input::class)
             ->setUnusedRouteParameters([])
         ;
 
         if ('' === $path) {
-            return $this->renderOverview($template, $model, $rootDir);
+            return $this->renderOverview($template, $model, $page, $rootDir);
         }
 
-        return $this->renderContent($template, $model, $rootDir, $path);
+        return $this->renderContent($template, $model, $page, $rootDir, $path);
     }
 
-    private function renderOverview(FragmentTemplate $template, ModuleModel $model, FilesModel $rootDir): Response
+    private function renderOverview(FragmentTemplate $template, ModuleModel $model, PageModel $page, FilesModel $rootDir): Response
     {
         $overview = $this->repository->findOverview($rootDir->path);
-        $overviewViewModel = $this->overviewFactory->create($overview, $model->galleryCoverSize);
+        $overviewViewModel = $this->overviewFactory->create($overview, $page, $model->galleryCoverSize);
 
         $items = array_map(
             fn (GalleryFolderViewModel $folder) => $this->folderRenderer->render(
@@ -93,7 +99,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         return $template->getResponse();
     }
 
-    private function renderContent(FragmentTemplate $template, ModuleModel $model, FilesModel $rootDir, string $path): Response
+    private function renderContent(FragmentTemplate $template, ModuleModel $model, PageModel $page, FilesModel $rootDir, string $path): Response
     {
         $folder = $this->repository->findOverview($rootDir->path)
             ->findFolderByPath($path)
@@ -105,7 +111,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
         $template->set(
             'content',
-            $this->contentFactory->create($folder, $model->galleryImageSize, $model->galleryCoverImageSize),
+            $this->contentFactory->create($folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize),
         );
 
         return $template->getResponse();

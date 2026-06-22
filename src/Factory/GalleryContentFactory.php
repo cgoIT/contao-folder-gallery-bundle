@@ -9,6 +9,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\Image\PictureConfiguration;
+use Contao\PageModel;
 
 final readonly class GalleryContentFactory
 {
@@ -22,13 +23,12 @@ final readonly class GalleryContentFactory
      * @param array<mixed>|PictureConfiguration|int|string|null $imageSize
      * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
      */
-    public function create(GalleryFolder $folder, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize): GalleryContentViewModel
+    public function create(GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize): GalleryContentViewModel
     {
         return new GalleryContentViewModel(
-            title: $folder->title,
-            description: $folder->description,
-            folders: array_map(
-                fn (GalleryFolder $child) => $this->folderViewModelFactory->create($child, $coverImageSize, false),
+            folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize, false),
+            children: array_map(
+                fn (GalleryFolder $child) => $this->folderViewModelFactory->create($child, $page, $coverImageSize, false),
                 $folder->folders,
             ),
             images: array_map(

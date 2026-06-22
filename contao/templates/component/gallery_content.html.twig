@@ -2,16 +2,18 @@
 
 <div class="gallery-content">
 
-    <h1>{{ content.title }}</h1>
+    {% if content.folder.title %}
+        <h1>{{ content.folder.title }}</h1>
+    {% endif %}
 
-    {% if content.description %}
+    {% if content.folder.description %}
         <div class="gallery-content__description">
-            {{ content.description }}
+            {{ content.folder.description|raw }}
         </div>
     {% endif %}
 
-    <div class="gallery-content__folders">
-        {% for folder in content.folders %}
+    <div class="gallery-content__subfolders">
+        {% for folder in content.children %}
             {{ folder.title }}
         {% endfor %}
     </div>

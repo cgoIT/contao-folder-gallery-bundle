@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\ViewModel;
 
+use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Contao\CoreBundle\Image\Studio\Figure;
 
 final readonly class GalleryFolderViewModel
@@ -14,9 +15,11 @@ final readonly class GalleryFolderViewModel
     public function __construct(
         public string $title,
         public string $slug,
+        public string $url,
         public array $children,
         public Figure|null $coverFigure,
         public string|null $description,
+        public bool $isGroup,
     ) {
     }
 }

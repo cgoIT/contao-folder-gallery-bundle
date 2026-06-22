@@ -16,7 +16,10 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
+use Contao\PageModel;
 use PHPUnit\Framework\TestCase;
 
 final class GalleryFolderViewModelFactoryTest extends TestCase
@@ -30,13 +33,20 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             ->willReturn(null)
         ;
 
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->willReturn('/parent/child')
+        ;
+
+        $pageModel = $this->createStub(PageModel::class);
+
         $child = new GalleryFolder(
             slug: 'child',
             title: 'Child',
             trail: ['parent', 'child'],
-            description: 'Child description',
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(description: 'Child description'),
             folders: [],
             images: [
                 new GalleryImage(
@@ -52,9 +62,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             slug: 'parent',
             title: 'Parent',
             trail: ['parent'],
-            description: 'Parent description',
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(description: 'Parent description'),
             folders: [$child],
             images: [
                 new GalleryImage(
@@ -66,9 +74,9 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             ],
         );
 
-        $factory = new GalleryFolderViewModelFactory($figureFactory);
+        $factory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
-        $viewModel = $factory->create($parent, null);
+        $viewModel = $factory->create($parent, $pageModel, null);
 
         $this->assertSame('Parent', $viewModel->title);
         $this->assertSame('parent', $viewModel->slug);
@@ -94,13 +102,20 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             ->willReturn(null)
         ;
 
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->willReturn('/parent/child')
+        ;
+
+        $pageModel = $this->createStub(PageModel::class);
+
         $child = new GalleryFolder(
             slug: 'child',
             title: 'Child',
             trail: ['parent', 'child'],
-            description: null,
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(),
             folders: [],
             images: [],
         );
@@ -109,9 +124,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             slug: 'parent',
             title: 'Parent',
             trail: ['parent'],
-            description: null,
-            publishedFrom: null,
-            publishedUntil: null,
+            metadata: new GalleryMetadata(),
             folders: [$child],
             images: [
                 new GalleryImage(
@@ -123,10 +136,11 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             ],
         );
 
-        $factory = new GalleryFolderViewModelFactory($figureFactory);
+        $factory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
         $viewModel = $factory->create(
             $parent,
+            $pageModel,
             null,
             false,
         );

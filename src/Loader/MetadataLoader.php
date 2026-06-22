@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Loader;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -44,6 +45,7 @@ final class MetadataLoader
             publishedFrom: $this->getDateTime($data, 'published_from'),
             publishedUntil: $this->getDateTime($data, 'published_until'),
             sortOrder: $this->getSortOrder($data),
+            hiddenInOverview: $this->getBool($data, 'hidden_in_overview'),
         );
     }
 
@@ -57,6 +59,24 @@ final class MetadataLoader
         return \is_string($value) && '' !== trim($value)
             ? $value
             : null;
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    private function getBool(array $data, string $key, bool $default = false): bool
+    {
+        if (!\array_key_exists($key, $data)) {
+            return $default;
+        }
+
+        $value = filter_var(
+            $data[$key],
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE,
+        );
+
+        return $value ?? $default;
     }
 
     /**
@@ -89,5 +109,19 @@ final class MetadataLoader
         }
 
         return SortOrder::tryFrom(strtolower(trim($sortOrder))) ?? SortOrder::Asc;
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    private function getOverviewMode(array $data): OverviewMode
+    {
+        $overviewMode = $data['overview_mode'] ?? null;
+
+        if (!\is_string($overviewMode) || '' === trim($overviewMode)) {
+            return OverviewMode::Gallery;
+        }
+
+        return OverviewMode::tryFrom(strtolower(trim($overviewMode))) ?? OverviewMode::Gallery;
     }
 }

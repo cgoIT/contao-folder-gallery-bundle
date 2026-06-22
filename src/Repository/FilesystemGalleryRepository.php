@@ -77,9 +77,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
             slug: $slug,
             title: $metadata->title ?? basename($directory),
             trail: $trail,
-            description: $metadata->description,
-            publishedFrom: $metadata->publishedFrom,
-            publishedUntil: $metadata->publishedUntil,
+            metadata: $metadata,
             folders: $folders,
             images: $this->galleryImageLoader->loadImages(
                 $directory,
