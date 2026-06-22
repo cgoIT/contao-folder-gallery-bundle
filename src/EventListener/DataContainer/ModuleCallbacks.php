@@ -58,4 +58,20 @@ class ModuleCallbacks extends Backend
             ->asTemplateOptions()
         ;
     }
+
+    /**
+     * @return array<mixed>
+     */
+    #[AsCallback(table: 'tl_module', target: 'fields.galleryContentTpl.options')]
+    public function getGalleryContentTemplates(): array
+    {
+        return $this->finderFactory
+            ->create()
+            ->identifier('component/gallery_content')
+            ->extension('html.twig')
+            ->withVariants()
+            ->excludePartials()
+            ->asTemplateOptions()
+        ;
+    }
 }

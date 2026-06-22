@@ -15,8 +15,6 @@ namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
-use Cgoit\ContaoFolderGalleryBundle\Twig\GalleryFolderRenderer;
-use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
@@ -43,7 +41,6 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         private readonly GalleryRepositoryInterface $repository,
         private readonly GalleryOverviewFactory $overviewFactory,
         private readonly GalleryContentFactory $contentFactory,
-        private readonly GalleryFolderRenderer $folderRenderer,
         private readonly PageFinder $pageFinder,
         private readonly ContaoFramework $framework,
     ) {
@@ -85,16 +82,13 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
     {
         $overview = $this->repository->findOverview($rootDir->path);
         $overviewViewModel = $this->overviewFactory->create($overview, $page, $model->galleryCoverSize);
+        $templateName = $model->galleryFolderTpl ?: 'component/gallery_folder';
 
-        $items = array_map(
-            fn (GalleryFolderViewModel $folder) => $this->folderRenderer->render(
-                $folder,
-                $model->galleryFolderTpl ?: 'component/gallery_folder',
-            ),
-            $overviewViewModel->folders,
+        $template->set('overview', $overviewViewModel);
+        $template->set(
+            'folderTemplate',
+            "@Contao/$templateName.html.twig",
         );
-
-        $template->set('items', $items);
 
         return $template->getResponse();
     }
@@ -109,9 +103,15 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
             throw new PageNotFoundException();
         }
 
+        $templateName = $model->galleryContentTpl ?: 'component/gallery_content';
+
         $template->set(
             'content',
             $this->contentFactory->create($folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize),
+        );
+        $template->set(
+            'contentTemplate',
+            "@Contao/$templateName.html.twig",
         );
 
         return $template->getResponse();

@@ -43,13 +43,13 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryCoverSize'] =
     'sql' => ['type' => 'string', 'length' => 255, 'default' => '', 'platformOptions' => ['collation' => 'ascii_bin']],
 ];
 
-$GLOBALS['TL_DCA']['tl_module']['fields']['galleryContentTpl'] = [
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryFolderTpl'] = [
     'inputType' => 'select',
-    'eval' => ['chosen' => true, 'tl_class' => 'w50'],
+    'eval' => ['chosen' => true, 'tl_class' => 'clr w50'],
     'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default ''",
 ];
 
-$GLOBALS['TL_DCA']['tl_module']['fields']['galleryFolderTpl'] = [
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryContentTpl'] = [
     'inputType' => 'select',
     'eval' => ['chosen' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default ''",
