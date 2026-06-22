@@ -17,7 +17,6 @@
   },
   "require": {
     "php": "^8.3",
-    "ext-filter": "*",
     "contao/core-bundle": "^5.7",
     "contao/image": "^1.2",
     "psr/cache": "^3.0",

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\ViewModel;
 
-use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Contao\CoreBundle\Image\Studio\Figure;
 
 final readonly class GalleryFolderViewModel

@@ -45,7 +45,7 @@ final class MetadataLoader
             publishedFrom: $this->getDateTime($data, 'published_from'),
             publishedUntil: $this->getDateTime($data, 'published_until'),
             sortOrder: $this->getSortOrder($data),
-            hiddenInOverview: $this->getBool($data, 'hidden_in_overview'),
+            overviewMode: $this->getOverviewMode($data),
         );
     }
 
@@ -59,24 +59,6 @@ final class MetadataLoader
         return \is_string($value) && '' !== trim($value)
             ? $value
             : null;
-    }
-
-    /**
-     * @param array<mixed> $data
-     */
-    private function getBool(array $data, string $key, bool $default = false): bool
-    {
-        if (!\array_key_exists($key, $data)) {
-            return $default;
-        }
-
-        $value = filter_var(
-            $data[$key],
-            FILTER_VALIDATE_BOOLEAN,
-            FILTER_NULL_ON_FAILURE,
-        );
-
-        return $value ?? $default;
     }
 
     /**

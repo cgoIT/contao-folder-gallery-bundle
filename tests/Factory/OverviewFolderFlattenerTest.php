@@ -15,6 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use PHPUnit\Framework\TestCase;
 
 final class OverviewFolderFlattenerTest extends TestCase
@@ -101,7 +102,7 @@ final class OverviewFolderFlattenerTest extends TestCase
             title: $title,
             trail: [$title],
             metadata: new GalleryMetadata(
-                hiddenInOverview: $hiddenInOverview,
+                overviewMode: $hiddenInOverview ? OverviewMode::Hidden : OverviewMode::Gallery,
             ),
             folders: $children,
             images: [],
