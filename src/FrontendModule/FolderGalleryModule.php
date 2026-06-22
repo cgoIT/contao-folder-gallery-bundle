@@ -12,14 +12,18 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 
+use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Twig\GalleryFolderRenderer;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
+use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\FilesModel;
+use Contao\Input;
 use Contao\ModuleModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +40,9 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
     public function __construct(
         private readonly GalleryRepositoryInterface $repository,
         private readonly GalleryOverviewFactory $overviewFactory,
+        private readonly GalleryContentFactory $contentFactory,
         private readonly GalleryFolderRenderer $folderRenderer,
+        private readonly ContaoFramework $framework,
     ) {
     }
 
@@ -46,21 +52,54 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
         $rootDir = FilesModel::findById($model->galleryRoot);
 
-        if (null !== $rootDir) {
-            $overview = $this->repository->findOverview($rootDir->path);
-
-            $overviewViewModel = $this->overviewFactory->create($overview, $model->galleryCoverSize);
-
-            $items = array_map(
-                fn (GalleryFolderViewModel $folder) => $this->folderRenderer->render(
-                    $folder,
-                    $model->galleryFolderTpl ?: 'components/gallery_folder',
-                ),
-                $overviewViewModel->folders,
-            );
-
-            $template->set('items', $items);
+        if (null === $rootDir) {
+            throw new PageNotFoundException();
         }
+
+        $path = trim((string) $request->attributes->get('parameters', ''), '/');
+
+        if ('' === $path) {
+            return $this->renderOverview($template, $model, $rootDir);
+        }
+
+        $input = $this->framework->getAdapter(Input::class);
+        $input->setUnusedRouteParameters([]);
+
+        return $this->renderContent($template, $model, $rootDir, $path);
+    }
+
+    private function renderOverview(FragmentTemplate $template, ModuleModel $model, FilesModel $rootDir): Response
+    {
+        $overview = $this->repository->findOverview($rootDir->path);
+        $overviewViewModel = $this->overviewFactory->create($overview, $model->galleryCoverSize);
+
+        $items = array_map(
+            fn (GalleryFolderViewModel $folder) => $this->folderRenderer->render(
+                $folder,
+                $model->galleryFolderTpl ?: 'component/gallery_folder',
+            ),
+            $overviewViewModel->folders,
+        );
+
+        $template->set('items', $items);
+
+        return $template->getResponse();
+    }
+
+    private function renderContent(FragmentTemplate $template, ModuleModel $model, FilesModel $rootDir, string $path): Response
+    {
+        $folder = $this->repository->findOverview($rootDir->path)
+            ->findFolderByPath($path)
+        ;
+
+        if (null === $folder) {
+            throw new PageNotFoundException();
+        }
+
+        $template->set(
+            'content',
+            $this->contentFactory->create($folder, $model->galleryImageSize, $model->galleryCoverImageSize),
+        );
 
         return $template->getResponse();
     }

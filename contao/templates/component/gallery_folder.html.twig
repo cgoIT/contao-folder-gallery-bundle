@@ -16,7 +16,9 @@
 
     <div class="module-gallery-overview__content">
         <div class="module-gallery-overview__folder-title">
-            {{ folder.title }}
+            <a href="{{ app.request.pathInfo }}/{{ folder.slug }}">
+                {{ folder.title }}
+            </a>
         </div>
 
         {% if folder.description %}

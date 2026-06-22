@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -47,10 +46,5 @@ final readonly class CachedGalleryRepository implements GalleryRepositoryInterfa
         $this->cache->save($item);
 
         return $overview;
-    }
-
-    public function findFolderByPath(string $rootPath, string $path): GalleryFolder|null
-    {
-        return null;
     }
 }

@@ -83,34 +83,15 @@ final class FilesystemGalleryRepositoryTest extends TestCase
         $this->assertSame('year-2025', $year2025->slug);
         $this->assertCount(2, $year2025->folders);
         $this->assertSame('year-2025', $year2025->getPath());
-        $this->assertFriday2025($year2025->folders[1]);
 
         $year2026 = $overview->folders[0];
         $this->assertSame('Year 2026', $year2026->title);
         $this->assertSame('year-2026', $year2026->slug);
         $this->assertCount(0, $year2026->folders);
         $this->assertSame('year-2026', $year2026->getPath());
-    }
 
-    public function testFindFolderByPath(): void
-    {
-        $folder = $this->repository->findFolderByPath(
-            __DIR__.'/../Fixtures/gallery',
-            'year-2025/friday-year-2025',
-        );
-
-        $this->assertInstanceOf(GalleryFolder::class, $folder);
-        $this->assertSame('Friday Year 2025', $folder->title);
-    }
-
-    public function testFindFolderByPathReturnsNullForUnknownPath(): void
-    {
-        $folder = $this->repository->findFolderByPath(
-            __DIR__.'/../Fixtures/gallery',
-            'does/not/exist',
-        );
-
-        $this->assertNotInstanceOf(GalleryFolder::class, $folder);
+        $friday2025 = $overview->findFolderByPath('year-2025/friday-year-2025');
+        $this->assertFriday2025($friday2025);
     }
 
     private function assertFriday2025(GalleryFolder $folder): void

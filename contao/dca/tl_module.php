@@ -23,7 +23,7 @@ use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 $GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
     .'{config_legend},galleryRoot,galleryCoverSize;'
-    .'{template_legend:collapsed},customTpl,galleryFolderTpl;'
+    .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl;'
     .'{protected_legend:collapsed},protected;'
     .'{expert_legend:collapsed},guests,cssID;'
     .'{invisible_legend:collapsed},invisible,start,stop';
@@ -41,6 +41,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryCoverSize'] =
     'reference' => &$GLOBALS['TL_LANG']['MSC'],
     'eval' => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
     'sql' => ['type' => 'string', 'length' => 255, 'default' => '', 'platformOptions' => ['collation' => 'ascii_bin']],
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryContentTpl'] = [
+    'inputType' => 'select',
+    'eval' => ['chosen' => true, 'tl_class' => 'w50'],
+    'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default ''",
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['galleryFolderTpl'] = [

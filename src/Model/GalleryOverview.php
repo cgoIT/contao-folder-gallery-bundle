@@ -23,4 +23,9 @@ final readonly class GalleryOverview
         public array $folderIndex,
     ) {
     }
+
+    public function findFolderByPath(string $path): GalleryFolder|null
+    {
+        return $this->folderIndex[$path] ?? null;
+    }
 }

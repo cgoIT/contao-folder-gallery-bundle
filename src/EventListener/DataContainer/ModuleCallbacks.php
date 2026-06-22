@@ -51,7 +51,7 @@ class ModuleCallbacks extends Backend
     {
         return $this->finderFactory
             ->create()
-            ->identifier('components/gallery_folder')
+            ->identifier('component/gallery_folder')
             ->extension('html.twig')
             ->withVariants()
             ->excludePartials()

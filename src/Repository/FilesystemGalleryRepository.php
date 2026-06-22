@@ -41,13 +41,6 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         return new GalleryOverview($folders, $folderIndex);
     }
 
-    public function findFolderByPath(string $rootPath, string $path): GalleryFolder|null
-    {
-        $overview = $this->findOverview($rootPath);
-
-        return $overview->folderIndex[$path] ?? null;
-    }
-
     /**
      * @param array<string>                $parentTrail
      * @param array<string, GalleryFolder> $folderIndex
