@@ -18,9 +18,13 @@
 
     <div class="module-gallery-overview__content">
         <div class="module-gallery-overview__folder-title">
-            <a href="{{ folder.url }}">
-                {{ folder.title }}
-            </a>
+            {% if folder.isGroup %}
+                <h2>{{ folder.title }}</h2>
+            {% else %}
+                <a href="{{ folder.url }}">
+                    {{ folder.title }}
+                </a>
+            {% endif %}
         </div>
 
         {% if folder.description %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\ViewModel;
 
+use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Contao\CoreBundle\Image\Studio\Figure;
 
 final readonly class GalleryFolderViewModel
@@ -18,7 +19,17 @@ final readonly class GalleryFolderViewModel
         public array $children,
         public Figure|null $coverFigure,
         public string|null $description,
-        public bool $isGroup,
+        public OverviewMode $overviewMode,
     ) {
+    }
+
+    public function isGroup(): bool
+    {
+        return OverviewMode::Group === $this->overviewMode;
+    }
+
+    public function isGallery(): bool
+    {
+        return OverviewMode::Gallery === $this->overviewMode;
     }
 }

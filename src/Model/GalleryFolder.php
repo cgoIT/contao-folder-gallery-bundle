@@ -69,6 +69,11 @@ final readonly class GalleryFolder
         return $this->metadata->description;
     }
 
+    public function getOverviewMode(): OverviewMode
+    {
+        return $this->metadata->overviewMode;
+    }
+
     public function isPublished(): bool
     {
         return $this->metadata->isPublished();
@@ -77,10 +82,5 @@ final readonly class GalleryFolder
     public function isHiddenInOverview(): bool
     {
         return OverviewMode::Hidden === $this->metadata->overviewMode;
-    }
-
-    public function isGroupInOverview(): bool
-    {
-        return OverviewMode::Group === $this->metadata->overviewMode;
     }
 }

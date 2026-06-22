@@ -35,7 +35,7 @@ final readonly class GalleryPathMatcher
             if (
                 $this->matchesRoot($item->getExistingPath(), $roots)
                 || (
-                    null !== $item->getNewPath()
+                    $item->updatesPath()
                     && $this->matchesRoot($item->getNewPath(), $roots)
                 )
             ) {

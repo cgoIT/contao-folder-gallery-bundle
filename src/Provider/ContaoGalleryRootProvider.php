@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
+use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 use Contao\FilesModel;
 use Contao\ModuleModel;
 
@@ -24,7 +25,7 @@ final class ContaoGalleryRootProvider implements GalleryRootProviderInterface
     {
         $roots = [];
 
-        $modules = ModuleModel::findBy('type', 'gallery_overview');
+        $modules = ModuleModel::findBy('type', FolderGalleryModule::TYPE);
 
         if (null === $modules) {
             return [];
