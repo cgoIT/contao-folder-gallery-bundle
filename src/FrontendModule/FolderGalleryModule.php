@@ -58,12 +58,19 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
         $path = trim((string) $request->attributes->get('parameters', ''), '/');
 
+        // Contao interpretiert den rekursiven Galeriepfad als Legacy-Route-Parameter
+        // (z.B. "year-2025" => "friday-year-2025"). Da wir den kompletten Pfad direkt
+        // aus dem Request-Attribut "parameters" auswerten, werden diese Parameter nie
+        // über Input::get() konsumiert und Contao würde eine UnusedArgumentsException
+        // werfen. Die endgültige Lösung erfolgt im Rahmen der Routing-/URL-Integration.
+        $this->framework
+            ->getAdapter(Input::class)
+            ->setUnusedRouteParameters([])
+        ;
+
         if ('' === $path) {
             return $this->renderOverview($template, $model, $rootDir);
         }
-
-        $input = $this->framework->getAdapter(Input::class);
-        $input->setUnusedRouteParameters([]);
 
         return $this->renderContent($template, $model, $rootDir, $path);
     }
