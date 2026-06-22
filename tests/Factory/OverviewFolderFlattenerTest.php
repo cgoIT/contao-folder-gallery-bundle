@@ -41,7 +41,7 @@ final class OverviewFolderFlattenerTest extends TestCase
     {
         $childA = $this->createFolder('Child A');
         $childB = $this->createFolder('Child B');
-        $hidden = $this->createFolder('Hidden', true, [$childA, $childB]);
+        $hidden = $this->createFolder('Hidden', OverviewMode::Hidden, [$childA, $childB]);
 
         $result = $this->flattener->flatten([$hidden]);
 
@@ -52,7 +52,7 @@ final class OverviewFolderFlattenerTest extends TestCase
     {
         $visible = $this->createFolder('Visible');
         $child = $this->createFolder('Child');
-        $hidden = $this->createFolder('Hidden', true, [$child]);
+        $hidden = $this->createFolder('Hidden', OverviewMode::Hidden, [$child]);
 
         $result = $this->flattener->flatten([$visible, $hidden]);
 
@@ -61,8 +61,8 @@ final class OverviewFolderFlattenerTest extends TestCase
 
     public function testFallsBackIfEverythingIsHidden(): void
     {
-        $hiddenA = $this->createFolder('A', true);
-        $hiddenB = $this->createFolder('B', true);
+        $hiddenA = $this->createFolder('A', OverviewMode::Hidden);
+        $hiddenB = $this->createFolder('B', OverviewMode::Hidden);
 
         $result = $this->flattener->flatten([$hiddenA, $hiddenB]);
 
@@ -72,8 +72,8 @@ final class OverviewFolderFlattenerTest extends TestCase
     public function testFlattensNestedHiddenFolders(): void
     {
         $visibleChild = $this->createFolder('Friday');
-        $hiddenLevel2 = $this->createFolder('Event Group', true, [$visibleChild]);
-        $hiddenLevel1 = $this->createFolder('2025', true, [$hiddenLevel2]);
+        $hiddenLevel2 = $this->createFolder('Event Group', OverviewMode::Hidden, [$visibleChild]);
+        $hiddenLevel1 = $this->createFolder('2025', OverviewMode::Hidden, [$hiddenLevel2]);
 
         $result = $this->flattener->flatten([$hiddenLevel1]);
 
@@ -84,26 +84,34 @@ final class OverviewFolderFlattenerTest extends TestCase
     {
         $friday = $this->createFolder('Friday');
         $saturday = $this->createFolder('Saturday');
-        $hiddenLevel2 = $this->createFolder('Event Group', true, [$friday, $saturday]);
-        $hiddenLevel1 = $this->createFolder('2025', true, [$hiddenLevel2]);
+        $hiddenLevel2 = $this->createFolder('Event Group', OverviewMode::Hidden, [$friday, $saturday]);
+        $hiddenLevel1 = $this->createFolder('2025', OverviewMode::Hidden, [$hiddenLevel2]);
 
         $result = $this->flattener->flatten([$hiddenLevel1]);
 
         $this->assertSame([$friday, $saturday], $result);
     }
 
+    public function testDoesNotFlattenGroupFolders(): void
+    {
+        $child = $this->createFolder('Friday');
+        $group = $this->createFolder('2025', OverviewMode::Group, [$child]);
+
+        $result = $this->flattener->flatten([$group]);
+
+        $this->assertSame([$group], $result);
+    }
+
     /**
      * @param list<GalleryFolder> $children
      */
-    private function createFolder(string $title, bool $hiddenInOverview = false, array $children = []): GalleryFolder
+    private function createFolder(string $title, OverviewMode $overviewMode = OverviewMode::Gallery, array $children = []): GalleryFolder
     {
         return new GalleryFolder(
             slug: strtolower(str_replace(' ', '-', $title)),
             title: $title,
             trail: [$title],
-            metadata: new GalleryMetadata(
-                overviewMode: $hiddenInOverview ? OverviewMode::Hidden : OverviewMode::Gallery,
-            ),
+            metadata: new GalleryMetadata(overviewMode: $overviewMode),
             folders: $children,
             images: [],
         );
