@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * @var Contao\BackendTemplate $this
+ * @var list<Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder> $this->folders
+ */
+
+?>
+
+<div class="tl_listing_container list_view">
+    <table class="tl_listing">
+        <thead>
+        <tr>
+            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.title'] ?? 'Titel' ?></th>
+            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.path'] ?? 'Pfad' ?></th>
+            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.directory'] ?? 'Verzeichnis' ?></th>
+            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.images'] ?? 'Bilder' ?></th>
+            <th class="tl_file_list tl_right_nowrap"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.actions'] ?? 'Aktionen' ?></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <?php foreach ($this->folders as $folder): ?>
+            <tr class="hover-row">
+                <td class="tl_file_list">
+                    <?= str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', max(0, $folder->getDepth() - 1)) ?>
+                    <?= Contao\StringUtil::specialchars($folder->title) ?>
+                </td>
+
+                <td class="tl_file_list">
+                    <?= Contao\StringUtil::specialchars($folder->getPath()) ?>
+                </td>
+
+                <td class="tl_file_list">
+                    <code><?= Contao\StringUtil::specialchars($folder->filesystemDirectory) ?></code>
+                </td>
+
+                <td class="tl_file_list">
+                    <?= count($folder->images) ?>
+                </td>
+
+                <td class="tl_file_list tl_right_nowrap">
+                    <a href="#">
+                        <?= $GLOBALS['TL_LANG']['MSC']['folderGallery.edit'] ?? 'Bearbeiten' ?>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,21 @@
+{% extends '@Contao/be_main' %}
+
+{% block main %}
+    <table class="tl_listing">
+        <thead>
+        <tr>
+            <th>Ordner</th>
+            <th>Dateisystempfad</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for folder in folders %}
+            <tr>
+                <td>{{ folder.path }}</td>
+                <td>{{ folder.filesystemDirectory }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

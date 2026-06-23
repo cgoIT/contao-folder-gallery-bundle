@@ -6,3 +6,7 @@ services:
    Cgoit\ContaoFolderGalleryBundle\:
       resource: ../src
       exclude: ../src/{ContaoManager,DependencyInjection,CgoitFolderGalleryBundle.php}
+
+   Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface:
+      alias: Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider
+      public: true
