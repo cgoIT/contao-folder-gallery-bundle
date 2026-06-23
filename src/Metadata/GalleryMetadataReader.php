@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cgoit\ContaoFolderGalleryBundle\Loader;
+namespace Cgoit\ContaoFolderGalleryBundle\Metadata;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
-final readonly class MetadataLoader
+final readonly class GalleryMetadataReader
 {
     private const array ALLOWED_KEYS = [
         'title',

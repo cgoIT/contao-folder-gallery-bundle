@@ -18,8 +18,8 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\Loader\ContaoGalleryImageLoader;
-use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\CachedGalleryRepository;
@@ -34,7 +34,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 final class CgoitFolderGalleryExtensionTest extends TestCase
 {
     private const array SERVICES = [
-        MetadataLoader::class,
+        GalleryMetadataReader::class,
         FilesystemGalleryRepository::class,
         ContaoFilesModelProvider::class,
         GalleryFigureFactory::class,

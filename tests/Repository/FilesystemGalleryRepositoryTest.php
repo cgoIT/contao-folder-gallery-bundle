@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(FilesystemGalleryRepository::class)]
 #[UsesClass(GalleryImage::class)]
-#[UsesClass(MetadataLoader::class)]
+#[UsesClass(GalleryMetadataReader::class)]
 final class FilesystemGalleryRepositoryTest extends TestCase
 {
     private FilesystemGalleryRepository $repository;
@@ -66,7 +66,7 @@ final class FilesystemGalleryRepositoryTest extends TestCase
         ;
 
         $this->repository = new FilesystemGalleryRepository(
-            new MetadataLoader(),
+            new GalleryMetadataReader(),
             $imageLoader,
             $slug,
         );

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
@@ -16,7 +16,7 @@ use Symfony\Component\Filesystem\Path;
 final readonly class FilesystemGalleryRepository implements GalleryRepositoryInterface
 {
     public function __construct(
-        private MetadataLoader $metadataLoader,
+        private GalleryMetadataReader $metadataLoader,
         private GalleryImageLoaderInterface $galleryImageLoader,
         private Slug $slug,
     ) {

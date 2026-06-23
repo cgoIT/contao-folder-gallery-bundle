@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Metadata;
 
-use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
@@ -20,19 +20,13 @@ use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Log\LoggerInterface;
 
-#[CoversClass(MetadataLoader::class)]
-final class MetadataLoaderTest extends TestCase
+#[CoversClass(GalleryMetadataReader::class)]
+final class GalleryMetadataReaderTest extends TestCase
 {
-    private MetadataLoader $reader;
-
-    protected function setUp(): void
-    {
-        $this->reader = new MetadataLoader();
-    }
-
     public function testReadsValidMetadata(): void
     {
-        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/valid');
+        $reader = new GalleryMetadataReader();
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/valid');
 
         $this->assertSame('Friday', $metadata->title);
         $this->assertSame('Test', $metadata->description);
@@ -45,7 +39,8 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReadsMetadataWithInvalidDates(): void
     {
-        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/invalid');
+        $reader = new GalleryMetadataReader();
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/invalid');
 
         $this->assertSame('Friday', $metadata->title);
         $this->assertSame('Test', $metadata->description);
@@ -56,7 +51,8 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReturnsEmptyMetadataIfFileDoesNotExist(): void
     {
-        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/empty');
+        $reader = new GalleryMetadataReader();
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/empty');
 
         $this->assertNull($metadata->title);
         $this->assertNull($metadata->description);
@@ -67,28 +63,32 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReturnsDefaultValuesIfFileDoesNotExist(): void
     {
+        $reader = new GalleryMetadataReader();
         $this->assertDefaultMetadata(
-            $this->reader->read($this->getFixturesDir().'/metadata/empty'),
+            $reader->read($this->getFixturesDir().'/metadata/empty'),
         );
     }
 
     public function testReturnsPublishedTrueIfDatesHaveCorrespondingValues(): void
     {
-        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/published');
+        $reader = new GalleryMetadataReader();
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/published');
 
         $this->assertTrue($metadata->isPublished());
     }
 
     public function testReturnsPublishedFalseIfDatesDoNotHaveCorrespondingValues(): void
     {
-        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/valid');
+        $reader = new GalleryMetadataReader();
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/valid');
 
         $this->assertFalse($metadata->isPublished());
     }
 
     public function testReadsHiddenInOverview(): void
     {
-        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/hidden');
+        $reader = new GalleryMetadataReader();
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/hidden');
         $this->assertSame(OverviewMode::Hidden, $metadata->overviewMode);
     }
 
@@ -100,7 +100,7 @@ final class MetadataLoaderTest extends TestCase
             ->method('warning')
         ;
 
-        $reader = new MetadataLoader($logger);
+        $reader = new GalleryMetadataReader($logger);
 
         $this->assertDefaultMetadata(
             $reader->read($this->getFixturesDir().'/metadata/invalid-yaml'),
@@ -115,7 +115,7 @@ final class MetadataLoaderTest extends TestCase
             ->method('warning')
         ;
 
-        $reader = new MetadataLoader($logger);
+        $reader = new GalleryMetadataReader($logger);
 
         $this->assertDefaultMetadata(
             $reader->read($this->getFixturesDir().'/metadata/scalar'),
@@ -134,7 +134,7 @@ final class MetadataLoaderTest extends TestCase
             )
         ;
 
-        $reader = new MetadataLoader($logger);
+        $reader = new GalleryMetadataReader($logger);
 
         $reader->read($this->getFixturesDir().'/metadata/unknown-key');
     }
