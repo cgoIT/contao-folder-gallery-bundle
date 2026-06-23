@@ -16,8 +16,10 @@ use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheWarmer;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(GalleryCacheWarmer::class)]
 final class GalleryCacheWarmerTest extends TestCase
 {
     public function testWarmsUpAllConfiguredGalleryRoots(): void

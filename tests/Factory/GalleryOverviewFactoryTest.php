@@ -23,8 +23,13 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\PageModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(GalleryOverviewFactory::class)]
+#[UsesClass(GalleryFolder::class)]
+#[UsesClass(GalleryImage::class)]
 final class GalleryOverviewFactoryTest extends TestCase
 {
     public function testCreatesViewModel(): void

@@ -25,10 +25,12 @@ use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\CachedGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+#[CoversClass(CgoitFolderGalleryExtension::class)]
 final class CgoitFolderGalleryExtensionTest extends TestCase
 {
     private const array SERVICES = [
@@ -70,14 +72,8 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
 
         $definition = $this->container->getDefinition($serviceId);
 
-        $this->assertSame(
-            $serviceId,
-            $definition->getClass(),
-        );
-
-        $this->assertTrue(
-            $definition->isAutowired(),
-        );
+        $this->assertSame($serviceId, $definition->getClass());
+        $this->assertTrue($definition->isAutowired());
     }
 
     /**

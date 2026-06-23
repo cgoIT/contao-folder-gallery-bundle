@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Loader;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -20,6 +21,10 @@ final readonly class ContaoGalleryImageLoader implements GalleryImageLoaderInter
         'avif',
     ];
 
+    public function __construct(private ContaoFramework $framework)
+    {
+    }
+
     /**
      * @return list<GalleryImage>
      */
@@ -27,7 +32,10 @@ final readonly class ContaoGalleryImageLoader implements GalleryImageLoaderInter
     {
         $images = [];
 
-        $arrFiles = FilesModel::findMultipleFilesByFolder($directory);
+        $arrFiles = $this->framework
+            ->getAdapter(FilesModel::class)
+            ->findMultipleFilesByFolder($directory)
+        ;
 
         if (!empty($arrFiles)) {
             foreach ($arrFiles as $file) {

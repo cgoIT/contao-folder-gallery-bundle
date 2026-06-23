@@ -16,8 +16,12 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(OverviewFolderFlattener::class)]
+#[UsesClass(GalleryFolder::class)]
 final class OverviewFolderFlattenerTest extends TestCase
 {
     private OverviewFolderFlattener $flattener;

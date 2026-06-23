@@ -19,6 +19,8 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
 
     /**
      * @param PictureConfiguration|array<mixed>|int|string|null $size
+     *
+     * @codeCoverageIgnore
      */
     public function create(GalleryImage $image, PictureConfiguration|array|int|string|null $size): Figure
     {

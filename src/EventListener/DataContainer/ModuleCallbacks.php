@@ -45,6 +45,8 @@ class ModuleCallbacks extends Backend
 
     /**
      * @return array<mixed>
+     *
+     * @codeCoverageIgnore
      */
     #[AsCallback(table: 'tl_module', target: 'fields.galleryFolderTpl.options')]
     public function getGalleryFolderTemplates(): array
@@ -61,6 +63,8 @@ class ModuleCallbacks extends Backend
 
     /**
      * @return array<mixed>
+     *
+     * @codeCoverageIgnore
      */
     #[AsCallback(table: 'tl_module', target: 'fields.galleryContentTpl.options')]
     public function getGalleryContentTemplates(): array

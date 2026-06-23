@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(FilesModelProviderInterface::class)]
-final class ContaoFilesModelProvider implements FilesModelProviderInterface
+final readonly class ContaoFilesModelProvider implements FilesModelProviderInterface
 {
+    public function __construct(private ContaoFramework $framework)
+    {
+    }
+
     public function findByPath(string $path): ImageFile|null
     {
-        $model = FilesModel::findByPath($path);
+        $model = $this->framework
+            ->getAdapter(FilesModel::class)
+            ->findByPath($path)
+        ;
 
         if (!$model instanceof FilesModel) {
             return null;

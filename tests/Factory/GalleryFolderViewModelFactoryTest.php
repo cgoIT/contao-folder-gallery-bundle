@@ -20,8 +20,13 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\PageModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(GalleryFolderViewModelFactory::class)]
+#[UsesClass(GalleryFolder::class)]
+#[UsesClass(GalleryImage::class)]
 final class GalleryFolderViewModelFactoryTest extends TestCase
 {
     public function testCreatesFolderViewModelRecursively(): void

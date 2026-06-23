@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Model;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(GalleryMetadata::class)]
 final class GalleryMetadataTest extends TestCase
 {
     public function testIsPublishedReturnsTrueWhenNoDatesAreSet(): void

@@ -16,10 +16,15 @@ use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Repository\CachedGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
+#[CoversClass(CachedGalleryRepository::class)]
+#[UsesClass(GalleryOverview::class)]
+#[UsesClass(GalleryCacheKeyGenerator::class)]
 final class CachedGalleryRepositoryTest extends TestCase
 {
     public function testReturnsCachedOverview(): void

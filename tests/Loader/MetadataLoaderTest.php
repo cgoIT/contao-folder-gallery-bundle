@@ -13,10 +13,13 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Metadata;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
-use PHPUnit\Framework\TestCase;
+use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(MetadataLoader::class)]
 final class MetadataLoaderTest extends TestCase
 {
     private MetadataLoader $reader;
@@ -28,7 +31,7 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReadsValidMetadata(): void
     {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/valid');
+        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/valid');
 
         $this->assertSame('Friday', $metadata->title);
         $this->assertSame('Test', $metadata->description);
@@ -41,7 +44,7 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReadsMetadataWithInvalidDates(): void
     {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/invalid');
+        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/invalid');
 
         $this->assertSame('Friday', $metadata->title);
         $this->assertSame('Test', $metadata->description);
@@ -52,7 +55,7 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReturnsEmptyMetadataIfFileDoesNotExist(): void
     {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/empty');
+        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/empty');
 
         $this->assertNull($metadata->title);
         $this->assertNull($metadata->description);
@@ -63,8 +66,47 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReturnsDefaultValuesIfFileDoesNotExist(): void
     {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/empty');
+        $this->assertDefaultMetadata(
+            $this->reader->read($this->getFixturesDir().'/metadata/empty'),
+        );
+    }
 
+    public function testReturnsPublishedTrueIfDatesHaveCorrespondingValues(): void
+    {
+        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/published');
+
+        $this->assertTrue($metadata->isPublished());
+    }
+
+    public function testReturnsPublishedFalseIfDatesDoNotHaveCorrespondingValues(): void
+    {
+        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/valid');
+
+        $this->assertFalse($metadata->isPublished());
+    }
+
+    public function testReadsHiddenInOverview(): void
+    {
+        $metadata = $this->reader->read($this->getFixturesDir().'/metadata/hidden');
+        $this->assertSame(OverviewMode::Hidden, $metadata->overviewMode);
+    }
+
+    public function testReturnsDefaultMetadataIfYamlCannotBeParsed(): void
+    {
+        $this->assertDefaultMetadata(
+            $this->reader->read($this->getFixturesDir().'/metadata/invalid-yaml'),
+        );
+    }
+
+    public function testReturnsDefaultMetadataIfYamlDoesNotContainArray(): void
+    {
+        $this->assertDefaultMetadata(
+            $this->reader->read($this->getFixturesDir().'/metadata/scalar'),
+        );
+    }
+
+    private function assertDefaultMetadata(GalleryMetadata $metadata): void
+    {
         $this->assertNull($metadata->title);
         $this->assertNull($metadata->description);
         $this->assertNull($metadata->cover);
@@ -72,25 +114,5 @@ final class MetadataLoaderTest extends TestCase
         $this->assertNotInstanceOf(\DateTimeImmutable::class, $metadata->publishedUntil);
         $this->assertSame(SortOrder::Asc, $metadata->sortOrder);
         $this->assertSame(OverviewMode::Gallery, $metadata->overviewMode);
-    }
-
-    public function testReturnsPublishedTrueIfDatesHaveCorrespondingValues(): void
-    {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/published');
-
-        $this->assertTrue($metadata->isPublished());
-    }
-
-    public function testReturnsPublishedFalseIfDatesDoNotHaveCorrespondingValues(): void
-    {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/valid');
-
-        $this->assertFalse($metadata->isPublished());
-    }
-
-    public function testReadsHiddenInOverview(): void
-    {
-        $metadata = $this->reader->read(__DIR__.'/../Fixtures/metadata/hidden');
-        $this->assertSame(OverviewMode::Hidden, $metadata->overviewMode);
     }
 }

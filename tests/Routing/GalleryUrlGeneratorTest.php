@@ -17,9 +17,14 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
 use Contao\CoreBundle\Routing\ContentUrlGenerator;
 use Contao\PageModel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[CoversClass(GalleryUrlGenerator::class)]
+#[UsesClass(GalleryFolder::class)]
+#[UsesClass(GalleryMetadata::class)]
 final class GalleryUrlGeneratorTest extends TestCase
 {
     public function testGeneratesFolderUrl(): void

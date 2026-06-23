@@ -17,14 +17,17 @@ use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
+use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
 use Contao\CoreBundle\Slug\Slug;
 use Contao\StringUtil;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
+#[CoversClass(FilesystemGalleryRepository::class)]
+#[UsesClass(GalleryImage::class)]
+#[UsesClass(MetadataLoader::class)]
 final class FilesystemGalleryRepositoryTest extends TestCase
 {
-    private const string FIXTURE_PATH = __DIR__.'/../Fixtures/gallery';
-
     private FilesystemGalleryRepository $repository;
 
     protected function setUp(): void
@@ -35,19 +38,19 @@ final class FilesystemGalleryRepositoryTest extends TestCase
             ->willReturn([
                 new GalleryImage(
                     uuid: StringUtil::binToUuid('00000000-0000-0000-0000-000000000000'),
-                    path: self::FIXTURE_PATH,
+                    path: $this->getFixturesDir().'/gallery',
                     filename: 'image1.jpg',
                     isCover: false,
                 ),
                 new GalleryImage(
                     uuid: StringUtil::binToUuid('00000000-0000-0000-0000-000000000001'),
-                    path: self::FIXTURE_PATH,
+                    path: $this->getFixturesDir().'/gallery',
                     filename: 'image2.jpg',
                     isCover: true,
                 ),
                 new GalleryImage(
                     uuid: StringUtil::binToUuid('00000000-0000-0000-0000-000000000002'),
-                    path: self::FIXTURE_PATH,
+                    path: $this->getFixturesDir().'/gallery',
                     filename: 'image3.jpg',
                     isCover: false,
                 ),
@@ -72,7 +75,7 @@ final class FilesystemGalleryRepositoryTest extends TestCase
     public function testFindOverview(): void
     {
         $overview = $this->repository->findOverview(
-            self::FIXTURE_PATH,
+            $this->getFixturesDir().'/gallery',
         );
 
         $this->assertCount(2, $overview->folders);

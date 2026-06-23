@@ -13,6 +13,14 @@
         </testsuite>
     </testsuites>
 
+    <coverage>
+        <report>
+            <html outputDirectory=".phpunit.result.cache/coverage/html"/>
+            <text outputFile="php://stdout"/>
+            <clover outputFile=".phpunit.result.cache/coverage/clover.xml"/>
+        </report>
+    </coverage>
+
     <source>
         <include>
             <directory>src</directory>

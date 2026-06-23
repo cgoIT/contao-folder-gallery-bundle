@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Cache;
 
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 
+#[CoversClass(GalleryCacheInvalidator::class)]
 final class GalleryCacheInvalidatorTest extends TestCase
 {
     public function testInvalidateClearsCache(): void
