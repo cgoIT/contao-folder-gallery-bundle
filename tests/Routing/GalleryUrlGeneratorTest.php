@@ -34,6 +34,7 @@ final class GalleryUrlGeneratorTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            filesystemDirectory: '/files/gallery/friday',
             trail: ['2025', 'friday'],
             metadata: new GalleryMetadata(),
             folders: [],
@@ -68,6 +69,7 @@ final class GalleryUrlGeneratorTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            filesystemDirectory: '/files/gallery/friday',
             trail: ['2025', 'friday'],
             metadata: new GalleryMetadata(),
             folders: [],

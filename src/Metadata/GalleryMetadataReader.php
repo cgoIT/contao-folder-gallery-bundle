@@ -132,7 +132,11 @@ final readonly class GalleryMetadataReader
         }
 
         try {
-            return new \DateTimeImmutable('@'.$value);
+            if (is_numeric($value)) {
+                return new \DateTimeImmutable('@'.$value);
+            }
+
+            return new \DateTimeImmutable((string) $value);
         } catch (\Throwable) {
             return null;
         }

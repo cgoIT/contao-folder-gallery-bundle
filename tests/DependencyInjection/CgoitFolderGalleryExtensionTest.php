@@ -20,8 +20,10 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\Loader\ContaoGalleryImageLoader;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataWriter;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\CachedGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
@@ -35,6 +37,7 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
 {
     private const array SERVICES = [
         GalleryMetadataReader::class,
+        GalleryMetadataWriter::class,
         FilesystemGalleryRepository::class,
         ContaoFilesModelProvider::class,
         GalleryFigureFactory::class,
@@ -46,6 +49,7 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         ContaoGalleryRootProvider::class,
         CachedGalleryRepository::class,
         GalleryUrlGenerator::class,
+        GalleryFolderProvider::class,
     ];
 
     private ContainerBuilder $container;

@@ -76,6 +76,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $folder = new GalleryFolder(
             slug: $slug,
             title: $metadata->title ?? basename($directory),
+            filesystemDirectory: $directory,
             trail: $trail,
             metadata: $metadata,
             folders: $folders,

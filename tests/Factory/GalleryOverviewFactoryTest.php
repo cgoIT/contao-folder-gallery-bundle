@@ -44,6 +44,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            filesystemDirectory: '/files/gallery/2025/friday',
             trail: ['2025', 'friday'],
             metadata: new GalleryMetadata(description: 'Friday description'),
             images: [$image],
@@ -52,6 +53,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $year = new GalleryFolder(
             slug: 'year-2025',
             title: 'Year 2025',
+            filesystemDirectory: '/files/gallery/2025',
             trail: ['year-2025'],
             metadata: new GalleryMetadata(),
             folders: [$day],
@@ -102,6 +104,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $day = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            filesystemDirectory: '/files/gallery/2025/friday',
             trail: ['year-2025', 'friday'],
             metadata: new GalleryMetadata(description: 'Friday description'),
             images: [],
@@ -110,6 +113,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $year = new GalleryFolder(
             slug: 'year-2025',
             title: 'Year 20425',
+            filesystemDirectory: '/files/gallery/2025',
             trail: ['year-2025'],
             metadata: new GalleryMetadata(description: 'Friday description'),
             folders: [$day],

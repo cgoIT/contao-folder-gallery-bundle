@@ -50,6 +50,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $child = new GalleryFolder(
             slug: 'child',
             title: 'Child',
+            filesystemDirectory: '/files/gallery/parent/child',
             trail: ['parent', 'child'],
             metadata: new GalleryMetadata(description: 'Child description'),
             folders: [],
@@ -66,6 +67,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $parent = new GalleryFolder(
             slug: 'parent',
             title: 'Parent',
+            filesystemDirectory: '/files/gallery/parent',
             trail: ['parent'],
             metadata: new GalleryMetadata(description: 'Parent description'),
             folders: [$child],
@@ -119,6 +121,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $child = new GalleryFolder(
             slug: 'child',
             title: 'Child',
+            filesystemDirectory: '/files/gallery/parent/child',
             trail: ['parent', 'child'],
             metadata: new GalleryMetadata(),
             folders: [],
@@ -128,6 +131,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $parent = new GalleryFolder(
             slug: 'parent',
             title: 'Parent',
+            filesystemDirectory: '/files/gallery/parent',
             trail: ['parent'],
             metadata: new GalleryMetadata(),
             folders: [$child],

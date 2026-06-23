@@ -114,6 +114,7 @@ final class OverviewFolderFlattenerTest extends TestCase
         return new GalleryFolder(
             slug: strtolower(str_replace(' ', '-', $title)),
             title: $title,
+            filesystemDirectory: '/files/gallery/'.$title,
             trail: [$title],
             metadata: new GalleryMetadata(overviewMode: $overviewMode),
             folders: $children,

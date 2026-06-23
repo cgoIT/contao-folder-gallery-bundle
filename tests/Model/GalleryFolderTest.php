@@ -43,6 +43,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
             images: [$image1, $image2],
@@ -70,6 +71,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
             images: [$image1, $image2],
@@ -83,6 +85,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
         );
@@ -95,6 +98,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            filesystemDirectory: '/files/gallery/friday',
             trail: ['2025', 'friday'],
             metadata: new GalleryMetadata(),
         );
@@ -107,6 +111,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'friday',
             title: 'Friday',
+            filesystemDirectory: '/files/gallery/friday',
             trail: ['2025', 'friday'],
             metadata: new GalleryMetadata(),
         );
@@ -119,6 +124,7 @@ final class GalleryFolderTest extends TestCase
         $child = new GalleryFolder(
             slug: 'child',
             title: 'Child',
+            filesystemDirectory: '/files/gallery/parent/child',
             trail: ['child'],
             metadata: new GalleryMetadata(),
         );
@@ -126,6 +132,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'parent',
             title: 'Parent',
+            filesystemDirectory: '/files/gallery/parent',
             trail: ['parent'],
             metadata: new GalleryMetadata(),
             folders: [$child],
@@ -139,6 +146,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
         );
@@ -151,6 +159,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
             images: [
@@ -171,6 +180,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
         );
@@ -183,6 +193,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(
                 description: 'Description',
@@ -197,6 +208,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(
                 overviewMode: OverviewMode::Group,
@@ -211,6 +223,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(),
         );
@@ -223,6 +236,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(
                 overviewMode: OverviewMode::Hidden,
@@ -237,6 +251,7 @@ final class GalleryFolderTest extends TestCase
         $folder = new GalleryFolder(
             slug: 'folder',
             title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(
                 overviewMode: OverviewMode::Gallery,

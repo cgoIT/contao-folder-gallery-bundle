@@ -17,6 +17,7 @@ final readonly class GalleryFolder
     public function __construct(
         public string $slug,
         public string $title,
+        public string $filesystemDirectory,
         /**
          * @var list<string>
          */

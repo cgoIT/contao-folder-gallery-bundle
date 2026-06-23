@@ -44,6 +44,7 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         $childFolder = new GalleryFolder(
             slug: 'child',
             title: 'Child Folder',
+            filesystemDirectory: '/files/gallery/parent/child',
             trail: ['parent', 'child'],
             metadata: new GalleryMetadata(),
         );
@@ -67,6 +68,7 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         $folder = new GalleryFolder(
             slug: 'parent',
             title: 'Parent Folder',
+            filesystemDirectory: '/files/gallery/parent',
             trail: ['parent'],
             metadata: new GalleryMetadata(),
             folders: [$childFolder],
