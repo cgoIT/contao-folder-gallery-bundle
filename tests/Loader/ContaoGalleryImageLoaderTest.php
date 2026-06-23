@@ -78,7 +78,7 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
             'name' => 'test.pdf',
             'extension' => 'pdf',
         ]);
-        $adapter = $this->createConfiguredAdapterMock(['findMultipleFilesByFolder' => [$image, $pdf]]);
+        $adapter = $this->createConfiguredAdapterStub(['findMultipleFilesByFolder' => [$image, $pdf]]);
         $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
 
         $loader = new ContaoGalleryImageLoader($framework);
@@ -94,7 +94,7 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
         $dot = $this->createClassWithPropertiesStub(FilesModel::class, ['name' => '.', 'extension' => '']);
         $dotDot = $this->createClassWithPropertiesStub(FilesModel::class, ['name' => '..', 'extension' => '']);
         $metadata = $this->createClassWithPropertiesStub(FilesModel::class, ['name' => '_metadata.yml', 'extension' => 'yml']);
-        $adapter = $this->createConfiguredAdapterMock(['findMultipleFilesByFolder' => [$dot, $dotDot, $metadata]]);
+        $adapter = $this->createConfiguredAdapterStub(['findMultipleFilesByFolder' => [$dot, $dotDot, $metadata]]);
         $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
 
         $loader = new ContaoGalleryImageLoader($framework);
@@ -106,7 +106,7 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
 
     public function testReturnsEmptyArrayIfFolderContainsNoFiles(): void
     {
-        $adapter = $this->createConfiguredAdapterMock(['findMultipleFilesByFolder' => []]);
+        $adapter = $this->createConfiguredAdapterStub(['findMultipleFilesByFolder' => []]);
         $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
 
         $loader = new ContaoGalleryImageLoader($framework);
@@ -116,7 +116,7 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
 
     public function testReturnsEmptyArrayIfAdapterReturnsNull(): void
     {
-        $adapter = $this->createConfiguredAdapterMock(['findMultipleFilesByFolder' => null]);
+        $adapter = $this->createConfiguredAdapterStub(['findMultipleFilesByFolder' => null]);
         $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
 
         $loader = new ContaoGalleryImageLoader($framework);

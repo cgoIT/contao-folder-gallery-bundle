@@ -18,6 +18,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(MetadataLoader::class)]
 final class MetadataLoaderTest extends TestCase
@@ -93,16 +94,49 @@ final class MetadataLoaderTest extends TestCase
 
     public function testReturnsDefaultMetadataIfYamlCannotBeParsed(): void
     {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('warning')
+        ;
+
+        $reader = new MetadataLoader($logger);
+
         $this->assertDefaultMetadata(
-            $this->reader->read($this->getFixturesDir().'/metadata/invalid-yaml'),
+            $reader->read($this->getFixturesDir().'/metadata/invalid-yaml'),
         );
     }
 
     public function testReturnsDefaultMetadataIfYamlDoesNotContainArray(): void
     {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('warning')
+        ;
+
+        $reader = new MetadataLoader($logger);
+
         $this->assertDefaultMetadata(
-            $this->reader->read($this->getFixturesDir().'/metadata/scalar'),
+            $reader->read($this->getFixturesDir().'/metadata/scalar'),
         );
+    }
+
+    public function testLogsUnknownMetadataKeys(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with(
+                $this->stringContains('Unknown gallery metadata keys'),
+                $this->arrayHasKey('unknown_keys'),
+            )
+        ;
+
+        $reader = new MetadataLoader($logger);
+
+        $reader->read($this->getFixturesDir().'/metadata/unknown-key');
     }
 
     private function assertDefaultMetadata(GalleryMetadata $metadata): void

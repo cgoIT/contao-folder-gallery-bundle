@@ -55,6 +55,7 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
 
         $fileAdapter = $this->createAdapterMock(['findById']);
         $fileAdapter
+            ->expects($this->exactly(2))
             ->method('findById')
             ->willReturnCallback(
                 fn (int $id) => match ($id) {
@@ -89,10 +90,11 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
     {
         $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 1]);
         $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 2]);
-        $moduleAdapter = $this->createConfiguredAdapterMock(['findBy' => [$moduleA, $moduleB]]);
+        $moduleAdapter = $this->createConfiguredAdapterStub(['findBy' => [$moduleA, $moduleB]]);
 
         $fileAdapter = $this->createAdapterMock(['findById']);
         $fileAdapter
+            ->expects($this->exactly(2))
             ->method('findById')
             ->willReturnCallback(
                 fn (int $id) => match ($id) {
@@ -119,10 +121,11 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
         $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 1]);
         $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 2]);
 
-        $moduleAdapter = $this->createConfiguredAdapterMock(['findBy' => [$moduleA, $moduleB]]);
+        $moduleAdapter = $this->createConfiguredAdapterStub(['findBy' => [$moduleA, $moduleB]]);
 
         $fileAdapter = $this->createAdapterMock(['findById']);
         $fileAdapter
+            ->expects($this->exactly(2))
             ->method('findById')
             ->willReturn(
                 $this->createClassWithPropertiesStub(FilesModel::class, [
