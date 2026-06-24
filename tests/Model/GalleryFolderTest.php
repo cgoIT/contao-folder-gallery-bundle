@@ -260,4 +260,34 @@ final class GalleryFolderTest extends TestCase
 
         $this->assertFalse($folder->isHiddenInOverview());
     }
+
+    public function testDetectsGroupFolder(): void
+    {
+        $folder = new GalleryFolder(
+            slug: 'folder',
+            title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
+            trail: ['folder'],
+            metadata: new GalleryMetadata(
+                overviewMode: OverviewMode::Group,
+            ),
+        );
+
+        $this->assertTrue($folder->isGroupInOverview());
+    }
+
+    public function testDetectsNoGroupFolder(): void
+    {
+        $folder = new GalleryFolder(
+            slug: 'folder',
+            title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
+            trail: ['folder'],
+            metadata: new GalleryMetadata(
+                overviewMode: OverviewMode::Gallery,
+            ),
+        );
+
+        $this->assertFalse($folder->isGroupInOverview());
+    }
 }

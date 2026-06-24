@@ -20,4 +20,9 @@ interface GalleryFolderProviderInterface
      * @return list<GalleryFolder>
      */
     public function findAllFolders(): array;
+
+    /**
+     * @return list<GalleryFolder>
+     */
+    public function findFolderTree(bool $blnShowUnpublished = false): array;
 }

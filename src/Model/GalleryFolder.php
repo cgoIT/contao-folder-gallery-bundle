@@ -84,4 +84,9 @@ final readonly class GalleryFolder
     {
         return OverviewMode::Hidden === $this->metadata->overviewMode;
     }
+
+    public function isGroupInOverview(): bool
+    {
+        return OverviewMode::Group === $this->metadata->overviewMode;
+    }
 }

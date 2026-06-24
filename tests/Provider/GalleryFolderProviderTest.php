@@ -149,6 +149,52 @@ final class GalleryFolderProviderTest extends ContaoTestCase
         );
     }
 
+    public function testReturnsFolderTree(): void
+    {
+        $friday = $this->createFolder('friday');
+        $saturday = $this->createFolder('saturday');
+
+        $year2025 = $this->createFolder('year-2025', [$friday, $saturday]);
+
+        $year2026 = $this->createFolder('year-2026');
+
+        $overview = new GalleryOverview(folders: [$year2025, $year2026], folderIndex: []);
+
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn(['/gallery'])
+        ;
+
+        $repository = $this->createStub(GalleryRepositoryInterface::class);
+        $repository
+            ->method('findOverview')
+            ->willReturn($overview)
+        ;
+
+        $provider = new GalleryFolderProvider($rootProvider, $repository);
+
+        $folders = $provider->findFolderTree();
+
+        $this->assertCount(2, $folders);
+        $this->assertSame(
+            [
+                [
+                    'slug' => 'year-2025',
+                    'children' => [
+                        ['slug' => 'friday', 'children' => []],
+                        ['slug' => 'saturday', 'children' => []],
+                    ],
+                ],
+                [
+                    'slug' => 'year-2026',
+                    'children' => [],
+                ],
+            ],
+            $this->extractTree($provider->findFolderTree()),
+        );
+    }
+
     /**
      * @param list<GalleryFolder> $children
      */
@@ -173,6 +219,22 @@ final class GalleryFolderProviderTest extends ContaoTestCase
     {
         return array_map(
             static fn (GalleryFolder $folder): string => $folder->slug,
+            $folders,
+        );
+    }
+
+    /**
+     * @param list<GalleryFolder> $folders
+     *
+     * @return array<mixed>
+     */
+    private function extractTree(array $folders): array
+    {
+        return array_map(
+            fn (GalleryFolder $folder): array => [
+                'slug' => $folder->slug,
+                'children' => $this->extractTree($folder->folders),
+            ],
             $folders,
         );
     }

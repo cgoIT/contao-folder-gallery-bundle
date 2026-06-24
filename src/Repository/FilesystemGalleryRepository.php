@@ -22,13 +22,13 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
     ) {
     }
 
-    public function findOverview(string $rootPath): GalleryOverview
+    public function findOverview(string $rootPath, bool $blnShowUnpublished = false): GalleryOverview
     {
         $folders = [];
         $folderIndex = [];
 
         foreach ($this->getDirectories($rootPath) as $subFolder) {
-            $folder = $this->createFolder($subFolder, $folderIndex);
+            $folder = $this->createFolder($subFolder, $folderIndex, [], true, $blnShowUnpublished);
 
             if (null !== $folder) {
                 $folders[] = $folder;
@@ -45,11 +45,11 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
      * @param array<string>                $parentTrail
      * @param array<string, GalleryFolder> $folderIndex
      */
-    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true): GalleryFolder|null
+    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true, bool $blnShowUnpublished = false): GalleryFolder|null
     {
         $metadata = $this->metadataLoader->read($directory);
 
-        if (!$metadata->isPublished()) {
+        if (!$blnShowUnpublished && !$metadata->isPublished()) {
             return null;
         }
 
@@ -63,7 +63,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
 
         if ($recursive) {
             foreach ($this->getDirectories($directory) as $subFolder) {
-                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive);
+                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive, $blnShowUnpublished);
 
                 if (null !== $folder) {
                     $folders[] = $folder;

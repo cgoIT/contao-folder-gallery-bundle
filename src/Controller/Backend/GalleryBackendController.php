@@ -34,7 +34,7 @@ final class GalleryBackendController extends AbstractBackendController
     public function __invoke(Request $request): Response
     {
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
-            'folders' => $this->folderProvider->findAllFolders(),
+            'folders' => $this->folderProvider->findFolderTree(true),
         ]);
     }
 }

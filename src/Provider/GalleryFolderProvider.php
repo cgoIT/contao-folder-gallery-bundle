@@ -25,15 +25,38 @@ final readonly class GalleryFolderProvider implements GalleryFolderProviderInter
     ) {
     }
 
+    /**
+     * @return list<GalleryFolder>
+     */
     public function findAllFolders(): array
+    {
+        return $this->doFind(true, false);
+    }
+
+    /**
+     * @return list<GalleryFolder>
+     */
+    public function findFolderTree(bool $blnShowUnpublished = false): array
+    {
+        return $this->doFind(false, $blnShowUnpublished);
+    }
+
+    /**
+     * @return list<GalleryFolder>
+     */
+    private function doFind(bool $flatten, bool $blnShowUnpublished): array
     {
         $folders = [];
 
         foreach ($this->rootProvider->getGalleryRoots() as $root) {
-            $overview = $this->repository->findOverview($root);
+            $overview = $this->repository->findOverview($root, $blnShowUnpublished);
 
-            foreach ($overview->folders as $folder) {
-                $this->collectFolders($folder, $folders);
+            if ($flatten) {
+                foreach ($overview->folders as $folder) {
+                    $this->collectFolders($folder, $folders);
+                }
+            } else {
+                $folders = [...$folders, ...$overview->folders];
             }
         }
 

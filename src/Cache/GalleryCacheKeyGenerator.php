@@ -14,8 +14,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\Cache;
 
 final readonly class GalleryCacheKeyGenerator
 {
-    public function overview(string $rootPath): string
+    public function overview(string $rootPath, bool $blnShowUnpublished): string
     {
-        return 'gallery.overview.'.md5($rootPath);
+        return 'gallery.overview.'.md5($rootPath).'.'.$blnShowUnpublished;
     }
 }

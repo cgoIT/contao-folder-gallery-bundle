@@ -1,25 +1,35 @@
 {% macro folder_node(folder) %}
-<ol>
-    <li>
-        <a
-            href="{{ path('cgoit_folder_gallery', {path: folder.path}) }}"
-            class="node"
-        >
-            {{ backend_icon('folderC.svg') }}
-            {{ folder.title }}
-        </a>
+<li>
+    {% set iconMap = {
+        gallery: 'image.svg',
+        group: 'parent.svg',
+        hidden: 'invisible.svg'
+    } %}
 
-        {% if folder.folders %}
+    {% set folder_link_attributes = attrs()
+        .addClass('node')
+        .addClass(folder.isPublished ? 'node--published' : 'node--unpublished')
+        .set('href', path('cgoit_folder_gallery', {path: folder.path}))
+    %}
+    <a{{ folder_link_attributes }}>
+        {{ backend_icon(iconMap[folder.overviewMode.value]) }}
+        {{ folder.title }}
+    </a>
+
+    {% if folder.folders %}
+        <ol>
             {% for child in folder.folders %}
                 {{ _self.folder_node(child) }}
             {% endfor %}
-        {% endif %}
-    </li>
-</ol>
+        </ol>
+    {% endif %}
+</li>
 {% endmacro %}
 
 <nav>
 {% for folder in folders %}
-    {{ _self.folder_node(folder) }}
+    <ol>
+        {{ _self.folder_node(folder) }}
+    </ol>
 {% endfor %}
 </nav>

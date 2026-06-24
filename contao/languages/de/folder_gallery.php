@@ -20,4 +20,5 @@ $GLOBALS['TL_LANG']['folder_gallery']['hidden'] = 'Versteckt';
 $GLOBALS['TL_LANG']['folder_gallery']['published'] = 'Veröffentlicht';
 $GLOBALS['TL_LANG']['folder_gallery']['unpublished'] = 'Nicht veröffentlicht';
 
-$GLOBALS['TL_LANG']['folder_gallery']['selectFolder'] = 'Bitte einen Ordner auswählen.';
+$GLOBALS['TL_LANG']['folder_gallery']['getting-started'][0] = 'Erste Schritte';
+$GLOBALS['TL_LANG']['folder_gallery']['getting-started'][1] = 'Wählen Sie einen Ordner aus der Übersicht aus. Anschließend können Sie die Metadaten der Galerie einsehen und anpassen.';

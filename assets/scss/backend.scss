@@ -94,6 +94,14 @@
             color: var(--hover-color);
             opacity: 1;
           }
+
+          &--unpublished {
+            filter: grayscale(1);
+          }
+
+          &--active {
+            color: var(--link);
+          }
         }
       }
     }
@@ -113,6 +121,10 @@
         line-height: 1.3;
         max-width: 60ch;
         padding: 12px;
+
+        h3 {
+           margin-bottom: 12px;
+        }
 
         svg {
           animation: point-left 4s infinite;

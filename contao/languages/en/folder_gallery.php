@@ -20,4 +20,5 @@ $GLOBALS['TL_LANG']['folder_gallery']['hidden'] = 'Hidden';
 $GLOBALS['TL_LANG']['folder_gallery']['published'] = 'Published';
 $GLOBALS['TL_LANG']['folder_gallery']['unpublished'] = 'Unpublished';
 
-$GLOBALS['TL_LANG']['folder_gallery']['selectFolder'] = 'Please select a folder.';
+$GLOBALS['TL_LANG']['folder_gallery']['getting-started'][0] = 'Getting Started';
+$GLOBALS['TL_LANG']['folder_gallery']['getting-started'][1] = 'Select a folder from the browser. You can then review the metadata of the selected gallery and customize it to suit your needs.';

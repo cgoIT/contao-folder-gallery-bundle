@@ -31,16 +31,16 @@ final readonly class CachedGalleryRepository implements GalleryRepositoryInterfa
     ) {
     }
 
-    public function findOverview(string $rootPath): GalleryOverview
+    public function findOverview(string $rootPath, bool $blnShowUnpublished = false): GalleryOverview
     {
-        $cacheKey = $this->cacheKeyGenerator->overview($rootPath);
+        $cacheKey = $this->cacheKeyGenerator->overview($rootPath, $blnShowUnpublished);
         $item = $this->cache->getItem($cacheKey);
 
         if ($item->isHit()) {
             return $item->get();
         }
 
-        $overview = $this->inner->findOverview($rootPath);
+        $overview = $this->inner->findOverview($rootPath, $blnShowUnpublished);
 
         $item->set($overview);
         $this->cache->save($item);
