@@ -1,0 +1,9 @@
+{% macro icon(mode) %}
+    {% if mode == 'gallery' %}
+        {{ include('@Contao/backend/folder_gallery/icons/gallery.svg.twig') }}
+    {% elseif mode == 'group' %}
+        {{ include('@Contao/backend/folder_gallery/icons/group.svg.twig') }}
+    {% elseif mode == 'hidden' %}
+        {{ include('@Contao/backend/folder_gallery/icons/hidden.svg.twig') }}
+    {% endif %}
+{% endmacro %}

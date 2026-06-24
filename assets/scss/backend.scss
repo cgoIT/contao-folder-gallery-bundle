@@ -80,27 +80,56 @@
 
           display: inline-flex;
           align-items: center;
-          gap: 2px;
+          gap: .35rem;
 
-          background: none;
-          border: none;
-
-          padding: 2px 0;
           color: var(--text);
 
           cursor: pointer;
 
-          &:hover {
-            color: var(--hover-color);
-            opacity: 1;
+          &__icon {
+            display: inline-flex;
+            align-items: center;
+
+            svg {
+              width: 16px;
+              height: 16px;
+              flex-shrink: 0;
+
+              color: var(--blue);
+            }
+          }
+
+          &__label {
+            white-space: nowrap;
+          }
+
+          &--group .node__icon svg {
+            color: var(--green);
+          }
+
+          &--gallery .node__icon svg {
+            color: var(--blue);
+          }
+
+          &--hidden .node__icon svg {
+            color: var(--gray);
           }
 
           &--unpublished {
-            filter: grayscale(1);
+            opacity: .6;
+
+            svg {
+              opacity: 1;
+              color: var(--gray);
+            }
           }
 
           &--active {
-            color: var(--link);
+            .node__label {
+              padding: 3px;
+              background: var(--drag-bg);
+              border-radius: 3px;
+            }
           }
         }
       }
