@@ -7,43 +7,72 @@ declare(strict_types=1);
  * @var list<Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder> $this->folders
  */
 
+use Contao\Image;
+use Contao\StringUtil;
+
 ?>
 
-<div class="tl_listing_container list_view">
-    <table class="tl_listing">
+<div class="folder_gallery tl_listing_container">
+    <table class="tl_listing with-padding with-zebra">
         <thead>
         <tr>
-            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.title'] ?? 'Titel' ?></th>
-            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.path'] ?? 'Pfad' ?></th>
-            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.directory'] ?? 'Verzeichnis' ?></th>
-            <th class="tl_file_list"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.images'] ?? 'Bilder' ?></th>
-            <th class="tl_file_list tl_right_nowrap"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.actions'] ?? 'Aktionen' ?></th>
+            <th><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.title'] ?? 'Titel' ?></th>
+            <th><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.directory'] ?? 'Verzeichnis' ?></th>
+            <th class="folder_gallery__right"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.images'] ?? 'Bilder' ?></th>
+            <th><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.status'] ?? 'Status' ?></th>
+            <th class="folder_gallery__right"><?= $GLOBALS['TL_LANG']['MSC']['folderGallery.actions'] ?? 'Aktionen' ?></th>
         </tr>
         </thead>
 
         <tbody>
         <?php foreach ($this->folders as $folder): ?>
             <tr class="hover-row">
-                <td class="tl_file_list">
-                    <?= str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', max(0, $folder->getDepth() - 1)) ?>
-                    <?= Contao\StringUtil::specialchars($folder->title) ?>
+                <td>
+                    <div class="folder_gallery__node folder_gallery__depth-<?= $folder->getDepth() ?>">
+                        <div class="folder_gallery__title">
+                            <?= Image::getHtml('folderC.svg') ?>
+                            <?= StringUtil::specialchars($folder->title) ?>
+                        </div>
+
+                        <div class="folder_gallery__path">
+                            <?= StringUtil::specialchars($folder->getPath()) ?>
+                        </div>
+                    </div>
                 </td>
 
-                <td class="tl_file_list">
-                    <?= Contao\StringUtil::specialchars($folder->getPath()) ?>
+                <td>
+                    <code><?= StringUtil::specialchars($folder->filesystemDirectory) ?></code>
                 </td>
 
-                <td class="tl_file_list">
-                    <code><?= Contao\StringUtil::specialchars($folder->filesystemDirectory) ?></code>
-                </td>
-
-                <td class="tl_file_list">
+                <td class="folder_gallery__right">
                     <?= count($folder->images) ?>
                 </td>
 
-                <td class="tl_file_list tl_right_nowrap">
-                    <a href="#">
-                        <?= $GLOBALS['TL_LANG']['MSC']['folderGallery.edit'] ?? 'Bearbeiten' ?>
+                <td>
+                    <?php if ($folder->isHiddenInOverview()): ?>
+                        <span class="folder_gallery__status folder_gallery__status--hidden">
+                            <?= $GLOBALS['TL_LANG']['MSC']['folderGallery.hidden'] ?? 'Versteckt' ?>
+                        </span>
+                    <?php elseif ($folder->isPublished()): ?>
+                        <span class="folder_gallery__status folder_gallery__status--published">
+                            <?= $GLOBALS['TL_LANG']['MSC']['folderGallery.published'] ?? 'Veröffentlicht' ?>
+                        </span>
+                    <?php else: ?>
+                        <span class="folder_gallery__status folder_gallery__status--unpublished">
+                            <?= $GLOBALS['TL_LANG']['MSC']['folderGallery.unpublished'] ?? 'Nicht veröffentlicht' ?>
+                        </span>
+                    <?php endif; ?>
+                </td>
+
+                <td class="folder_gallery__right">
+                    <a
+                        href="<?= StringUtil::ampersand($this->editUrl($folder)) ?>"
+                        title="<?= StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['edit'] ?? 'Bearbeiten') ?>"
+                    >
+                        <?= Image::getHtml(
+                            'edit.svg',
+                            $GLOBALS['TL_LANG']['MSC']['edit'] ?? 'Bearbeiten',
+                        ) ?>
                     </a>
                 </td>
             </tr>

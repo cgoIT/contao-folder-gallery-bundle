@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Backend;
 
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\BackendModule;
 use Contao\BackendTemplate;
@@ -41,5 +42,9 @@ final class ModuleFolderGallery extends BackendModule
         System::loadLanguageFile(self::TYPE);
 
         $this->Template->folders = $this->folderProvider->findAllFolders();
+        $this->Template->editUrl = static fn (GalleryFolder $folder): string => \sprintf(
+            'contao?do='.self::TYPE.'&act=edit&path=%s',
+            rawurlencode($folder->getPath()),
+        );
     }
 }

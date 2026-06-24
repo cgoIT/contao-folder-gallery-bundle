@@ -12,4 +12,5 @@ use Cgoit\ContaoFolderGalleryBundle\Backend\ModuleFolderGallery;
 
 $GLOBALS['BE_MOD']['content'][ModuleFolderGallery::TYPE] = [
     'callback' => ModuleFolderGallery::class,
+    'stylesheet' => ['bundles/cgoitfoldergallery/backend.css'],
 ];
