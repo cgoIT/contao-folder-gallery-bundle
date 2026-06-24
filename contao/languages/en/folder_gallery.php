@@ -8,9 +8,16 @@
  * @license    LGPL-3.0-or-later
  */
 
-$GLOBALS['TL_LANG']['MSC']['folderGallery']['title'] = 'Title';
-$GLOBALS['TL_LANG']['MSC']['folderGallery']['path'] = 'Path';
-$GLOBALS['TL_LANG']['MSC']['folderGallery']['directory'] = 'Directory';
-$GLOBALS['TL_LANG']['MSC']['folderGallery']['images'] = 'Images';
-$GLOBALS['TL_LANG']['MSC']['folderGallery']['actions'] = 'Actions';
-$GLOBALS['TL_LANG']['MSC']['folderGallery']['edit'] = 'Edit';
+$GLOBALS['TL_LANG']['folder_gallery']['title'] = 'Title';
+$GLOBALS['TL_LANG']['folder_gallery']['path'] = 'Path';
+$GLOBALS['TL_LANG']['folder_gallery']['directory'] = 'Directory';
+$GLOBALS['TL_LANG']['folder_gallery']['images'] = 'Images';
+$GLOBALS['TL_LANG']['folder_gallery']['actions'] = 'Actions';
+
+$GLOBALS['TL_LANG']['folder_gallery']['edit'] = 'Edit';
+
+$GLOBALS['TL_LANG']['folder_gallery']['hidden'] = 'Hidden';
+$GLOBALS['TL_LANG']['folder_gallery']['published'] = 'Published';
+$GLOBALS['TL_LANG']['folder_gallery']['unpublished'] = 'Unpublished';
+
+$GLOBALS['TL_LANG']['folder_gallery']['selectFolder'] = 'Please select a folder.';

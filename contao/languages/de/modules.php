@@ -8,7 +8,7 @@
  * @license    LGPL-3.0-or-later
  */
 
-use Cgoit\ContaoFolderGalleryBundle\Backend\ModuleFolderGallery;
+use Cgoit\ContaoFolderGalleryBundle\Controller\Backend\GalleryBackendController;
 
-$GLOBALS['TL_LANG']['MOD'][ModuleFolderGallery::TYPE][0] = 'Ordner Galerien';
-$GLOBALS['TL_LANG']['MOD'][ModuleFolderGallery::TYPE][1] = 'Verwalte Metadaten deiner Ordner Galerien.';
+$GLOBALS['TL_LANG']['MOD'][GalleryBackendController::TYPE][0] = 'Ordner Galerien';
+$GLOBALS['TL_LANG']['MOD'][GalleryBackendController::TYPE][1] = 'Verwalte Metadaten deiner Ordner Galerien.';

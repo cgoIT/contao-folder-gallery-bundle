@@ -1,0 +1,52 @@
+{% trans_default_domain 'contao_folder_gallery' %}
+{% extends '@Contao/be_main' %}
+
+{% block main %}
+    {% set template_studio_attributes = attrs()
+        .set('id', 'main')
+        .set('aria-labelledby', 'main_headline')
+        .set('data-controller', 'contao--folder-gallery')
+        .set('data-action', 'contao--color-scheme:change@window->contao--folder-gallery#colorChange')
+        .mergeWith(folder_gallery_attributes|default)
+    %}
+    <main{{ template_studio_attributes }}>
+        <div class="content-top">
+            <h1 id="main_headline">
+                {{ 'MOD.folder_gallery.0'|trans(domain: 'contao_modules') }}
+            </h1>
+
+            {{ include('@Contao/backend/component/_favorites.html.twig') }}
+        </div>
+
+        <section id="folder_gallery" class="content chrome cfg-main">
+            <div class="nav">
+                <div class="tree">
+                    {{ include('@Contao/backend/folder_gallery/tree/_tree.html.twig') }}
+                </div>
+            </div>
+
+            <div class="editor">
+                {% block panel_content %}
+                    <div class="panel"></div>
+                {% endblock %}
+
+                {% block initial_content %}
+                    <div class="initial">
+                        <div class="explainer">
+                            <h3>{{ 'folder_gallery.getting-started.0'|trans }}</h3>
+                            <p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m12 19-7-7 7-7"/>
+                                    <path d="M19 12H5"/>
+                                </svg>
+                                {{ 'folder_gallery.select-folder'|trans }}
+                            </p>
+                        </div>
+                    </div>
+                {% endblock %}
+            </div>
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% macro folder_node(folder) %}
+<ol>
+    <li>
+        <a
+            href="{{ path('cgoit_folder_gallery', {path: folder.path}) }}"
+            class="node"
+        >
+            {{ backend_icon('folderC.svg') }}
+            {{ folder.title }}
+        </a>
+
+        {% if folder.folders %}
+            {% for child in folder.folders %}
+                {{ _self.folder_node(child) }}
+            {% endfor %}
+        {% endif %}
+    </li>
+</ol>
+{% endmacro %}
+
+<nav>
+{% for folder in folders %}
+    {{ _self.folder_node(folder) }}
+{% endfor %}
+</nav>
