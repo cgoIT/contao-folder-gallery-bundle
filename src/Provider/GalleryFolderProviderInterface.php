@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 
 interface GalleryFolderProviderInterface
 {
     /**
-     * @return list<GalleryFolder>
+     * @return list<GalleryOverview>
      */
-    public function findAllFolders(): array;
+    public function findAllOverviews(bool $blnShowUnpublished = false): array;
 
-    /**
-     * @return list<GalleryFolder>
-     */
-    public function findFolderTree(bool $blnShowUnpublished = false): array;
+    public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null;
+
+    public function findFolderByPath(string $path, bool $blnShowUnpublished = false): GalleryFolder|null;
 }

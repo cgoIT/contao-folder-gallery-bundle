@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -26,52 +27,40 @@ final readonly class GalleryFolderProvider implements GalleryFolderProviderInter
     }
 
     /**
-     * @return list<GalleryFolder>
+     * @return list<GalleryOverview>
      */
-    public function findAllFolders(): array
+    public function findAllOverviews(bool $blnShowUnpublished = false): array
     {
-        return $this->doFind(true, false);
-    }
-
-    /**
-     * @return list<GalleryFolder>
-     */
-    public function findFolderTree(bool $blnShowUnpublished = false): array
-    {
-        return $this->doFind(false, $blnShowUnpublished);
-    }
-
-    /**
-     * @return list<GalleryFolder>
-     */
-    private function doFind(bool $flatten, bool $blnShowUnpublished): array
-    {
-        $folders = [];
+        $overviews = [];
 
         foreach ($this->rootProvider->getGalleryRoots() as $root) {
             $overview = $this->repository->findOverview($root, $blnShowUnpublished);
 
-            if ($flatten) {
-                foreach ($overview->folders as $folder) {
-                    $this->collectFolders($folder, $folders);
-                }
-            } else {
-                $folders = [...$folders, ...$overview->folders];
+            $overviews = [...$overviews, $overview];
+        }
+
+        return $overviews;
+    }
+
+    public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null
+    {
+        foreach ($this->rootProvider->getGalleryRoots() as $root) {
+            if ($root === $path) {
+                return $this->repository->findOverview($root, $blnShowUnpublished);
             }
         }
 
-        return $folders;
+        return null;
     }
 
-    /**
-     * @param list<GalleryFolder> $folders
-     */
-    private function collectFolders(GalleryFolder $folder, array &$folders): void
+    public function findFolderByPath(string $path, bool $blnShowUnpublished = false): GalleryFolder|null
     {
-        $folders[] = $folder;
-
-        foreach ($folder->folders as $child) {
-            $this->collectFolders($child, $folders);
+        foreach ($this->findAllOverviews($blnShowUnpublished) as $overview) {
+            if (isset($overview->folderIndex[$path])) {
+                return $overview->folderIndex[$path];
+            }
         }
+
+        return null;
     }
 }

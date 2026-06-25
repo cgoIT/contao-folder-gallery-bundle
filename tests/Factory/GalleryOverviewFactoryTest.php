@@ -59,7 +59,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             folders: [$day],
         );
 
-        $overview = new GalleryOverview([$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
+        $overview = new GalleryOverview('/files/gallery', [$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
 
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
@@ -119,7 +119,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             folders: [$day],
         );
 
-        $overview = new GalleryOverview([$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
+        $overview = new GalleryOverview('/files/gallery', [$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
 
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory

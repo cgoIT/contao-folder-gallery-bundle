@@ -16,12 +16,16 @@ use Psr\Cache\CacheItemPoolInterface;
 
 final readonly class GalleryCacheInvalidator
 {
-    public function __construct(private CacheItemPoolInterface $cache)
-    {
+    public function __construct(
+        private CacheItemPoolInterface $cache,
+        private GalleryCacheKeyGenerator $keyGenerator,
+    ) {
     }
 
     public function invalidate(): void
     {
-        $this->cache->clear();
+        foreach ($this->keyGenerator->allKeys() as $key) {
+            $this->cache->deleteItem($key);
+        }
     }
 }

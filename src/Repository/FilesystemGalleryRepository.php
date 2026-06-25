@@ -11,8 +11,10 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Contao\CoreBundle\Slug\Slug;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
 
+#[AsAlias(GalleryRepositoryInterface::class)]
 final readonly class FilesystemGalleryRepository implements GalleryRepositoryInterface
 {
     public function __construct(
@@ -38,7 +40,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $metadata = $this->metadataLoader->read($rootPath);
         $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryOverview($folders, $folderIndex);
+        return new GalleryOverview($rootPath, $folders, $folderIndex);
     }
 
     /**

@@ -21,10 +21,10 @@ use Cgoit\ContaoFolderGalleryBundle\Loader\ContaoGalleryImageLoader;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataWriter;
+use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider;
-use Cgoit\ContaoFolderGalleryBundle\Repository\CachedGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -47,9 +47,9 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         OverviewFolderFlattener::class,
         GalleryPathMatcher::class,
         ContaoGalleryRootProvider::class,
-        CachedGalleryRepository::class,
         GalleryUrlGenerator::class,
         GalleryFolderProvider::class,
+        CachedGalleryFolderProvider::class,
     ];
 
     private ContainerBuilder $container;

@@ -43,14 +43,14 @@ final class GalleryFolderProviderTest extends ContaoTestCase
 
         $provider = new GalleryFolderProvider($rootProvider, $repository);
 
-        $this->assertSame([], $provider->findAllFolders());
+        $this->assertSame([], $provider->findAllOverviews());
     }
 
-    public function testReturnsFoldersFromSingleRoot(): void
+    public function testReturnsOverviewsFromSingleRoot(): void
     {
         $folder = $this->createFolder('year-2025');
 
-        $overview = new GalleryOverview(folders: [$folder], folderIndex: []);
+        $overview = new GalleryOverview(filesystemDirectory: '/gallery', folders: [$folder], folderIndex: []);
 
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
@@ -68,13 +68,13 @@ final class GalleryFolderProviderTest extends ContaoTestCase
 
         $provider = new GalleryFolderProvider($rootProvider, $repository);
 
-        $folders = $provider->findAllFolders();
+        $overviews = $provider->findAllOverviews();
 
-        $this->assertCount(1, $folders);
-        $this->assertSame(['year-2025'], $this->extractSlugs($folders));
+        $this->assertCount(1, $overviews);
+        $this->assertSame(['year-2025'], $this->extractSlugs($overviews));
     }
 
-    public function testReturnsFoldersFromMultipleRoots(): void
+    public function testReturnsOverviewsFromMultipleRoots(): void
     {
         $folderA = $this->createFolder('year-2025');
         $folderB = $this->createFolder('year-2026');
@@ -93,63 +93,22 @@ final class GalleryFolderProviderTest extends ContaoTestCase
             ->expects($this->exactly(2))
             ->method('findOverview')
             ->willReturnMap([
-                ['/gallery-a', new GalleryOverview([$folderA], [])],
-                ['/gallery-b', new GalleryOverview([$folderB], [])],
+                ['/gallery-a', new GalleryOverview('/gallery-a', [$folderA], [])],
+                ['/gallery-b', new GalleryOverview('/gallery-b', [$folderB], [])],
             ])
         ;
 
         $provider = new GalleryFolderProvider($rootProvider, $repository);
 
-        $folders = $provider->findAllFolders();
+        $overviews = $provider->findAllOverviews();
 
         $this->assertSame(
             ['year-2025', 'year-2026'],
-            $this->extractSlugs($folders),
+            $this->extractSlugs($overviews),
         );
     }
 
-    public function testReturnsFoldersRecursively(): void
-    {
-        $friday = $this->createFolder('friday');
-        $saturday = $this->createFolder('saturday');
-
-        $year2025 = $this->createFolder(
-            'year-2025',
-            [$friday, $saturday],
-        );
-
-        $year2026 = $this->createFolder('year-2026');
-
-        $overview = new GalleryOverview(folders: [$year2025, $year2026], folderIndex: []);
-
-        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
-        $rootProvider
-            ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
-        ;
-
-        $repository = $this->createStub(GalleryRepositoryInterface::class);
-        $repository
-            ->method('findOverview')
-            ->willReturn($overview)
-        ;
-
-        $provider = new GalleryFolderProvider($rootProvider, $repository);
-
-        $folders = $provider->findAllFolders();
-
-        $this->assertSame(
-            [
-                'year-2025',
-                'friday',
-                'saturday',
-                'year-2026',
-            ],
-            $this->extractSlugs($folders),
-        );
-    }
-
-    public function testReturnsFolderTree(): void
+    public function testReturnsFolderTreeForOverviewByRootPath(): void
     {
         $friday = $this->createFolder('friday');
         $saturday = $this->createFolder('saturday');
@@ -158,7 +117,7 @@ final class GalleryFolderProviderTest extends ContaoTestCase
 
         $year2026 = $this->createFolder('year-2026');
 
-        $overview = new GalleryOverview(folders: [$year2025, $year2026], folderIndex: []);
+        $overview = new GalleryOverview(filesystemDirectory: '/gallery', folders: [$year2025, $year2026], folderIndex: []);
 
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
@@ -174,9 +133,9 @@ final class GalleryFolderProviderTest extends ContaoTestCase
 
         $provider = new GalleryFolderProvider($rootProvider, $repository);
 
-        $folders = $provider->findFolderTree();
+        $overview = $provider->findOverviewByRootPath('/gallery');
 
-        $this->assertCount(2, $folders);
+        $this->assertCount(2, $overview->folders);
         $this->assertSame(
             [
                 [
@@ -191,8 +150,116 @@ final class GalleryFolderProviderTest extends ContaoTestCase
                     'children' => [],
                 ],
             ],
-            $this->extractTree($provider->findFolderTree()),
+            $this->extractTree($overview->folders),
         );
+    }
+
+    public function testReturnsOverviewByRootPath(): void
+    {
+        $folder = $this->createFolder('year-2025');
+
+        $overview = new GalleryOverview(
+            filesystemDirectory: '/gallery',
+            folders: [$folder],
+            folderIndex: [],
+        );
+
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn(['/gallery'])
+        ;
+
+        $repository = $this->createMock(GalleryRepositoryInterface::class);
+        $repository
+            ->expects($this->once())
+            ->method('findOverview')
+            ->with('/gallery', false)
+            ->willReturn($overview)
+        ;
+
+        $provider = new GalleryFolderProvider($rootProvider, $repository);
+
+        $result = $provider->findOverviewByRootPath('/gallery');
+
+        $this->assertSame($overview, $result);
+    }
+
+    public function testReturnsNullIfOverviewRootPathDoesNotExist(): void
+    {
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn(['/gallery'])
+        ;
+
+        $repository = $this->createMock(GalleryRepositoryInterface::class);
+        $repository
+            ->expects($this->never())
+            ->method('findOverview')
+        ;
+
+        $provider = new GalleryFolderProvider($rootProvider, $repository);
+
+        $this->assertNotInstanceOf(
+            GalleryOverview::class, $provider->findOverviewByRootPath('/unknown'),
+        );
+    }
+
+    public function testReturnsFolderByPath(): void
+    {
+        $folder = $this->createFolder('year-2025');
+
+        $overview = new GalleryOverview(
+            filesystemDirectory: '/gallery',
+            folders: [$folder],
+            folderIndex: [
+                'year-2025' => $folder,
+            ],
+        );
+
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn(['/gallery'])
+        ;
+
+        $repository = $this->createStub(GalleryRepositoryInterface::class);
+        $repository
+            ->method('findOverview')
+            ->willReturn($overview)
+        ;
+
+        $provider = new GalleryFolderProvider($rootProvider, $repository);
+
+        $result = $provider->findFolderByPath('year-2025');
+
+        $this->assertSame($folder, $result);
+    }
+
+    public function testReturnsNullIfFolderPathDoesNotExist(): void
+    {
+        $overview = new GalleryOverview(
+            filesystemDirectory: '/gallery',
+            folders: [],
+            folderIndex: [],
+        );
+
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn(['/gallery'])
+        ;
+
+        $repository = $this->createStub(GalleryRepositoryInterface::class);
+        $repository
+            ->method('findOverview')
+            ->willReturn($overview)
+        ;
+
+        $provider = new GalleryFolderProvider($rootProvider, $repository);
+
+        $this->assertNotInstanceOf(GalleryFolder::class, $provider->findFolderByPath('unknown-folder'));
     }
 
     /**
@@ -211,15 +278,20 @@ final class GalleryFolderProviderTest extends ContaoTestCase
     }
 
     /**
-     * @param list<GalleryFolder> $folders
+     * @param list<GalleryOverview> $overviews
      *
      * @return list<string>
      */
-    private function extractSlugs(array $folders): array
+    private function extractSlugs(array $overviews): array
     {
-        return array_map(
-            static fn (GalleryFolder $folder): string => $folder->slug,
-            $folders,
+        return array_merge(
+            ...array_map(
+                static fn (GalleryOverview $overview): array => array_map(
+                    static fn (GalleryFolder $folder): string => $folder->slug,
+                    $overview->folders,
+                ),
+                $overviews,
+            ),
         );
     }
 

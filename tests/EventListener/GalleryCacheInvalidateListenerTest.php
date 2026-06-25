@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener;
 
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
@@ -32,12 +33,15 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
     {
         $cache = $this->createMock(CacheItemPoolInterface::class);
         $cache
-            ->expects($this->once())
-            ->method('clear')
+            ->expects($this->exactly(2))
+            ->method('deleteItem')
+            ->withAnyParameters()
             ->willReturn(true)
         ;
 
-        $invalidator = new GalleryCacheInvalidator($cache);
+        $generator = new GalleryCacheKeyGenerator();
+
+        $invalidator = new GalleryCacheInvalidator($cache, $generator);
 
         $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
         $rootProvider
@@ -64,10 +68,13 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
         $cache = $this->createMock(CacheItemPoolInterface::class);
         $cache
             ->expects($this->never())
-            ->method('clear')
+            ->method('deleteItem')
+            ->withAnyParameters()
         ;
 
-        $invalidator = new GalleryCacheInvalidator($cache);
+        $generator = new GalleryCacheKeyGenerator();
+
+        $invalidator = new GalleryCacheInvalidator($cache, $generator);
 
         $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
         $rootProvider

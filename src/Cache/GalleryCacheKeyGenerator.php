@@ -14,8 +14,19 @@ namespace Cgoit\ContaoFolderGalleryBundle\Cache;
 
 final readonly class GalleryCacheKeyGenerator
 {
-    public function overview(string $rootPath, bool $blnShowUnpublished): string
+    public function allOverviews(bool $showUnpublished): string
     {
-        return 'gallery.overview.'.md5($rootPath).'.'.$blnShowUnpublished;
+        return \sprintf('all_folder_gallery_overviews_%d', (int) $showUnpublished);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function allKeys(): array
+    {
+        return [
+            $this->allOverviews(false),
+            $this->allOverviews(true),
+        ];
     }
 }

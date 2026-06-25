@@ -14,7 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
-use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
@@ -38,7 +38,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
     public const string TYPE = 'folder_gallery';
 
     public function __construct(
-        private readonly GalleryRepositoryInterface $repository,
+        private readonly CachedGalleryFolderProviderInterface $folderProvider,
         private readonly GalleryOverviewFactory $overviewFactory,
         private readonly GalleryContentFactory $contentFactory,
         private readonly PageFinder $pageFinder,
@@ -80,7 +80,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
     private function renderOverview(FragmentTemplate $template, ModuleModel $model, PageModel $page, FilesModel $rootDir): Response
     {
-        $overview = $this->repository->findOverview($rootDir->path);
+        $overview = $this->folderProvider->findOverviewByRootPath($rootDir->path);
         $overviewViewModel = $this->overviewFactory->create($overview, $page, $model->galleryCoverSize);
         $templateName = $model->galleryFolderTpl ?: 'component/gallery_folder';
 
@@ -95,7 +95,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
     private function renderContent(FragmentTemplate $template, ModuleModel $model, PageModel $page, FilesModel $rootDir, string $path): Response
     {
-        $folder = $this->repository->findOverview($rootDir->path)
+        $folder = $this->folderProvider->findOverviewByRootPath($rootDir->path)
             ->findFolderByPath($path)
         ;
 
