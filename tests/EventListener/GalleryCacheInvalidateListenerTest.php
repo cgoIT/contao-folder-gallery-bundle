@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener;
 
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
-use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
@@ -22,7 +22,7 @@ use Contao\CoreBundle\Filesystem\Dbafs\DbafsChangeEvent;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[CoversClass(GalleryCacheInvalidateListener::class)]
 #[UsesClass(GalleryCacheInvalidator::class)]
@@ -31,17 +31,15 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
 {
     public function testInvalidatesCacheIfGalleryIsAffected(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache
-            ->expects($this->exactly(2))
-            ->method('deleteItem')
-            ->withAnyParameters()
+            ->expects($this->once())
+            ->method('invalidateTags')
+            ->with(GalleryCache::getAllTags())
             ->willReturn(true)
         ;
 
-        $generator = new GalleryCacheKeyGenerator();
-
-        $invalidator = new GalleryCacheInvalidator($cache, $generator);
+        $invalidator = new GalleryCacheInvalidator($cache);
 
         $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
         $rootProvider
@@ -65,16 +63,15 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
 
     public function testDoesNotInvalidateCacheIfGalleryIsNotAffected(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache
             ->expects($this->never())
-            ->method('deleteItem')
-            ->withAnyParameters()
+            ->method('invalidateTags')
+            ->with(GalleryCache::getAllTags())
+            ->willReturn(true)
         ;
 
-        $generator = new GalleryCacheKeyGenerator();
-
-        $invalidator = new GalleryCacheInvalidator($cache, $generator);
+        $invalidator = new GalleryCacheInvalidator($cache);
 
         $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
         $rootProvider

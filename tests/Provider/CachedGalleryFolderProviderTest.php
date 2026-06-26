@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Provider;
 
-use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
@@ -21,8 +21,8 @@ use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
-use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
 #[CoversClass(CachedGalleryFolderProvider::class)]
 #[UsesClass(GalleryFolder::class)]
@@ -38,33 +38,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             folderIndex: [],
         );
 
-        $item = $this->createMock(CacheItemInterface::class);
-        $item
-            ->expects($this->once())
-            ->method('isHit')
-            ->willReturn(false)
-        ;
-
-        $item
-            ->expects($this->once())
-            ->method('set')
-            ->with([$overview])
-            ->willReturnSelf()
-        ;
-
-        $cache = $this->createMock(CacheItemPoolInterface::class);
-        $cache
-            ->expects($this->once())
-            ->method('getItem')
-            ->with('all_folder_gallery_overviews_0')
-            ->willReturn($item)
-        ;
-
-        $cache
-            ->expects($this->once())
-            ->method('save')
-            ->with($item)
-        ;
+        $cache = new TagAwareAdapter(new ArrayAdapter());
 
         $inner = $this->createMock(GalleryFolderProviderInterface::class);
         $inner
@@ -74,12 +48,9 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->willReturn([$overview])
         ;
 
-        $generator = new GalleryCacheKeyGenerator();
-
         $provider = new CachedGalleryFolderProvider(
             $inner,
             $cache,
-            $generator,
         );
 
         $this->assertSame([$overview], $provider->findAllOverviews());
@@ -93,26 +64,13 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             folderIndex: [],
         );
 
-        $item = $this->createMock(CacheItemInterface::class);
-        $item
-            ->expects($this->once())
-            ->method('isHit')
-            ->willReturn(true)
-        ;
+        $cache = new TagAwareAdapter(new ArrayAdapter());
+        $item = $cache->getItem(GalleryCache::KEY_PUBLISHED_OVERVIEWS);
 
-        $item
-            ->expects($this->once())
-            ->method('get')
-            ->willReturn([$overview])
-        ;
+        $item->set([$overview]);
+        $item->tag(GalleryCache::TAG_OVERVIEWS);
 
-        $cache = $this->createMock(CacheItemPoolInterface::class);
-        $cache
-            ->expects($this->once())
-            ->method('getItem')
-            ->with('all_folder_gallery_overviews_0')
-            ->willReturn($item)
-        ;
+        $cache->save($item);
 
         $inner = $this->createMock(GalleryFolderProviderInterface::class);
         $inner
@@ -120,15 +78,12 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->method('findAllOverviews')
         ;
 
-        $generator = new GalleryCacheKeyGenerator();
-
         $provider = new CachedGalleryFolderProvider(
             $inner,
             $cache,
-            $generator,
         );
 
-        $this->assertSame([$overview], $provider->findAllOverviews());
+        $this->assertOverviewsEqual([$overview], $provider->findAllOverviews());
     }
 
     public function testFindsOverviewByRootPath(): void
@@ -141,7 +96,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
 
         $provider = $this->createProviderWithCachedOverviews([$overview]);
 
-        $this->assertSame($overview, $provider->findOverviewByRootPath('/gallery'));
+        $this->assertOverviewsEqual([$overview], [$provider->findOverviewByRootPath('/gallery')]);
     }
 
     public function testReturnsNullIfOverviewPathDoesNotExist(): void
@@ -165,7 +120,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
 
         $provider = $this->createProviderWithCachedOverviews([$overview]);
 
-        $this->assertSame($folder, $provider->findFolderByPath('year-2025'));
+        $this->assertFolderTreesEqual([$folder], [$provider->findFolderByPath('year-2025')]);
     }
 
     public function testReturnsNullIfFolderPathDoesNotExist(): void
@@ -180,29 +135,17 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
      */
     private function createProviderWithCachedOverviews(array $overviews): CachedGalleryFolderProvider
     {
-        $item = $this->createStub(CacheItemInterface::class);
-        $item
-            ->method('isHit')
-            ->willReturn(true)
-        ;
+        $cache = new TagAwareAdapter(new ArrayAdapter());
+        $item = $cache->getItem(GalleryCache::KEY_PUBLISHED_OVERVIEWS);
 
-        $item
-            ->method('get')
-            ->willReturn($overviews)
-        ;
+        $item->set($overviews);
+        $item->tag(GalleryCache::TAG_OVERVIEWS);
 
-        $cache = $this->createStub(CacheItemPoolInterface::class);
-        $cache
-            ->method('getItem')
-            ->willReturn($item)
-        ;
-
-        $generator = new GalleryCacheKeyGenerator();
+        $cache->save($item);
 
         return new CachedGalleryFolderProvider(
             $this->createStub(GalleryFolderProviderInterface::class),
             $cache,
-            $generator,
         );
     }
 
@@ -215,5 +158,41 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             trail: [$slug],
             metadata: new GalleryMetadata(),
         );
+    }
+
+    /**
+     * @param list<GalleryOverview> $expected
+     * @param list<GalleryOverview> $actual
+     */
+    private function assertOverviewsEqual(array $expected, array $actual): void
+    {
+        $this->assertCount(\count($expected), $actual);
+
+        foreach ($expected as $i => $overview) {
+            $this->assertSame($overview->filesystemDirectory, $actual[$i]->filesystemDirectory);
+            $this->assertFolderTreesEqual($overview->folders, $actual[$i]->folders);
+            $this->assertSame(array_keys($overview->folderIndex), array_keys($actual[$i]->folderIndex));
+        }
+    }
+
+    /**
+     * @param list<GalleryFolder> $expected
+     * @param list<GalleryFolder> $actual
+     */
+    private function assertFolderTreesEqual(array $expected, array $actual): void
+    {
+        $this->assertCount(\count($expected), $actual);
+
+        foreach ($expected as $i => $folder) {
+            $this->assertSame($folder->slug, $actual[$i]->slug);
+            $this->assertSame($folder->title, $actual[$i]->title);
+            $this->assertSame($folder->filesystemDirectory, $actual[$i]->filesystemDirectory);
+            $this->assertSame($folder->trail, $actual[$i]->trail);
+
+            $this->assertSame($folder->metadata->title, $actual[$i]->metadata->title);
+            $this->assertSame($folder->metadata->overviewMode, $actual[$i]->metadata->overviewMode);
+
+            $this->assertFolderTreesEqual($folder->folders, $actual[$i]->folders);
+        }
     }
 }

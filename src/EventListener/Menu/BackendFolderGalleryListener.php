@@ -58,7 +58,7 @@ final readonly class BackendFolderGalleryListener
                 ),
             )
             ->setCurrent(
-                'cgoit_folder_gallery' === $request?->get('_route'),
+                'cgoit_folder_gallery' === $request?->attributes->get('_route'),
             )
         ;
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
-use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
-use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
@@ -19,8 +19,7 @@ final readonly class CachedGalleryFolderProvider implements GalleryFolderProvide
     public function __construct(
         #[AutowireDecorated]
         private GalleryFolderProviderInterface $inner,
-        private CacheItemPoolInterface $cache,
-        private GalleryCacheKeyGenerator $cacheKeyGenerator,
+        private TagAwareAdapter $cache,
     ) {
     }
 
@@ -29,20 +28,19 @@ final readonly class CachedGalleryFolderProvider implements GalleryFolderProvide
      */
     public function findAllOverviews(bool $blnShowUnpublished = false): array
     {
-        $cacheKey = $this->cacheKeyGenerator->allOverviews($blnShowUnpublished);
-
-        $item = $this->cache->getItem($cacheKey);
+        $item = $this->cache->getItem($this->getCacheKey($blnShowUnpublished));
 
         if ($item->isHit()) {
             return $item->get();
         }
 
-        $folders = $this->inner->findAllOverviews($blnShowUnpublished);
+        $overviews = $this->inner->findAllOverviews($blnShowUnpublished);
 
-        $item->set($folders);
+        $item->set($overviews);
+        $item->tag(GalleryCache::TAG_OVERVIEWS);
         $this->cache->save($item);
 
-        return $folders;
+        return $overviews;
     }
 
     public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null
@@ -65,5 +63,12 @@ final readonly class CachedGalleryFolderProvider implements GalleryFolderProvide
         }
 
         return null;
+    }
+
+    private function getCacheKey(bool $showUnpublished): string
+    {
+        return $showUnpublished
+            ? GalleryCache::KEY_ALL_OVERVIEWS
+            : GalleryCache::KEY_PUBLISHED_OVERVIEWS;
     }
 }

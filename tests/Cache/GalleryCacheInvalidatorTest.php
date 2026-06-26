@@ -12,28 +12,28 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Cache;
 
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
-use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheKeyGenerator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[CoversClass(GalleryCacheInvalidator::class)]
+#[UsesClass(GalleryCache::class)]
 final class GalleryCacheInvalidatorTest extends TestCase
 {
     public function testInvalidateClearsCache(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache
-            ->expects($this->exactly(2))
-            ->method('deleteItem')
-            ->withAnyParameters()
+            ->expects($this->once())
+            ->method('invalidateTags')
+            ->with(GalleryCache::getAllTags())
             ->willReturn(true)
         ;
 
-        $generator = new GalleryCacheKeyGenerator();
-
-        $invalidator = new GalleryCacheInvalidator($cache, $generator);
+        $invalidator = new GalleryCacheInvalidator($cache);
 
         $invalidator->invalidate();
     }
