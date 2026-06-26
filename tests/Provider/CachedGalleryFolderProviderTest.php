@@ -65,7 +65,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
         );
 
         $cache = new TagAwareAdapter(new ArrayAdapter());
-        $item = $cache->getItem(GalleryCache::KEY_PUBLISHED_OVERVIEWS);
+        $item = $cache->getItem(GalleryCache::KEY_ALL_OVERVIEWS);
 
         $item->set([$overview]);
         $item->tag(GalleryCache::TAG_OVERVIEWS);
@@ -83,7 +83,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             $cache,
         );
 
-        $this->assertOverviewsEqual([$overview], $provider->findAllOverviews());
+        $this->assertOverviewsEqual([$overview], $provider->findAllOverviews(true));
     }
 
     public function testFindsOverviewByRootPath(): void
