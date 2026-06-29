@@ -43,4 +43,20 @@ final readonly class GalleryMetadata
 
         return true;
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getCurrentRecord(): array
+    {
+        return [
+            'title' => $this->title,
+            'description' => $this->description,
+            'cover' => $this->cover,
+            'publishedFrom' => $this->publishedFrom?->getTimestamp(),
+            'publishedUntil' => $this->publishedUntil?->getTimestamp(),
+            'sortOrder' => $this->sortOrder->value,
+            'overviewMode' => $this->overviewMode->value,
+        ];
+    }
 }

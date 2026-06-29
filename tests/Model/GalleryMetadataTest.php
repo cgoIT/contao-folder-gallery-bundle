@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Model;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
+use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -75,5 +77,34 @@ final class GalleryMetadataTest extends TestCase
         $metadata = new GalleryMetadata(publishedUntil: $publishedUntil);
 
         $this->assertTrue($metadata->isPublished($now), 'isPublished() should return true when now equals publishedUntil');
+    }
+
+    public function testReturnsCurrentRecord(): void
+    {
+        $publishedFrom = new \DateTimeImmutable('2025-01-01');
+        $publishedUntil = new \DateTimeImmutable('2025-12-31');
+
+        $metadata = new GalleryMetadata(
+            title: 'Gallery 2025',
+            description: 'Description',
+            cover: 'cover.jpg',
+            publishedFrom: $publishedFrom,
+            publishedUntil: $publishedUntil,
+            sortOrder: SortOrder::Desc,
+            overviewMode: OverviewMode::Group,
+        );
+
+        $this->assertSame(
+            [
+                'title' => 'Gallery 2025',
+                'description' => 'Description',
+                'cover' => 'cover.jpg',
+                'publishedFrom' => $publishedFrom->getTimestamp(),
+                'publishedUntil' => $publishedUntil->getTimestamp(),
+                'sortOrder' => SortOrder::Desc->value,
+                'overviewMode' => OverviewMode::Group->value,
+            ],
+            $metadata->getCurrentRecord(),
+        );
     }
 }
