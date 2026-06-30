@@ -66,11 +66,23 @@ class tl_gallery_metadata extends Backend
 {
     public function getSortOrders(): array
     {
-        return array_map(static fn (SortOrder $sortOrder) => $sortOrder->value, SortOrder::cases());
+        $options = [];
+
+        foreach (SortOrder::cases() as $sortOrder) {
+            $options[$sortOrder->value] = &$GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order'][$sortOrder->value];
+        }
+
+        return $options;
     }
 
     public function getOverviewModes(): array
     {
-        return array_map(static fn (OverviewMode $overviewMode) => $overviewMode->value, OverviewMode::cases());
+        $options = [];
+
+        foreach (OverviewMode::cases() as $overviewMode) {
+            $options[$overviewMode->value] = &$GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode'][$overviewMode->value];
+        }
+
+        return $options;
     }
 }

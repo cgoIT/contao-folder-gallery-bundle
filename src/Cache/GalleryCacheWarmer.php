@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Cache;
 
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 #[AutoconfigureTag('kernel.cache_warmer')]
 final readonly class GalleryCacheWarmer implements CacheWarmerInterface
 {
-    public function __construct(private CachedGalleryFolderProviderInterface $folderProvider)
-    {
+    public function __construct(
+        private ContaoFramework $framework,
+        private CachedGalleryFolderProviderInterface $folderProvider,
+    ) {
     }
 
     public function isOptional(): bool
@@ -30,6 +33,7 @@ final readonly class GalleryCacheWarmer implements CacheWarmerInterface
 
     public function warmUp(string $cacheDir, string|null $buildDir = null): array
     {
+        $this->framework->initialize();
         $this->warmGalleryCaches();
 
         return [];
