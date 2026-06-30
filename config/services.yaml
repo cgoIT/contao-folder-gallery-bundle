@@ -10,3 +10,6 @@ services:
    Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface:
       alias: Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider
       public: true
+
+   Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager:
+      public: true

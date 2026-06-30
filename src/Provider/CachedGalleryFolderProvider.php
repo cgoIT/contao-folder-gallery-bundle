@@ -7,19 +7,20 @@ namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsAlias(CachedGalleryFolderProviderInterface::class)]
 #[AsDecorator(GalleryFolderProvider::class)]
-final readonly class CachedGalleryFolderProvider implements GalleryFolderProviderInterface
+final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderProviderInterface
 {
     public function __construct(
         #[AutowireDecorated]
         private GalleryFolderProviderInterface $inner,
-        private TagAwareAdapter $cache,
+        private TagAwareCacheInterface $cache,
     ) {
     }
 
@@ -28,19 +29,10 @@ final readonly class CachedGalleryFolderProvider implements GalleryFolderProvide
      */
     public function findAllOverviews(bool $blnShowUnpublished = false): array
     {
-        $item = $this->cache->getItem($this->getCacheKey($blnShowUnpublished));
-
-        if ($item->isHit()) {
-            return $item->get();
-        }
-
-        $overviews = $this->inner->findAllOverviews($blnShowUnpublished);
-
-        $item->set($overviews);
-        $item->tag(GalleryCache::TAG_OVERVIEWS);
-        $this->cache->save($item);
-
-        return $overviews;
+        return $this->cache->get(
+            $this->getCacheKey($blnShowUnpublished),
+            fn ($item) => $this->findUncachedEntry($item, $blnShowUnpublished),
+        );
     }
 
     public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null
@@ -63,6 +55,18 @@ final readonly class CachedGalleryFolderProvider implements GalleryFolderProvide
         }
 
         return null;
+    }
+
+    /**
+     * @return list<GalleryOverview>
+     */
+    private function findUncachedEntry(ItemInterface $item, bool $blnShowUnpublished): array
+    {
+        $overviews = $this->inner->findAllOverviews($blnShowUnpublished);
+
+        $item->tag(GalleryCache::TAG_OVERVIEWS);
+
+        return $overviews;
     }
 
     private function getCacheKey(bool $showUnpublished): string

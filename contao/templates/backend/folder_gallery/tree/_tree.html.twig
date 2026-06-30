@@ -12,7 +12,7 @@
         .addClass('node')
         .addClass(folder.isPublished ? 'node--published' : 'node--unpublished')
         .addClass('node--' ~ folder.overviewMode.value)
-        .set('href', path('cgoit_folder_gallery', {path: folder.path}))
+        .set('href', path('cgoit_folder_gallery', {id: folder.filesystemDirectory}))
     %}
     <a{{ folder_link_attributes }}>
         <span class="node__icon">
@@ -35,9 +35,11 @@
 {% endmacro %}
 
 <nav>
-{% for folder in folders %}
-    <ol>
-        {{ _self.folder_node(folder) }}
-    </ol>
-{% endfor %}
+    {% for overview in overviews %}
+        {% for folder in overview.folders %}
+        <ol>
+            {{ _self.folder_node(folder) }}
+        </ol>
+        {% endfor %}
+    {% endfor %}
 </nav>

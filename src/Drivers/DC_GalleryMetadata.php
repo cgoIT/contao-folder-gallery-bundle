@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Drivers;
 
-use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\DataContainer;
@@ -25,11 +25,9 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 
 final class DC_GalleryMetadata extends DataContainer implements EditableDataContainerInterface
 {
-    private GalleryMetadataReader $galleryMetadataReader;
+    private GalleryMetadataManager $metadataManager;
 
     private GalleryMetadata $metadata;
-
-    private string $path;
 
     /**
      * Initialize the object.
@@ -45,21 +43,10 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
 
     public function getPalette(): string
     {
-        // The PaletteBuilder requires an integer ID although the current
-        // record is provided through getCurrentRecord().
         return System::getContainer()
             ->get('contao.data_container.palette_builder')
-            ->getPalette($this->strTable, 0, $this)
+            ->getPalette($this->strTable, (int) $this->intId, $this)
         ;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    #[\Override]
-    public function getCurrentRecord(int|string|null $id = null, string|null $table = null): array
-    {
-        return $this->metadata->getCurrentRecord();
     }
 
     public function edit(): string
@@ -91,17 +78,19 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
 
     private function initialize(string $strTable): void
     {
+        self::loadDataContainer($strTable);
+
         $container = System::getContainer();
         $objSession = $container->get('request_stack')->getSession();
         $request = $container->get('request_stack')->getCurrentRequest();
 
-        $galleryMetadataReader = $container->get(GalleryMetadataReader::class);
+        $metadataManager = $container->get(GalleryMetadataManager::class);
 
-        if (!$galleryMetadataReader instanceof GalleryMetadataReader) {
-            throw new \RuntimeException(\sprintf('Expected service "%s" to be an instance of "%s", got "%s".', GalleryMetadataReader::class, GalleryMetadataReader::class, get_debug_type($galleryMetadataReader)));
+        if (!$metadataManager instanceof GalleryMetadataManager) {
+            throw new \RuntimeException(\sprintf('Expected service "%s" to be an instance of "%s", got "%s".', GalleryMetadataManager::class, GalleryMetadataManager::class, get_debug_type($metadataManager)));
         }
 
-        $this->galleryMetadataReader = $galleryMetadataReader;
+        $this->metadataManager = $metadataManager;
 
         // Check the request token (see #4007)
         if ((!$request || $request->isMethodSafe()) && !\in_array(Input::get('act'), [null, 'edit'], true) && (null === Input::get('rt') || !$container->get('contao.csrf.token_manager')->isTokenValid(new CsrfToken($container->getParameter('contao.csrf_token_name'), Input::get('rt'))))) {
@@ -109,8 +98,7 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
             $this->redirect($container->get('router')->generate('contao_backend_confirm'));
         }
 
-        $this->path = (string) Input::get('id', true);
-        $this->intId = $this->path;
+        $this->intId = Input::get('id', true);
         $this->strTable = $strTable;
 
         // Check whether the table is defined
@@ -135,7 +123,7 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
 
     private function loadMetadata(): void
     {
-        $this->metadata = $this->galleryMetadataReader->read($this->path);
+        $this->metadata = $this->metadataManager->read($this->intId);
     }
 
     private function renderBoxes(): string
@@ -178,7 +166,14 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
     {
         $this->strField = $field;
         $this->strInputName = $field;
-        $this->varValue = $this->metadata->$field;
+
+        $varValue = $this->metadata->$field;
+
+        if ('publishedFrom' === $field || 'publishedUntil' === $field) {
+            $varValue = $this->metadata->$field->getTimestamp();
+        }
+
+        $this->varValue = $varValue;
 
         if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['load_callback'] ?? null)) {
             foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$field]['load_callback'] as $callback) {
@@ -215,12 +210,10 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
 </div>
   '.$buttons.'
 </form>';
-        $content = Message::generate().'
-<p class="tl_error">'.$GLOBALS['TL_LANG']['ERR']['submit'].'</p>'
-            .$container
-                ->get('contao.data_container.global_operations_builder')
-                ->initialize($this->strTable)
-                ->addBackButton().'
+        $content = $container
+            ->get('contao.data_container.global_operations_builder')
+            ->initialize($this->strTable)
+            ->addBackButton().'
 <form id="'.$this->strTable.'" class="tl_form tl_edit_form" method="post"'
             .(!empty($this->onsubmit) ? ' onsubmit="'.implode(' ', $this->onsubmit).'"' : '')
             .'>
@@ -262,7 +255,7 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
         }
 
         $this->redirect(
-            $this->addToUrl('id='.$this->urlEncode($this->path)),
+            $this->addToUrl('id='.$this->urlEncode($this->intId)),
         );
     }
 }

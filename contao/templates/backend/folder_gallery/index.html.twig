@@ -27,7 +27,11 @@
 
             <div class="editor">
                 {% block panel_content %}
-                    <div class="panel"></div>
+                    <div class="panel">
+                    {% if editor %}
+                        {{ editor|raw }}
+                    {% endif %}
+                    </div>
                 {% endblock %}
 
                 {% block initial_content %}

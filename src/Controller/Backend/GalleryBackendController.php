@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Controller\Backend;
 
+use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,8 +34,15 @@ final class GalleryBackendController extends AbstractBackendController
     )]
     public function __invoke(Request $request): Response
     {
+        $editor = null;
+
+        if (null !== $request->query->get('id')) {
+            $editor = (new DC_GalleryMetadata('tl_gallery_metadata'))->edit();
+        }
+
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
-            'folders' => $this->folderProvider->findAllOverviews(true),
+            'overviews' => $this->folderProvider->findAllOverviews(true),
+            'editor' => $editor,
         ]);
     }
 }
