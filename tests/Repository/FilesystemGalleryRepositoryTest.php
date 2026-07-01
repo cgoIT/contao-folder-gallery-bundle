@@ -65,8 +65,10 @@ final class FilesystemGalleryRepositoryTest extends TestCase
             )
         ;
 
+        $framework = $this->createContaoFrameworkStub();
+
         $this->repository = new FilesystemGalleryRepository(
-            new GalleryMetadataReader(),
+            new GalleryMetadataReader($framework),
             $imageLoader,
             $slug,
         );

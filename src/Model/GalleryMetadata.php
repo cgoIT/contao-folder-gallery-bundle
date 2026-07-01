@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
+use Contao\Input;
+
 final readonly class GalleryMetadata
 {
     public function __construct(
@@ -58,5 +60,23 @@ final readonly class GalleryMetadata
             'sortOrder' => $this->sortOrder->value,
             'overviewMode' => $this->overviewMode->value,
         ];
+    }
+
+    public function mergeWithInput(\DateTimeZone $dateTimeZone = null)
+    {
+        $publishedFrom = Input::post('publishedFrom') ? new \DateTimeImmutable(Input::post('publishedFrom'), $dateTimeZone) : null;
+        $publishedUntil = Input::post('publishedUntil') ? new \DateTimeImmutable(Input::post('publishedUntil'), $dateTimeZone) : null;
+        $sortOrder = Input::post('sortOrder') ? SortOrder::from(Input::post('sortOrder')) : SortOrder::Asc;
+        $overviewMode = Input::post('overviewMode') ? OverviewMode::from(Input::post('overviewMode')) : OverviewMode::Gallery;
+
+        return new GalleryMetadata(
+            title: Input::post('title'),
+            description: Input::post('description'),
+            cover: Input::post('cover'),
+            publishedFrom: $publishedFrom,
+            publishedUntil: $publishedUntil,
+            sortOrder: $sortOrder,
+            overviewMode: $overviewMode,
+        );
     }
 }

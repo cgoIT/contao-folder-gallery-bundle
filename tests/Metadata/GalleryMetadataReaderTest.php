@@ -25,7 +25,9 @@ final class GalleryMetadataReaderTest extends TestCase
 {
     public function testReadsValidMetadata(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $metadata = $reader->read($this->getFixturesDir().'/metadata/valid');
 
         $this->assertSame('Friday', $metadata->title);
@@ -39,7 +41,9 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReadsMetadataWithInvalidDates(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $metadata = $reader->read($this->getFixturesDir().'/metadata/invalid');
 
         $this->assertSame('Friday', $metadata->title);
@@ -51,7 +55,9 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReturnsEmptyMetadataIfFileDoesNotExist(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $metadata = $reader->read($this->getFixturesDir().'/metadata/empty');
 
         $this->assertNull($metadata->title);
@@ -63,7 +69,9 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReturnsDefaultValuesIfFileDoesNotExist(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $this->assertDefaultMetadata(
             $reader->read($this->getFixturesDir().'/metadata/empty'),
         );
@@ -71,7 +79,9 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReturnsPublishedTrueIfDatesHaveCorrespondingValues(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $metadata = $reader->read($this->getFixturesDir().'/metadata/published');
 
         $this->assertTrue($metadata->isPublished());
@@ -79,7 +89,9 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReturnsPublishedFalseIfDatesDoNotHaveCorrespondingValues(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $metadata = $reader->read($this->getFixturesDir().'/metadata/valid');
 
         $this->assertFalse($metadata->isPublished());
@@ -87,20 +99,24 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReadsHiddenInOverview(): void
     {
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $metadata = $reader->read($this->getFixturesDir().'/metadata/hidden');
         $this->assertSame(OverviewMode::Hidden, $metadata->overviewMode);
     }
 
     public function testReturnsDefaultMetadataIfYamlCannotBeParsed(): void
     {
+        $framework = $this->createContaoFrameworkStub();
+
         $logger = $this->createMock(LoggerInterface::class);
         $logger
             ->expects($this->once())
             ->method('warning')
         ;
 
-        $reader = new GalleryMetadataReader($logger);
+        $reader = new GalleryMetadataReader($framework, $logger);
 
         $this->assertDefaultMetadata(
             $reader->read($this->getFixturesDir().'/metadata/invalid-yaml'),
@@ -109,13 +125,15 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testReturnsDefaultMetadataIfYamlDoesNotContainArray(): void
     {
+        $framework = $this->createContaoFrameworkStub();
+
         $logger = $this->createMock(LoggerInterface::class);
         $logger
             ->expects($this->once())
             ->method('warning')
         ;
 
-        $reader = new GalleryMetadataReader($logger);
+        $reader = new GalleryMetadataReader($framework, $logger);
 
         $this->assertDefaultMetadata(
             $reader->read($this->getFixturesDir().'/metadata/scalar'),
@@ -124,6 +142,8 @@ final class GalleryMetadataReaderTest extends TestCase
 
     public function testLogsUnknownMetadataKeys(): void
     {
+        $framework = $this->createContaoFrameworkStub();
+
         $logger = $this->createMock(LoggerInterface::class);
         $logger
             ->expects($this->once())
@@ -134,7 +154,7 @@ final class GalleryMetadataReaderTest extends TestCase
             )
         ;
 
-        $reader = new GalleryMetadataReader($logger);
+        $reader = new GalleryMetadataReader($framework, $logger);
 
         $reader->read($this->getFixturesDir().'/metadata/unknown-key');
     }

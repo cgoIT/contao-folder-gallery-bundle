@@ -14,6 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Drivers;
 
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Contao\Config;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\DataContainer;
 use Contao\EditableDataContainerInterface;
@@ -28,6 +29,8 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
     private GalleryMetadataManager $metadataManager;
 
     private GalleryMetadata $metadata;
+
+    private ?\DateTimeZone $dateTimeZone = null;
 
     /**
      * Initialize the object.
@@ -83,6 +86,7 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
         $container = System::getContainer();
         $objSession = $container->get('request_stack')->getSession();
         $request = $container->get('request_stack')->getCurrentRequest();
+        $framework = $container->get('contao.framework');
 
         $metadataManager = $container->get(GalleryMetadataManager::class);
 
@@ -106,6 +110,10 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
             $container->get('monolog.logger.contao.error')->error('Could not load data container configuration for "'.$strTable.'"');
             trigger_error('Could not load data container configuration', E_USER_ERROR);
         }
+
+        $config = $framework->getAdapter(Config::class);
+        $timezone = (string) $config->get('timeZone');
+        $this->dateTimeZone = '' !== $timezone ? new \DateTimeZone($timezone) : null;
 
         $this->loadMetadata();
 
@@ -248,6 +256,10 @@ final class DC_GalleryMetadata extends DataContainer implements EditableDataCont
                 }
             }
         }
+
+        $this->metadata = $this->metadata->mergeWithInput($this->dateTimeZone);
+
+        $this->metadataManager->write($this->intId, $this->metadata);
 
         if (null !== Input::post('saveNclose')) {
             Message::reset();

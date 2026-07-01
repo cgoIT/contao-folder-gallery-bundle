@@ -7,6 +7,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\Metadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
+use Contao\Config;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -23,8 +25,10 @@ final readonly class GalleryMetadataReader
         'overview_mode',
     ];
 
-    public function __construct(private LoggerInterface|null $logger = null)
-    {
+    public function __construct(
+        private ContaoFramework $framework,
+        private LoggerInterface|null $logger = null,
+    ) {
     }
 
     public function read(string $directory): GalleryMetadata
@@ -127,16 +131,22 @@ final readonly class GalleryMetadataReader
     {
         $value = $data[$key] ?? null;
 
-        if (empty($value)) {
+        if (null === $value || '' === $value) {
             return null;
         }
 
+        $config = $this->framework->getAdapter(Config::class);
+        $timezone = (string) $config->get('timeZone');
+        $tz = '' !== $timezone ? new \DateTimeZone($timezone) : null;
+
         try {
-            if (is_numeric($value)) {
-                return new \DateTimeImmutable('@'.$value);
+            if (\is_int($value) || \is_float($value) || ctype_digit((string) $value)) {
+                $date = new \DateTimeImmutable('@'.(int) $value);
+
+                return $tz ? $date->setTimezone($tz) : $date;
             }
 
-            return new \DateTimeImmutable((string) $value);
+            return new \DateTimeImmutable((string) $value, $tz);
         } catch (\Throwable) {
             return null;
         }

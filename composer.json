@@ -17,6 +17,7 @@
   },
   "require": {
     "php": "^8.3",
+    "ext-ctype": "*",
     "contao/core-bundle": "^5.7",
     "contao/image": "^1.2",
     "knplabs/knp-menu": "^3.8",

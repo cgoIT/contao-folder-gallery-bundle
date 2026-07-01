@@ -15,6 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Controller\Backend;
 use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
+use Contao\System;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,6 +35,8 @@ final class GalleryBackendController extends AbstractBackendController
     )]
     public function __invoke(Request $request): Response
     {
+        System::loadLanguageFile('tl_gallery_metadata');
+
         $editor = null;
 
         if (null !== $request->query->get('id')) {

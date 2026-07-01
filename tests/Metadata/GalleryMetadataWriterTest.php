@@ -99,7 +99,9 @@ final class GalleryMetadataWriterTest extends TestCase
 
         $this->writer->write($this->tempDirectory, $metadata);
 
-        $reader = new GalleryMetadataReader();
+        $framework = $this->createContaoFrameworkStub();
+
+        $reader = new GalleryMetadataReader($framework);
         $loaded = $reader->read($this->tempDirectory);
 
         $this->assertSame($metadata->title, $loaded->title);

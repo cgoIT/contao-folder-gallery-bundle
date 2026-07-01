@@ -41,6 +41,14 @@ final readonly class GalleryMetadataWriter
             static fn (mixed $value): bool => null !== $value,
         );
 
-        $this->filesystem->dumpFile($filename, Yaml::dump($data, 2, 4));
+        $this->filesystem->dumpFile(
+            $filename,
+            Yaml::dump(
+                $data,
+                2,
+                4,
+                Yaml::DUMP_FORCE_DOUBLE_QUOTES_ON_VALUES,
+            ),
+        );
     }
 }
