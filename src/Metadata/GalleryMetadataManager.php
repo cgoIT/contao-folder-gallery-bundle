@@ -19,6 +19,8 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
  */
 final readonly class GalleryMetadataManager
 {
+    public const string DATIM_FORMAT = 'Y-m-d H:i';
+
     public function __construct(
         private GalleryMetadataReader $reader,
         private GalleryMetadataWriter $writer,

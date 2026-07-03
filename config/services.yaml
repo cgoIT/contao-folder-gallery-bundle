@@ -13,3 +13,6 @@ services:
 
    Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager:
       public: true
+
+   Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator:
+      public: true

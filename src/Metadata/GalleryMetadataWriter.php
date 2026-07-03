@@ -13,13 +13,21 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Metadata;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Contao\Config;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 final readonly class GalleryMetadataWriter
 {
-    public function __construct(private Filesystem $filesystem)
-    {
+    private string $datimFormat;
+
+    public function __construct(
+        private ContaoFramework $framework,
+        private Filesystem $filesystem,
+    ) {
+        $config = $this->framework->getAdapter(Config::class);
+        $this->datimFormat = $config->get('datimFormat') ?? GalleryMetadataManager::DATIM_FORMAT;
     }
 
     public function write(string $directory, GalleryMetadata $metadata): void
@@ -30,8 +38,8 @@ final readonly class GalleryMetadataWriter
             'title' => $metadata->title,
             'description' => $metadata->description,
             'cover' => $metadata->cover,
-            'published_from' => $metadata->publishedFrom?->format('Y-m-d H:i:s'),
-            'published_until' => $metadata->publishedUntil?->format('Y-m-d H:i:s'),
+            'published_from' => $metadata->publishedFrom?->format($this->datimFormat),
+            'published_until' => $metadata->publishedUntil?->format($this->datimFormat),
             'sort_order' => $metadata->sortOrder->value,
             'overview_mode' => $metadata->overviewMode->value,
         ];
@@ -41,14 +49,7 @@ final readonly class GalleryMetadataWriter
             static fn (mixed $value): bool => null !== $value,
         );
 
-        $this->filesystem->dumpFile(
-            $filename,
-            Yaml::dump(
-                $data,
-                2,
-                4,
-                Yaml::DUMP_FORCE_DOUBLE_QUOTES_ON_VALUES,
-            ),
-        );
+        $yaml = Yaml::dump($data);
+        $this->filesystem->dumpFile($filename, $yaml);
     }
 }

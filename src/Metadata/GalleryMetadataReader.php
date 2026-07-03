@@ -25,10 +25,17 @@ final readonly class GalleryMetadataReader
         'overview_mode',
     ];
 
+    private \DateTimeZone|null $tz;
+
+    private string $datimFormat;
+
     public function __construct(
         private ContaoFramework $framework,
         private LoggerInterface|null $logger = null,
     ) {
+        $config = $this->framework->getAdapter(Config::class);
+        $this->tz = $config->get('timeZone') ? new \DateTimeZone($config->get('timeZone')) : null;
+        $this->datimFormat = $config->get('datimFormat') ?? GalleryMetadataManager::DATIM_FORMAT;
     }
 
     public function read(string $directory): GalleryMetadata
@@ -135,18 +142,14 @@ final readonly class GalleryMetadataReader
             return null;
         }
 
-        $config = $this->framework->getAdapter(Config::class);
-        $timezone = (string) $config->get('timeZone');
-        $tz = '' !== $timezone ? new \DateTimeZone($timezone) : null;
-
         try {
             if (\is_int($value) || \is_float($value) || ctype_digit((string) $value)) {
                 $date = new \DateTimeImmutable('@'.(int) $value);
 
-                return $tz ? $date->setTimezone($tz) : $date;
+                return $this->tz ? $date->setTimezone($this->tz) : $date;
             }
 
-            return new \DateTimeImmutable((string) $value, $tz);
+            return \DateTimeImmutable::createFromFormat($this->datimFormat, (string) $value, $this->tz);
         } catch (\Throwable) {
             return null;
         }

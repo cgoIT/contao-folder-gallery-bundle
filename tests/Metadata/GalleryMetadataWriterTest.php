@@ -35,7 +35,9 @@ final class GalleryMetadataWriterTest extends TestCase
 
         (new Filesystem())->mkdir($this->tempDirectory);
 
-        $this->writer = new GalleryMetadataWriter(new Filesystem());
+        $contaoFramework = $this->createContaoFrameworkStub();
+
+        $this->writer = new GalleryMetadataWriter($contaoFramework, new Filesystem());
     }
 
     protected function tearDown(): void
@@ -64,8 +66,8 @@ final class GalleryMetadataWriterTest extends TestCase
         $this->assertSame('Friday', $data['title']);
         $this->assertSame('Test', $data['description']);
         $this->assertSame('image.jpg', $data['cover']);
-        $this->assertSame('2025-09-05 20:00:00', $data['published_from']);
-        $this->assertSame('2025-09-10 23:59:59', $data['published_until']);
+        $this->assertSame('2025-09-05 20:00', $data['published_from']);
+        $this->assertSame('2025-09-10 23:59', $data['published_until']);
         $this->assertSame('desc', $data['sort_order']);
         $this->assertSame('hidden', $data['overview_mode']);
     }
@@ -91,8 +93,8 @@ final class GalleryMetadataWriterTest extends TestCase
             title: 'Friday',
             description: 'Test',
             cover: 'image.jpg',
-            publishedFrom: new \DateTimeImmutable('2025-09-05 20:00:00'),
-            publishedUntil: new \DateTimeImmutable('2025-09-10 23:59:59'),
+            publishedFrom: new \DateTimeImmutable('2025-09-05 20:00'),
+            publishedUntil: new \DateTimeImmutable('2025-09-10 23:59'),
             sortOrder: SortOrder::Desc,
             overviewMode: OverviewMode::Hidden,
         );
