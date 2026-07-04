@@ -64,7 +64,8 @@
     "contao-manager-plugin": "Cgoit\\ContaoFolderGalleryBundle\\ContaoManager\\Plugin"
   },
   "scripts": {
-    "phpunit": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox",
+    "phpunit": "vendor/bin/phpunit --no-coverage",
+    "phpunit:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox",
     "unit-tests": "@phpunit",
     "all": [
       "@ecs",
