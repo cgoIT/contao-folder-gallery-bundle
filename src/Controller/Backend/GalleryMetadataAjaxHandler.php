@@ -14,6 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Controller\Backend;
 
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\DataContainer;
+use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\FileTree;
 use Contao\Input;
@@ -47,7 +48,17 @@ final readonly class GalleryMetadataAjaxHandler
             throw new BadRequestHttpException('Image from invalid folder selected: '.$varValue);
         }
 
-        $file = $varValue ? FilesModel::findByPath($varValue) : null;
+        $file = null;
+
+        if ($varValue) {
+            $file = FilesModel::findByPath($varValue);
+
+            if (Dbafs::shouldBeSynchronized($varValue)) {
+                if (null === $file) {
+                    $file = Dbafs::addResource($varValue);
+                }
+            }
+        }
 
         $varCoverUuid = $file?->uuid;
 
