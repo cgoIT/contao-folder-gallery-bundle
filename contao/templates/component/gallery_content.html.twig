@@ -20,9 +20,11 @@
 
     <div class="gallery-content__images">
         {% for image in content.images %}
-            {% with {figure: image} %}
-                {{ block('figure_component') }}
-            {% endwith %}
+            <div class="gallery-content__image">
+                {% with {figure: image} %}
+                    {{ block('figure_component') }}
+                {% endwith %}
+            </div>
         {% endfor %}
     </div>
 

@@ -12,26 +12,26 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer;
 
-use Contao\Backend;
 use Contao\BackendUser;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Image\ImageSizes;
 use Contao\CoreBundle\Twig\Finder\FinderFactory;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class ModuleCallbacks extends Backend
+final readonly class ModuleCallbacks
 {
     public function __construct(
-        private readonly FinderFactory $finderFactory,
-        private readonly Security $security,
-        private readonly ImageSizes $imageSizes,
+        private FinderFactory $finderFactory,
+        private Security $security,
+        private ImageSizes $imageSizes,
     ) {
     }
 
     /**
      * @return array<mixed>
      */
-    #[AsCallback(table: 'tl_module', target: 'fields.galleryCoverSize.options')]
+    #[AsCallback(table: 'tl_module', target: 'fields.galleryCoverImageSize.options')]
+    #[AsCallback(table: 'tl_module', target: 'fields.galleryImageSize.options')]
     public function getImageSizes(): array
     {
         $user = $this->security->getUser();

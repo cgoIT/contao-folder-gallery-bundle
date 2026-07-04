@@ -15,9 +15,14 @@ $GLOBALS['TL_LANG']['tl_module']['galleryRoot'] = [
     'Select the folder that contains the folders of your gallery.',
 ];
 
-$GLOBALS['TL_LANG']['tl_module']['galleryCoverSize'] = [
+$GLOBALS['TL_LANG']['tl_module']['galleryCoverImageSize'] = [
     'Gallery cover size',
     'Select the size of the gallery cover images.',
+];
+
+$GLOBALS['TL_LANG']['tl_module']['galleryImageSize'] = [
+    'Gallery image size',
+    'Select the size of the thumbnails in a gallery.',
 ];
 
 $GLOBALS['TL_LANG']['tl_module']['galleryContentTpl'] = [

@@ -15,9 +15,14 @@ $GLOBALS['TL_LANG']['tl_module']['galleryRoot'] = [
     'Wähle das Verzeichnis, das die Ordner für deine Galerie enthält.',
 ];
 
-$GLOBALS['TL_LANG']['tl_module']['galleryCoverSize'] = [
+$GLOBALS['TL_LANG']['tl_module']['galleryCoverImageSize'] = [
     'Galerie Covergröße',
     'Wähle die Größe der Galerie Coverbilder.',
+];
+
+$GLOBALS['TL_LANG']['tl_module']['galleryImageSize'] = [
+    'Galerie Bildgröße',
+    'Wähle die Größe der Vorschaubilder in einer Galerie.',
 ];
 
 $GLOBALS['TL_LANG']['tl_module']['galleryContentTpl'] = [

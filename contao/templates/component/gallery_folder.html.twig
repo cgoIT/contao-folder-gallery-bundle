@@ -10,9 +10,11 @@
 <article{{ wrapper_attributes }}>
     {% if folder.coverFigure %}
         <div class="module-gallery-overview__image">
-            {% with {figure: folder.coverFigure} %}
-                {{ block('figure_component') }}
-            {% endwith %}
+            <a href="{{ folder.url }}">
+                {% with {figure: folder.coverFigure} %}
+                    {{ block('figure_component') }}
+                {% endwith %}
+            </a>
         </div>
     {% endif %}
 
@@ -29,7 +31,7 @@
 
         {% if folder.description %}
             <div class="module-gallery-overview__description">
-                {{ folder.description }}
+                {{ folder.description|raw }}
             </div>
         {% endif %}
     </div>
