@@ -10,7 +10,7 @@
 
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['title'] = ['Titel', 'Der Titel der Galerie.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['description'] = ['Beschreibung', 'Beschreibung der Galerie.'];
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['cover'] = ['Titelbild', 'Wählen Sie ein Bild aus, das als Vorschaubild der Galerie verwendet werden soll.'];
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['cover'] = ['Titelbild', 'Wählen Sie ein Bild aus, das als Vorschaubild der Galerie verwendet werden soll. Wird kein Bild ausgewählt, dann wird das erste Bild aus dem zugehörigen Gallerieordner verwendet.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['publishedFrom'] = ['Veröffentlicht ab', 'Die Galerie erst ab diesem Zeitpunkt veröffentlichen.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['publishedUntil'] = ['Veröffentlicht bis', 'Die Galerie nur bis zu diesem Zeitpunkt veröffentlichen.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['sortOrder'] = ['Sortierreihenfolge', 'Legen Sie fest, in welcher Reihenfolge Untergalerien angezeigt werden.'];

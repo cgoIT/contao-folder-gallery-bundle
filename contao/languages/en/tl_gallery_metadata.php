@@ -10,7 +10,7 @@
 
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['title'] = ['Title', 'Title of the gallery.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['description'] = ['Description', 'Description of the gallery.'];
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['cover'] = ['Cover image', 'Select the image that should be used as the gallery cover.'];
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['cover'] = ['Cover image', 'Select the image that should be used as the gallery cover. If no image is selected, the first image from the corresponding gallery folder will be used.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['publishedFrom'] = ['Published from', 'Publish the gallery starting at this date and time.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['publishedUntil'] = ['Published until', 'Publish the gallery only until this date and time.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['sortOrder'] = ['Sort order', 'Choose how child galleries should be sorted.'];
