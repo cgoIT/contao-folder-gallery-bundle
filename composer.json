@@ -73,6 +73,7 @@
       "@phpstan",
       "@twig-cs-fixer",
       "@yamllint",
+      "@stylelint",
       "@depcheck",
       "@phpunit"
     ]

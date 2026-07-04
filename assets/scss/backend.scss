@@ -1,187 +1,182 @@
 #folder_gallery {
-  display: grid;
-  grid-template-areas: "nav editor";
-  grid-template-columns: auto 1fr;
+    display: grid;
+    grid-template-areas: 'nav editor';
+    grid-template-columns: auto 1fr;
 
-  height: calc(100vh - 7rem);
-  overflow: hidden;
-
-  position: relative;
-
-  * {
-    scrollbar-width: thin;
-  }
-
-  .nav {
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    grid-area: nav;
-    max-width: -moz-max-content;
-    max-width: max-content;
-    min-width: 180px;
+    height: calc(100vh - 7rem);
     overflow: hidden;
-    resize: horizontal;
 
-    .tree {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-
-      nav {
-        height: 100%;
-        overflow: auto;
-        box-sizing: border-box;
-        white-space: nowrap;
-        padding: 12px 4px;
-
-        ol {
-          padding: 0;
-          margin: 0;
-        }
-
-        > ol > li {
-          > ol {
-            li {
-              margin-left: 0.75em;
-              border-left: thin solid var(--tree-line);
-
-              &::before {
-                content: "";
-                width: 0.5em;
-                height: 0.75em;
-                vertical-align: top;
-                border-bottom: thin solid var(--tree-line);
-                display: inline-block;
-              }
-
-              &:last-child {
-                border-left: none;
-
-                &::before {
-                  border-left: thin solid var(--tree-line);
-                }
-              }
-
-              > :not(ol) {
-                display: inline-flex;
-                align-items: center;
-              }
-            }
-          }
-
-          > .node {
-            margin-left: 4px;
-          }
-        }
-
-        .node {
-          font-size: 0.75rem;
-
-          display: inline-flex;
-          align-items: center;
-          gap: .35rem;
-
-          color: var(--text);
-
-          cursor: pointer;
-
-          &__icon {
-            display: inline-flex;
-            align-items: center;
-
-            svg {
-              width: 16px;
-              height: 16px;
-              flex-shrink: 0;
-
-              color: var(--blue);
-            }
-          }
-
-          &__label {
-            white-space: nowrap;
-          }
-
-          &--group .node__icon svg {
-            color: var(--green);
-          }
-
-          &--gallery .node__icon svg {
-            color: var(--blue);
-          }
-
-          &--hidden .node__icon svg {
-            color: var(--gray);
-          }
-
-          &--unpublished {
-            opacity: .6;
-
-            svg {
-              opacity: 1;
-              color: var(--gray);
-            }
-          }
-
-          &--active {
-            .node__label {
-              padding: 3px;
-              background: var(--drag-bg);
-              border-radius: 3px;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .editor {
-    grid-area: editor;
-    overflow-y: auto;
     position: relative;
 
-    .initial {
-      pointer-events: none;
-      visibility: hidden;
+    * {
+        scrollbar-width: thin;
+    }
 
-      .explainer {
-        background-color: var(--content-bg);
-        line-height: 1.3;
-        max-width: 60ch;
-        padding: 12px;
+    .nav {
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        grid-area: nav;
+        max-width: max-content;
+        min-width: 180px;
+        overflow: hidden;
+        resize: horizontal;
 
-        h3 {
-           margin-bottom: 12px;
+        .tree {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+
+            nav {
+                height: 100%;
+                overflow: auto;
+                box-sizing: border-box;
+                white-space: nowrap;
+                padding: 12px 4px;
+
+                ol {
+                    padding: 0;
+                    margin: 0;
+                }
+
+                > ol > li {
+                    > ol {
+                        li {
+                            margin-left: 0.75em;
+                            border-left: thin solid var(--tree-line);
+
+                            &::before {
+                                content: '';
+                                width: 0.5em;
+                                height: 0.75em;
+                                vertical-align: top;
+                                border-bottom: thin solid var(--tree-line);
+                                display: inline-block;
+                            }
+
+                            &:last-child {
+                                border-left: none;
+
+                                &::before {
+                                    border-left: thin solid var(--tree-line);
+                                }
+                            }
+
+                            > :not(ol) {
+                                display: inline-flex;
+                                align-items: center;
+                            }
+                        }
+                    }
+
+                    > .node {
+                        margin-left: 4px;
+                    }
+                }
+
+                .node {
+                    font-size: 0.75rem;
+
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.35rem;
+
+                    color: var(--text);
+
+                    cursor: pointer;
+
+                    &__icon {
+                        display: inline-flex;
+                        align-items: center;
+
+                        svg {
+                            width: 16px;
+                            height: 16px;
+                            flex-shrink: 0;
+
+                            color: var(--blue);
+                        }
+                    }
+
+                    &__label {
+                        white-space: nowrap;
+                    }
+
+                    &--group .node__icon svg {
+                        color: var(--green);
+                    }
+
+                    &--gallery .node__icon svg {
+                        color: var(--blue);
+                    }
+
+                    &--hidden .node__icon svg {
+                        color: var(--gray);
+                    }
+
+                    &--unpublished {
+                        opacity: 0.6;
+
+                        svg {
+                            opacity: 1;
+                            color: var(--gray);
+                        }
+                    }
+
+                    &--active {
+                        .node__label {
+                            padding: 3px;
+                            background: var(--drag-bg);
+                            border-radius: 3px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .editor {
+        grid-area: editor;
+        overflow-y: auto;
+        position: relative;
+
+        .initial {
+            pointer-events: none;
+            visibility: hidden;
+
+            .explainer {
+                background-color: var(--content-bg);
+                line-height: 1.3;
+                max-width: 60ch;
+                padding: 12px;
+
+                h3 {
+                    margin-bottom: 12px;
+                }
+
+                svg {
+                    animation: point-left 4s infinite;
+                    margin-left: 1ch;
+                    vertical-align: middle;
+                }
+            }
         }
 
-        svg {
-          animation: point-left 4s infinite;
-          margin-left: 1ch;
-          vertical-align: middle;
+        .panel:not(:has(*)) {
+            background-color: var(--panel-bg);
+            height: 100%;
+            position: relative;
         }
-      }
-    }
 
-    .panel:not(:has(*)) {
-      background-color: var(--panel-bg);
-      height: 100%;
-      position: relative;
+        .panel:not(:has(*)) + .initial {
+            align-items: center;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            padding: 12px;
+            pointer-events: auto;
+            position: absolute;
+            visibility: visible;
+        }
     }
-
-    .panel:not(:has(*))+.initial {
-      align-items: center;
-      bottom: 0;
-      display: flex;
-      justify-content: center;
-      left: 0;
-      padding: 12px;
-      pointer-events: auto;
-      position: absolute;
-      right: 0;
-      top: 0;
-      visibility: visible;
-    }
-  }
 }
-
