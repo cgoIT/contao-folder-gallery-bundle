@@ -2,7 +2,21 @@ services:
    _defaults:
       autoconfigure: true
       autowire: true
+      bind:
+        $paletteBuilder: '@contao.data_container.palette_builder'
+        $buttonsBuilder: '@contao.data_container.buttons_builder'
+        $globalOperationsBuilder: '@contao.data_container.global_operations_builder'
 
    Cgoit\ContaoFolderGalleryBundle\:
       resource: ../src
       exclude: ../src/{ContaoManager,DependencyInjection,CgoitFolderGalleryBundle.php}
+
+   Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface:
+      alias: Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider
+      public: true
+
+   Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager:
+      public: true
+
+   Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator:
+      public: true

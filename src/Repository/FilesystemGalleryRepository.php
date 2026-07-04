@@ -5,30 +5,32 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Loader\MetadataLoader;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Contao\CoreBundle\Slug\Slug;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
 
+#[AsAlias(GalleryRepositoryInterface::class)]
 final readonly class FilesystemGalleryRepository implements GalleryRepositoryInterface
 {
     public function __construct(
-        private MetadataLoader $metadataLoader,
+        private GalleryMetadataReader $metadataLoader,
         private GalleryImageLoaderInterface $galleryImageLoader,
         private Slug $slug,
     ) {
     }
 
-    public function findOverview(string $rootPath): GalleryOverview
+    public function findOverview(string $rootPath, bool $blnShowUnpublished = false): GalleryOverview
     {
         $folders = [];
         $folderIndex = [];
 
         foreach ($this->getDirectories($rootPath) as $subFolder) {
-            $folder = $this->createFolder($subFolder, $folderIndex);
+            $folder = $this->createFolder($subFolder, $folderIndex, [], true, $blnShowUnpublished);
 
             if (null !== $folder) {
                 $folders[] = $folder;
@@ -38,25 +40,18 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $metadata = $this->metadataLoader->read($rootPath);
         $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryOverview($folders, $folderIndex);
-    }
-
-    public function findFolderByPath(string $rootPath, string $path): GalleryFolder|null
-    {
-        $overview = $this->findOverview($rootPath);
-
-        return $overview->folderIndex[$path] ?? null;
+        return new GalleryOverview($rootPath, $folders, $folderIndex);
     }
 
     /**
      * @param array<string>                $parentTrail
      * @param array<string, GalleryFolder> $folderIndex
      */
-    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true): GalleryFolder|null
+    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true, bool $blnShowUnpublished = false): GalleryFolder|null
     {
         $metadata = $this->metadataLoader->read($directory);
 
-        if (!$metadata->isPublished()) {
+        if (!$blnShowUnpublished && !$metadata->isPublished()) {
             return null;
         }
 
@@ -70,7 +65,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
 
         if ($recursive) {
             foreach ($this->getDirectories($directory) as $subFolder) {
-                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive);
+                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive, $blnShowUnpublished);
 
                 if (null !== $folder) {
                     $folders[] = $folder;
@@ -83,10 +78,9 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $folder = new GalleryFolder(
             slug: $slug,
             title: $metadata->title ?? basename($directory),
+            filesystemDirectory: $directory,
             trail: $trail,
-            description: $metadata->description,
-            publishedFrom: $metadata->publishedFrom,
-            publishedUntil: $metadata->publishedUntil,
+            metadata: $metadata,
             folders: $folders,
             images: $this->galleryImageLoader->loadImages(
                 $directory,

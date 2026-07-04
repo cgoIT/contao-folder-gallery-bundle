@@ -1,0 +1,29 @@
+{% use '@Contao/component/_figure.html.twig' %}
+
+<div class="gallery-content">
+
+    {% if content.folder.title %}
+        <h1>{{ content.folder.title }}</h1>
+    {% endif %}
+
+    {% if content.folder.description %}
+        <div class="gallery-content__description">
+            {{ content.folder.description|raw }}
+        </div>
+    {% endif %}
+
+    <div class="gallery-content__subfolders">
+        {% for folder in content.children %}
+            {{ folder.title }}
+        {% endfor %}
+    </div>
+
+    <div class="gallery-content__images">
+        {% for image in content.images %}
+            {% with {figure: image} %}
+                {{ block('figure_component') }}
+            {% endwith %}
+        {% endfor %}
+    </div>
+
+</div>

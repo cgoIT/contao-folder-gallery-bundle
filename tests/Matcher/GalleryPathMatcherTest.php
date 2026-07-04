@@ -15,9 +15,11 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Matcher;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Contao\CoreBundle\Filesystem\Dbafs\ChangeSet\ChangeSet;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(GalleryPathMatcher::class)]
 final class GalleryPathMatcherTest extends TestCase
 {
     #[DataProvider('affectedGalleryProvider')]

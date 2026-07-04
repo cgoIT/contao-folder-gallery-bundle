@@ -7,6 +7,7 @@ use ShipMonk\ComposerDependencyAnalyser\Config\ErrorType;
 
 $config = new Configuration();
 $config
+    ->ignoreErrorsOnPackage('contao/test-case', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackage('phpunit/phpunit', [ErrorType::DEV_DEPENDENCY_IN_PROD]);
 
 return $config;

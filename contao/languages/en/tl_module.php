@@ -19,3 +19,13 @@ $GLOBALS['TL_LANG']['tl_module']['galleryCoverSize'] = [
     'Gallery cover size',
     'Select the size of the gallery cover images.',
 ];
+
+$GLOBALS['TL_LANG']['tl_module']['galleryContentTpl'] = [
+    'Content Template',
+    'Template to use for the contents of a gallery',
+];
+
+$GLOBALS['TL_LANG']['tl_module']['galleryFolderTpl'] = [
+    'Folder Template',
+    'Template for the folders of a gallery',
+];

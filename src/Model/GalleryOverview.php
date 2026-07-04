@@ -19,8 +19,14 @@ final readonly class GalleryOverview
      * @param array<string, GalleryFolder> $folderIndex
      */
     public function __construct(
+        public string $filesystemDirectory,
         public array $folders,
         public array $folderIndex,
     ) {
+    }
+
+    public function findFolderByPath(string $path): GalleryFolder|null
+    {
+        return $this->folderIndex[$path] ?? null;
     }
 }

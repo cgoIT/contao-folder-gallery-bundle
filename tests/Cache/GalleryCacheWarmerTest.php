@@ -14,52 +14,25 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Cache;
 
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheWarmer;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
-use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
-use PHPUnit\Framework\TestCase;
+use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
+use Contao\TestCase\ContaoTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-final class GalleryCacheWarmerTest extends TestCase
+#[CoversClass(GalleryCacheWarmer::class)]
+final class GalleryCacheWarmerTest extends ContaoTestCase
 {
     public function testWarmsUpAllConfiguredGalleryRoots(): void
     {
-        $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
+        $contaoFramework = $this->createContaoFrameworkStub();
+
+        $rootProvider = $this->createMock(CachedGalleryFolderProviderInterface::class);
         $rootProvider
             ->expects($this->once())
-            ->method('getGalleryRoots')
-            ->willReturn([
-                'files/gallery',
-                'files/archive',
-            ])
+            ->method('findAllOverviews')
+            ->willReturn([new GalleryOverview('/files/gallery', [], [])])
         ;
 
-        $repository = $this->createMock(GalleryRepositoryInterface::class);
-        $repository
-            ->expects($this->exactly(2))
-            ->method('findOverview')
-            ->willReturn(new GalleryOverview([], []))
-        ;
-
-        $warmer = new GalleryCacheWarmer($rootProvider, $repository);
-
-        $warmer->warmUp('/tmp');
-    }
-
-    public function testDoesNothingIfNoGalleryRootsExist(): void
-    {
-        $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
-        $rootProvider
-            ->expects($this->once())
-            ->method('getGalleryRoots')
-            ->willReturn([])
-        ;
-
-        $repository = $this->createMock(GalleryRepositoryInterface::class);
-        $repository
-            ->expects($this->never())
-            ->method('findOverview')
-        ;
-
-        $warmer = new GalleryCacheWarmer($rootProvider, $repository);
+        $warmer = new GalleryCacheWarmer($contaoFramework, $rootProvider);
 
         $warmer->warmUp('/tmp');
     }

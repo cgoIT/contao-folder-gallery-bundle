@@ -10,12 +10,11 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-namespace Cgoit\ContaoFolderGalleryBundle\Cache;
+namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-final readonly class GalleryCacheKeyGenerator
+enum OverviewMode: string
 {
-    public function overview(string $rootPath): string
-    {
-        return 'gallery.overview.'.md5($rootPath);
-    }
+    case Gallery = 'gallery';
+    case Group = 'group';
+    case Hidden = 'hidden';
 }

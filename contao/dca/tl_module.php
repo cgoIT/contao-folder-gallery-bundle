@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-use Cgoit\ContaoFolderGalleryBundle\FrontendModule\GalleryOverviewModule;
+use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 
 /*
  * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
@@ -20,10 +20,10 @@ use Cgoit\ContaoFolderGalleryBundle\FrontendModule\GalleryOverviewModule;
  * @license    LGPL-3.0-or-later
  */
 
-$GLOBALS['TL_DCA']['tl_module']['palettes'][GalleryOverviewModule::TYPE]
+$GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
     .'{config_legend},galleryRoot,galleryCoverSize;'
-    .'{template_legend:collapsed},customTpl,galleryFolderTpl;'
+    .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl;'
     .'{protected_legend:collapsed},protected;'
     .'{expert_legend:collapsed},guests,cssID;'
     .'{invisible_legend:collapsed},invisible,start,stop';
@@ -44,6 +44,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryCoverSize'] =
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['galleryFolderTpl'] = [
+    'inputType' => 'select',
+    'eval' => ['chosen' => true, 'tl_class' => 'clr w50'],
+    'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryContentTpl'] = [
     'inputType' => 'select',
     'eval' => ['chosen' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default ''",

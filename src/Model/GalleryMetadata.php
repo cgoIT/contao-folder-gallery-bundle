@@ -14,6 +14,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
 final readonly class GalleryMetadata
 {
+    public const string DCA_TABLE_NAME = 'tl_gallery_metadata';
+
     public function __construct(
         public string|null $title = null,
         public string|null $description = null,
@@ -21,6 +23,7 @@ final readonly class GalleryMetadata
         public \DateTimeImmutable|null $publishedFrom = null,
         public \DateTimeImmutable|null $publishedUntil = null,
         public SortOrder $sortOrder = SortOrder::Asc,
+        public OverviewMode $overviewMode = OverviewMode::Gallery,
     ) {
     }
 
@@ -41,5 +44,21 @@ final readonly class GalleryMetadata
         }
 
         return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getCurrentRecord(): array
+    {
+        return [
+            'title' => $this->title,
+            'description' => $this->description,
+            'cover' => $this->cover,
+            'publishedFrom' => $this->publishedFrom?->getTimestamp(),
+            'publishedUntil' => $this->publishedUntil?->getTimestamp(),
+            'sortOrder' => $this->sortOrder->value,
+            'overviewMode' => $this->overviewMode->value,
+        ];
     }
 }

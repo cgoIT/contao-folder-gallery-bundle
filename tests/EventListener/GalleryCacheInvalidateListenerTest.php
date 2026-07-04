@@ -12,23 +12,30 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener;
 
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Contao\CoreBundle\Filesystem\Dbafs\ChangeSet\ChangeSet;
 use Contao\CoreBundle\Filesystem\Dbafs\DbafsChangeEvent;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
+#[CoversClass(GalleryCacheInvalidateListener::class)]
+#[UsesClass(GalleryCacheInvalidator::class)]
+#[UsesClass(GalleryPathMatcher::class)]
 final class GalleryCacheInvalidateListenerTest extends TestCase
 {
     public function testInvalidatesCacheIfGalleryIsAffected(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache
             ->expects($this->once())
-            ->method('clear')
+            ->method('invalidateTags')
+            ->with(GalleryCache::getAllTags())
             ->willReturn(true)
         ;
 
@@ -47,7 +54,6 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
         $matcher = new GalleryPathMatcher($rootProvider);
 
         $listener = new GalleryCacheInvalidateListener($invalidator, $matcher);
-
         $listener(
             new DbafsChangeEvent(
                 new ChangeSet([['hash' => '', 'path' => 'files/gallery', 'type' => ChangeSet::TYPE_DIRECTORY]], [], []),
@@ -57,10 +63,12 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
 
     public function testDoesNotInvalidateCacheIfGalleryIsNotAffected(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache
             ->expects($this->never())
-            ->method('clear')
+            ->method('invalidateTags')
+            ->with(GalleryCache::getAllTags())
+            ->willReturn(true)
         ;
 
         $invalidator = new GalleryCacheInvalidator($cache);
@@ -77,15 +85,7 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
 
         $matcher = new GalleryPathMatcher($rootProvider);
 
-        $listener = new GalleryCacheInvalidateListener(
-            $invalidator,
-            $matcher,
-        );
-
-        $listener(
-            new DbafsChangeEvent(
-                ChangeSet::createEmpty(),
-            ),
-        );
+        $listener = new GalleryCacheInvalidateListener($invalidator, $matcher);
+        $listener(new DbafsChangeEvent(ChangeSet::createEmpty()));
     }
 }

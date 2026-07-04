@@ -1,0 +1,18 @@
+{% extends '@Contao/frontend_module/_base.html.twig' %}
+
+{% block content %}
+
+    {% if content is defined %}
+        {{ include(contentTemplate, {
+            content,
+        }) }}
+    {% else %}
+        {% for folder in overview.folders %}
+            {{ include(folderTemplate, {
+                folder,
+                level: 1,
+            }) }}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

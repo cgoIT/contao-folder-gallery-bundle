@@ -17,21 +17,29 @@
   },
   "require": {
     "php": "^8.3",
+    "ext-ctype": "*",
     "contao/core-bundle": "^5.7",
     "contao/image": "^1.2",
-    "psr/cache": "^3.0",
+    "knplabs/knp-menu": "^3.8",
+    "psr/container": "^2.0",
+    "psr/log": "^3.0",
+    "symfony/cache": "^7.3",
+    "symfony/cache-contracts": "^3.7",
     "symfony/config": "^7.3",
     "symfony/dependency-injection": "^7.3",
-    "symfony/event-dispatcher": "^7.4",
+    "symfony/event-dispatcher": "^7.3",
     "symfony/http-foundation": "^7.3",
     "symfony/http-kernel": "^7.3",
     "symfony/filesystem": "^7.3",
+    "symfony/routing": "^7.3",
     "symfony/security-bundle": "^7.3",
-    "symfony/yaml": "^7.3",
-    "twig/twig": "^3"
+    "symfony/security-csrf": "^7.3",
+    "symfony/translation-contracts": "^3.7",
+    "symfony/yaml": "^7.3"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",
+    "contao/test-case": "^5.7",
     "terminal42/contao-build-tools": "dev-main",
     "phpunit/phpunit": "^12.5 || ^13.2"
   },
@@ -56,7 +64,8 @@
     "contao-manager-plugin": "Cgoit\\ContaoFolderGalleryBundle\\ContaoManager\\Plugin"
   },
   "scripts": {
-    "phpunit": "vendor/bin/phpunit",
+    "phpunit": "vendor/bin/phpunit --no-coverage",
+    "phpunit:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox",
     "unit-tests": "@phpunit",
     "all": [
       "@ecs",
@@ -64,6 +73,7 @@
       "@phpstan",
       "@twig-cs-fixer",
       "@yamllint",
+      "@stylelint",
       "@depcheck",
       "@phpunit"
     ]

@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Cache;
 
-use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 final readonly class GalleryCacheInvalidator
 {
-    public function __construct(private CacheItemPoolInterface $cache)
+    public function __construct(private TagAwareCacheInterface $cache)
     {
     }
 
     public function invalidate(): void
     {
-        $this->cache->clear();
+        $this->cache->invalidateTags(GalleryCache::getAllTags());
     }
 }
