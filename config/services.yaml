@@ -2,6 +2,10 @@ services:
    _defaults:
       autoconfigure: true
       autowire: true
+      bind:
+        $paletteBuilder: '@contao.data_container.palette_builder'
+        $buttonsBuilder: '@contao.data_container.buttons_builder'
+        $globalOperationsBuilder: '@contao.data_container.global_operations_builder'
 
    Cgoit\ContaoFolderGalleryBundle\:
       resource: ../src

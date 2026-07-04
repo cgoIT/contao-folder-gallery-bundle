@@ -16,19 +16,16 @@ use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
-use Contao\CoreBundle\Exception\ResponseException;
+use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
 use Contao\Environment;
-use Contao\FilesModel;
-use Contao\FileTree;
 use Contao\Input;
-use Contao\PageTree;
-use Contao\Picker;
 use Contao\System;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
 
 final class GalleryBackendController extends AbstractBackendController
 {
@@ -38,7 +35,10 @@ final class GalleryBackendController extends AbstractBackendController
 
     public function __construct(
         private readonly UrlGeneratorInterface $router,
+        private readonly ContaoCsrfTokenManager $csrfTokenManager,
         private readonly GalleryFolderProviderInterface $folderProvider,
+        private readonly GalleryMetadataAjaxHandler $ajaxHandler,
+        private readonly DC_GalleryMetadata $dataContainer,
     ) {
     }
 
@@ -51,60 +51,37 @@ final class GalleryBackendController extends AbstractBackendController
     {
         System::loadLanguageFile(GalleryMetadata::DCA_TABLE_NAME);
 
-        $dc = new DC_GalleryMetadata($this->router);
+        // Check the request token
+        if (
+            $request->isMethodSafe()
+            && !\in_array($request->query->get('act'), [null, 'edit'], true)
+            && (null === $request->query->get('rt')
+                || !$this->csrfTokenManager->isTokenValid(new CsrfToken($this->getParameter('contao.csrf_token_name'), $request->query->get('rt')))
+            )
+        ) {
+            $objSession = $request->getSession();
+            $objSession->set('INVALID_TOKEN_URL', Environment::get('requestUri'));
+
+            return new RedirectResponse($this->router->generate('contao_backend_confirm'));
+        }
+
+        $this->dataContainer->initialize(Input::get('id', true));
 
         // Ajax request
         $action = Input::post('action');
         if ($action && Environment::get('isAjaxRequest')) {
-            $this->doAjax($action, $dc);
+            $this->ajaxHandler->executePostActions($action, $this->dataContainer);
         }
 
         $editor = null;
 
-        if (null !== $request->query->get('id')) {
-            $editor = $dc->edit();
+        if (null !== $this->dataContainer->id) {
+            $editor = $this->dataContainer->edit();
         }
 
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
             'overviews' => $this->folderProvider->findAllOverviews(true),
             'editor' => $editor,
         ]);
-    }
-
-    private function doAjax(string $action, DC_GalleryMetadata $dc): void
-    {
-        if ('reloadFiletree' !== $action) {
-            return;
-        }
-
-        $intId = Input::get('id', true);
-        $strField = $dc->inputName = Input::post('name');
-
-        if (!isset($GLOBALS['TL_DCA'][$dc->table]['fields'][$strField])) {
-            throw new BadRequestHttpException('Invalid field name: '.$strField);
-        }
-
-        $dcaField = $GLOBALS['TL_DCA'][$dc->table]['fields'][$strField];
-        $varValue = Input::post('value', true);
-
-        if ($varValue) {
-            if (\dirname($varValue) !== $intId && !str_starts_with($varValue, rtrim($intId, '/').'/')) {
-                throw new BadRequestHttpException('Image from invalid folder selected: '.$varValue);
-            }
-
-            $file = FilesModel::findByPath($varValue);
-
-            if (null === $file) {
-                throw new BadRequestHttpException(\sprintf('File "%s" not found.', $varValue));
-            }
-
-            $varCoverUuid = $file->uuid;
-
-            /** @var class-string<FileTree|PageTree|Picker> $strClass */
-            $strClass = $GLOBALS['BE_FFL']['fileTree'] ?? null;
-            $objWidget = new $strClass($strClass::getAttributesFromDca($dcaField, $dc->inputName, $varCoverUuid, $strField, $dc->table, $dc));
-
-            throw new ResponseException(new Response($objWidget->generate()));
-        }
     }
 }
