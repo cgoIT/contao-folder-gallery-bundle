@@ -18,7 +18,7 @@
         {% endfor %}
     </div>
 
-    <div class="gallery-content__images">
+    <div class="gallery-content__images" data-photoswipe="pswp">
         {% for image in content.images %}
             <div class="gallery-content__image">
                 {% with {figure: image} %}

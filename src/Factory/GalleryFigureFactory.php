@@ -8,10 +8,14 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Image\Studio\Figure;
+use Contao\CoreBundle\Image\Studio\ImageResult;
 use Contao\CoreBundle\Image\Studio\Studio;
 use Contao\CoreBundle\Routing\PageFinder;
+use Contao\Image\DeferredImage;
+use Contao\Image\Image;
 use Contao\Image\ImageInterface;
 use Contao\Image\PictureConfiguration;
+use Contao\Image\PictureInterface;
 use Contao\LayoutModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -53,18 +57,44 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
                 ->enableLightbox()
             ;
         } elseif (GalleryViewer::Photoswipe) {
+            $photoswipeImage = $this->getPhotoswipeImage($image);
+
+            $picture = $photoswipeImage?->getPicture();
+
+            $linkAttributes = [
+                'href' => $photoswipeImage?->getImageSrc(),
+                'target' => '_blank',
+                'class' => 'pswp-link',
+                'data-pswp-height' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getHeight(),
+                'data-pswp-width' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getWidth(),
+            ];
+
+
+            $urls = $this->getAdditionalSourceUrls($picture);
+            foreach ($urls as $type => $url) {
+                $linkAttributes['data-pswp-'.$type.'-src'] = $url;
+            }
+
             $builder = $builder
-                ->setLinkAttributes([
-                    'href' => $this->getPhotoswipeUrl($image),
-                    'data-pspw-height' => '1024px',
-                ])
+                ->setLinkAttributes($linkAttributes)
             ;
         }
 
         return $builder->buildIfResourceExists();
     }
 
-    private function getPhotoswipeUrl(GalleryImage $galleryImage): string|null
+    public function createCoverImage(GalleryImage $image, array|int|string|PictureConfiguration|null $size, string $folderUrl): Figure|null
+    {
+        return $this->studio
+            ->createFigureBuilder()
+            ->fromUuid($image->uuid)
+            ->setSize($size)
+            ->setLinkAttribute('href', $folderUrl)
+            ->buildIfResourceExists()
+        ;
+    }
+
+    private function getPhotoswipeImage(GalleryImage $galleryImage): ImageResult|null
     {
         $getResourceOrUrl = function (ImageInterface|string $target): array {
             if ($target instanceof ImageInterface) {
@@ -117,7 +147,6 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
                 $filePathOrImage,
                 $this->getDefaultLightboxSizeConfiguration(),
             )
-            ->getImageSrc()
         ;
     }
 
@@ -139,5 +168,33 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
         }
 
         return StringUtil::deserialize($layoutModel->lightboxSize, true);
+    }
+
+    /**
+     * @return array<string,string>|null
+     */
+    private function getAdditionalSourceUrls(PictureInterface|null $picture): array
+    {
+        $urls = [];
+
+        if (null === $picture) {
+            return $urls;
+        }
+
+        foreach ($picture->getSources() as $source) {
+            if (!\in_array($source['type'] ?? null, ['image/webp', 'image/avif'], true)) {
+                continue;
+            }
+
+            $url = $source['src']->getUrl($this->projectDir);
+
+            if (null === $url) {
+                continue;
+            }
+
+            $urls[str_replace('image/', '', $source['type'])] = '/'.$url;
+        }
+
+        return $urls;
     }
 }

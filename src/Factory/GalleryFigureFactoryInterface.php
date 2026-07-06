@@ -15,4 +15,9 @@ interface GalleryFigureFactoryInterface
      * @param PictureConfiguration|array<mixed>|int|string|null $size
      */
     public function create(GalleryImage $image, PictureConfiguration|array|int|string|null $size, GalleryViewer $galleryViewer = GalleryViewer::None, string|null $lightboxGroupIdentifier = null): Figure|null;
+
+    /**
+     * @param PictureConfiguration|array<mixed>|int|string|null $size
+     */
+    public function createCoverImage(GalleryImage $image, PictureConfiguration|array|int|string|null $size, string $folderUrl): Figure|null;
 }

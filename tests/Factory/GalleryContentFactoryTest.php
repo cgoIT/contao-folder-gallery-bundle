@@ -82,7 +82,7 @@ final class GalleryContentFactoryTest extends ContaoTestCase
             ->expects($this->atMost(3))
             ->method('create')
             ->willReturnCallback(
-                function ($image, PictureConfiguration|array|int|string|null $size, $viewer, string|null $group) use ($imageA, $imageB, $figureA, $figureB) {
+                function ($image, PictureConfiguration|array|int|string|null $size, $viewer, string|null $group) use ($imageA, $imageB, $figureA, $figureB): Figure|null {
                     $this->assertIsString($size);
                     $this->assertSame(GalleryViewer::None, $viewer);
 
