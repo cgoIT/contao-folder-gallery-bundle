@@ -24,6 +24,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
     .'{config_legend},galleryRoot,galleryCoverImageSize,galleryImageSize;'
     .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl;'
+    .'{viewer_legend:collapsed},galleryViewer;'
     .'{protected_legend:collapsed},protected;'
     .'{expert_legend:collapsed},guests,cssID;'
     .'{invisible_legend:collapsed},invisible,start,stop';
@@ -61,4 +62,10 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryContentTpl'] = [
     'inputType' => 'select',
     'eval' => ['chosen' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryViewer'] = [
+    'inputType' => 'select',
+    'eval' => ['chosen' => true, 'tl_class' => 'w50'],
+    'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default 'lightbox'",
 ];

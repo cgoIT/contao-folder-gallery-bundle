@@ -14,6 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewFactory;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
@@ -105,9 +106,13 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
         $templateName = $model->galleryContentTpl ?: 'component/gallery_content';
 
+        $galleryViewer = GalleryViewer::tryFrom($model->galleryViewer) ?: GalleryViewer::Lightbox;
+
         $template->set(
             'content',
-            $this->contentFactory->create($folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize),
+            $this->contentFactory->create(
+                $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $galleryViewer,
+            ),
         );
         $template->set(
             'contentTemplate',

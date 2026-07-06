@@ -18,11 +18,13 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\CoreBundle\Image\Studio\ImageResult;
+use Contao\Image\PictureConfiguration;
 use Contao\PageModel;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -79,10 +81,18 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         $figureFactory
             ->expects($this->atMost(3))
             ->method('create')
-            ->willReturnMap([
-                [$imageA, 'image-size', $figureA],
-                [$imageB, 'image-size', $figureB],
-            ])
+            ->willReturnCallback(
+                function ($image, PictureConfiguration|array|int|string|null $size, $viewer, string|null $group) use ($imageA, $imageB, $figureA, $figureB) {
+                    $this->assertIsString($size);
+                    $this->assertSame(GalleryViewer::None, $viewer);
+
+                    return match ($image) {
+                        $imageA => $figureA,
+                        $imageB => $figureB,
+                        default => null,
+                    };
+                },
+            )
         ;
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
