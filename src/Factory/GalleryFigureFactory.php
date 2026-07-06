@@ -8,11 +8,10 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Image\Studio\Figure;
+use Contao\CoreBundle\Image\Studio\FigureBuilder;
 use Contao\CoreBundle\Image\Studio\ImageResult;
 use Contao\CoreBundle\Image\Studio\Studio;
 use Contao\CoreBundle\Routing\PageFinder;
-use Contao\Image\DeferredImage;
-use Contao\Image\Image;
 use Contao\Image\ImageInterface;
 use Contao\Image\PictureConfiguration;
 use Contao\Image\PictureInterface;
@@ -51,39 +50,22 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
             ->setSize($size)
         ;
 
-        if (GalleryViewer::Lightbox === $galleryViewer) {
-            $builder = $builder
-                ->setLightboxGroupIdentifier($lightboxGroupIdentifier)
-                ->enableLightbox()
-            ;
-        } elseif (GalleryViewer::Photoswipe) {
-            $photoswipeImage = $this->getPhotoswipeImage($image);
-
-            $picture = $photoswipeImage?->getPicture();
-
-            $linkAttributes = [
-                'href' => $photoswipeImage?->getImageSrc(),
-                'target' => '_blank',
-                'class' => 'pswp-link',
-                'data-pswp-height' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getHeight(),
-                'data-pswp-width' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getWidth(),
-            ];
-
-
-            $urls = $this->getAdditionalSourceUrls($picture);
-            foreach ($urls as $type => $url) {
-                $linkAttributes['data-pswp-'.$type.'-src'] = $url;
-            }
-
-            $builder = $builder
-                ->setLinkAttributes($linkAttributes)
-            ;
-        }
+        $builder = match ($galleryViewer) {
+            GalleryViewer::Lightbox => $this->configureLightbox(
+                $builder,
+                $lightboxGroupIdentifier ?? '',
+            ),
+            GalleryViewer::Photoswipe => $this->configurePhotoswipe(
+                $builder,
+                $image,
+            ),
+            GalleryViewer::None => $builder,
+        };
 
         return $builder->buildIfResourceExists();
     }
 
-    public function createCoverImage(GalleryImage $image, array|int|string|PictureConfiguration|null $size, string $folderUrl): Figure|null
+    public function createCoverImage(GalleryImage $image, PictureConfiguration|array|int|string|null $size, string $folderUrl): Figure|null
     {
         return $this->studio
             ->createFigureBuilder()
@@ -94,49 +76,41 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
         ;
     }
 
+    private function configureLightbox(FigureBuilder $builder, string|null $lightboxGroupIdentifier): FigureBuilder
+    {
+        if (null !== $lightboxGroupIdentifier) {
+            $builder->setLightboxGroupIdentifier($lightboxGroupIdentifier);
+        }
+
+        return $builder->enableLightbox();
+    }
+
+    private function configurePhotoswipe(FigureBuilder $builder, GalleryImage $image): FigureBuilder
+    {
+        $photoswipeImage = $this->getPhotoswipeImage($image);
+
+        $picture = $photoswipeImage?->getPicture();
+
+        $linkAttributes = [
+            'href' => $photoswipeImage?->getImageSrc(),
+            'target' => '_blank',
+            'class' => 'pswp-link',
+            'data-pswp-height' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getHeight(),
+            'data-pswp-width' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getWidth(),
+        ];
+
+        $urls = $this->getAdditionalSourceUrls($picture);
+
+        foreach ($urls as $type => $url) {
+            $linkAttributes['data-pswp-'.$type.'-src'] = $url;
+        }
+
+        return $builder->setLinkAttributes($linkAttributes);
+    }
+
     private function getPhotoswipeImage(GalleryImage $galleryImage): ImageResult|null
     {
-        $getResourceOrUrl = function (ImageInterface|string $target): array {
-            if ($target instanceof ImageInterface) {
-                return [$target, null];
-            }
-
-            $validExtension = \in_array(Path::getExtension($target, true), $this->validImageExtensions, true);
-            $externalUrl = 1 === preg_match('#^https?://#', $target);
-
-            if (!$validExtension) {
-                return [null, null];
-            }
-
-            if ($externalUrl) {
-                return [null, $target];
-            }
-
-            // Check if target is an absolute filesystem path to an existing resource
-            if (Path::isAbsolute($target) && is_file($target)) {
-                return [Path::canonicalize($target), null];
-            }
-
-            $filePath = urldecode($target);
-
-            // Check if target references a resource relative to the project dir
-            $projectPath = Path::join($this->projectDir, $filePath);
-
-            if (is_file($projectPath)) {
-                return [$projectPath, null];
-            }
-
-            // Check if target references a resource relative to the public dir
-            $publicPath = Path::join($this->webDir, $filePath);
-
-            if (is_file($publicPath)) {
-                return [null, $target];
-            }
-
-            return [null, null];
-        };
-
-        [$filePathOrImage, $url] = $getResourceOrUrl($galleryImage->path);
+        [$filePathOrImage, $url] = $this->resolveImage($galleryImage->path);
 
         if (null === $filePathOrImage && null === $url) {
             return null;
@@ -171,7 +145,51 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
     }
 
     /**
-     * @return array<string,string>|null
+     * @return array<mixed>
+     */
+    private function resolveImage(ImageInterface|string $target): array
+    {
+        if ($target instanceof ImageInterface) {
+            return [$target, null];
+        }
+
+        $validExtension = \in_array(Path::getExtension($target, true), $this->validImageExtensions, true);
+        $externalUrl = 1 === preg_match('#^https?://#', $target);
+
+        if (!$validExtension) {
+            return [null, null];
+        }
+
+        if ($externalUrl) {
+            return [null, $target];
+        }
+
+        // Check if target is an absolute filesystem path to an existing resource
+        if (Path::isAbsolute($target) && is_file($target)) {
+            return [Path::canonicalize($target), null];
+        }
+
+        $filePath = urldecode($target);
+
+        // Check if target references a resource relative to the project dir
+        $projectPath = Path::join($this->projectDir, $filePath);
+
+        if (is_file($projectPath)) {
+            return [$projectPath, null];
+        }
+
+        // Check if target references a resource relative to the public dir
+        $publicPath = Path::join($this->webDir, $filePath);
+
+        if (is_file($publicPath)) {
+            return [null, $target];
+        }
+
+        return [null, null];
+    }
+
+    /**
+     * @return array<string, string>
      */
     private function getAdditionalSourceUrls(PictureInterface|null $picture): array
     {
@@ -192,7 +210,12 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
                 continue;
             }
 
-            $urls[str_replace('image/', '', $source['type'])] = '/'.$url;
+            $type = match ($source['type']) {
+                'image/avif' => 'avif',
+                'image/webp' => 'webp',
+            };
+
+            $urls[$type] = '/'.$url;
         }
 
         return $urls;

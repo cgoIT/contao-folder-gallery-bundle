@@ -34,7 +34,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
             ->expects($this->exactly(2))
-            ->method('create')
+            ->method('createCoverImage')
             ->willReturn(null)
         ;
 
@@ -105,7 +105,7 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
             ->expects($this->once())
-            ->method('create')
+            ->method('createCoverImage')
             ->willReturn(null)
         ;
 
