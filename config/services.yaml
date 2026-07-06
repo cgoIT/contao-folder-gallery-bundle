@@ -6,6 +6,9 @@ services:
         $paletteBuilder: '@contao.data_container.palette_builder'
         $buttonsBuilder: '@contao.data_container.buttons_builder'
         $globalOperationsBuilder: '@contao.data_container.global_operations_builder'
+        $validImageExtensions: '%contao.image.valid_extensions%'
+        $projectDir: '%kernel.project_dir%'
+        $webDir: '%contao.web_dir%'
 
    Cgoit\ContaoFolderGalleryBundle\:
       resource: ../src

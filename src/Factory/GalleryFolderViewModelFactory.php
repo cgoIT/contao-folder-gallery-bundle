@@ -24,11 +24,12 @@ final readonly class GalleryFolderViewModelFactory
     public function create(GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $coverImageSize, bool $recursive = true): GalleryFolderViewModel
     {
         $coverImage = $folder->getCoverImage();
+        $url = $this->urlGenerator->generate($page, $folder);
 
         return new GalleryFolderViewModel(
             title: $folder->title,
             slug: $folder->slug,
-            url: $this->urlGenerator->generate($page, $folder),
+            url: $url,
             children: $recursive
                 ? array_map(
                     fn (GalleryFolder $child) => $this->create(
@@ -41,7 +42,7 @@ final readonly class GalleryFolderViewModelFactory
                 )
                 : [],
             coverFigure: $coverImage
-                ? $this->figureFactory->create($coverImage, $coverImageSize)
+                ? $this->figureFactory->createCoverImage($coverImage, $coverImageSize, $url)
                 : null,
             description: $folder->getDescription(),
             overviewMode: $folder->getOverviewMode(),

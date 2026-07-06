@@ -64,7 +64,7 @@ final class GalleryOverviewFactoryTest extends TestCase
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
             ->expects($this->once())
-            ->method('create')
+            ->method('createCoverImage')
             ->willReturn(null)
         ;
 
