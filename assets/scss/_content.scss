@@ -1,24 +1,25 @@
-.module-gallery-overview {
-    &__group {
+.gallery-content {
+    &__description {
         margin-bottom: var(--gallery-section-spacing);
     }
 
-    &__group-title {
-        margin-bottom: var(--gallery-spacing);
-    }
-
-    &__folders {
+    &__subfolders {
         display: grid;
         grid-template-columns: repeat(
             auto-fill,
-            minmax(var(--gallery-overview-column-width), 1fr)
+            minmax(var(--gallery-content-column-width), 1fr)
         );
-        gap: var(--gallery-overview-gap);
+        gap: var(--gallery-content-gap);
+        margin-bottom: var(--gallery-section-spacing);
     }
 
-    &__folder {
-        display: flex;
-        flex-direction: column;
+    &__images {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(var(--gallery-content-column-width), 1fr)
+        );
+        gap: var(--gallery-content-gap);
     }
 
     &__image {
@@ -49,34 +50,6 @@
         &:hover img {
             transform: scale(var(--gallery-hover-scale));
             filter: brightness(var(--gallery-hover-brightness));
-        }
-    }
-
-    &__content {
-        padding-top: var(--gallery-spacing);
-    }
-
-    &__folder-title {
-        margin-bottom: calc(var(--gallery-spacing) * .5);
-
-        h2,
-        h3 {
-            margin: 0;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    &__description {
-        p:last-child {
-            margin-bottom: 0;
         }
     }
 }

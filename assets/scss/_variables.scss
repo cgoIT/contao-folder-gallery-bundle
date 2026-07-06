@@ -1,0 +1,21 @@
+.module-folder-gallery {
+    // Spacing
+    --gallery-spacing: 1rem;
+    --gallery-section-spacing: 2rem;
+
+    // Overview
+    --gallery-overview-column-width: 300px;
+    --gallery-overview-gap: 1.5rem;
+
+    // Gallery
+    --gallery-content-column-width: 200px;
+    --gallery-content-gap: 1rem;
+
+    // Images
+    --gallery-border-radius: .5rem;
+
+    // Hover effects
+    --gallery-hover-scale: 1.04;
+    --gallery-hover-brightness: .95;
+    --gallery-transition-duration: .2s;
+}
