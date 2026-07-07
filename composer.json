@@ -1,6 +1,18 @@
 {
   "name": "cgoit/contao-folder-gallery-bundle",
-  "description": "A Contao CMS extension for creating folder-based image galleries with YAML metadata, responsive images, gallery overviews and customizable frontend templates.",
+  "description": "Automatically build Contao image galleries from folders using YAML metadata and the native image pipeline.",
+  "keywords": [
+    "contao",
+    "gallery",
+    "image gallery",
+    "folder",
+    "filesystem",
+    "yaml",
+    "metadata",
+    "responsive images",
+    "photoswipe",
+    "lightbox"
+  ],
   "license": "LGPL-3.0-or-later",
   "type": "contao-bundle",
   "version": "0.1.0",
