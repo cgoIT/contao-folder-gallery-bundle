@@ -7,21 +7,26 @@
 
 ## Inhaltsverzeichnis
 
-- Warum gibt es diese Erweiterung?
-- Installation
-- Schnellstart (5 Minuten bis zur ersten Galerie)
-- Designprinzipien
-- Metadaten (`_metadata.yml`)
-- Backend
-- Frontend
-- FAQ
-- Lizenz
+- [Kurzüberblick](#kurzüberblick)
+- [Warum gibt es diese Erweiterung?](#warum-gibt-es-diese-erweiterung)
+- [Installation](#installation)
+- [Schnellstart (5 Minuten bis zur ersten Galerie)](#schnellstart-5-minuten-bis-zur-ersten-galerie)
+- [Designprinzipien](#designprinzipien)
+- [Galerie-Struktur](#galerie-struktur)
+- [Metadaten (`_metadata.yml`)](#metadaten-_metadatayml)
+- [Backend](#backend)
+- [Frontend](#frontend)
+- [FAQ](#faq)
+- [Mitwirken](#mitwirken)
+- [Lizenz](#lizenz)
+
+## Kurzüberblick
 
 Das **Contao Folder Gallery Bundle** verfolgt einen anderen Ansatz als klassische Galerie-Erweiterungen.
 
 Anstatt Galerien im Backend anzulegen und Bilder einzelnen Datensätzen zuzuordnen, nutzt diese Erweiterung die bereits
 vorhandene Ordnerstruktur im Dateisystem. Jeder Ordner entspricht genau einer Galerie. Zusätzliche Informationen wie
-Titel, Beschreibung oder Veröffentlichungszeiträume werden direkt in einer `_metadata.yml` innerhalb des jeweiligen
+Titel, Beschreibung oder Veröffentlichungszeiträume werden direkt in einer [`_metadata.yml`](#metadaten-_metadatayml) innerhalb des jeweiligen
 Ordners gespeichert.
 
 Dadurch reduziert sich der Pflegeaufwand auf ein Minimum und bestehende Dateistrukturen können ohne zusätzliche
@@ -62,7 +67,7 @@ Das Contao Folder Gallery Bundle verfolgt deshalb einen anderen Ansatz.
 
 Jeder Ordner repräsentiert genau eine Galerie. Das Bundle erzeugt daraus automatisch Übersichten und Galerieansichten.
 Zusätzliche Informationen wie Titel, Beschreibung, Coverbild oder Veröffentlichungszeiträume werden direkt in
-einer `_metadata.yml` innerhalb des jeweiligen Ordners gespeichert.
+einer [`_metadata.yml`](#metadaten-_metadatayml) innerhalb des jeweiligen Ordners gespeichert.
 
 Damit entfällt der größte Teil der wiederkehrenden Backend-Konfiguration.
 
@@ -78,7 +83,7 @@ Eine Galerie besteht ausschließlich aus
 
 - der vorhandenen Ordnerstruktur innerhalb von `files/`,
 - den Bildern selbst,
-- sowie optionalen `_metadata.yml`-Dateien.
+- sowie optionalen [`_metadata.yml`](#metadaten-_metadatayml)-Dateien.
 
 Die Dateiverwaltung von Contao wird dabei vollständig weiter genutzt. Bilder können wie gewohnt über den
 Contao-Dateimanager hochgeladen und verwaltet werden. Ebenso lassen sich bestehende Workflows mit SFTP, rsync
@@ -106,6 +111,8 @@ composer require cgoit/contao-folder-gallery-bundle
 ### Installation mit dem Contao Manager
 
 Alternativ kann das Bundle bequem über den Contao Manager installiert werden.
+
+Auch bei einer Installation über den Contao Manager muss anschließend die Datenbank aktualisiert werden.
 
 ### Datenbank aktualisieren
 
@@ -155,7 +162,7 @@ In wenigen Minuten zur ersten Galerie:
 
 Fertig. Das Bundle erzeugt daraus automatisch die Galerieübersicht sowie die einzelnen Galerieansichten.
 
-> 💡**Tipp**
+> 💡 **Tipp**
 >
 > Eine `_metadata.yml` ist optional. Ohne Metadaten verwendet das Bundle automatisch sinnvolle Standardwerte.
 > Metadaten können jederzeit später ergänzt werden.
@@ -193,7 +200,7 @@ auf das Contao Folder Gallery Bundle umgestellt werden, ohne die vorhandene Date
 
 Das Contao Folder Gallery Bundle erzeugt Galerien direkt aus der Ordnerstruktur innerhalb des `files/`-Verzeichnisses.
 
-Jeder Ordner repräsentiert dabei genau einen Eintrag der Galerie. Dieser kann entweder als **Galerie** oder
+Jeder Ordner repräsentiert genau eine Galerie. Dieser kann entweder als **Galerie** oder
 als **Galeriegruppe** dargestellt werden.
 
 Eine typische Struktur könnte beispielsweise so aussehen:
@@ -217,17 +224,7 @@ files/
 In diesem Beispiel stellt der Ordner **2026** eine Galeriegruppe dar. Im Frontend wird zunächst die Überschrift
 „2026“ ausgegeben und darunter die Galerien „Freitag“, „Samstag“ und „Sonntag“ angezeigt.
 
-Ob ein Ordner als Galerie oder als Galeriegruppe dargestellt wird, wird in seiner `_metadata.yml` festgelegt.
-
-Jeder Ordner kann zusätzlich eine `_metadata.yml` enthalten, in der beispielsweise
-
-- Titel
-- Beschreibung
-- Coverbild
-- Veröffentlichungszeitraum
-- Sortierung
-
-definiert werden können.
+Ob ein Ordner als Galerie oder als Galeriegruppe dargestellt wird, wird in seiner [`_metadata.yml`](#metadaten-_metadatayml) festgelegt.
 
 > 💡 **Hinweis**
 >
@@ -259,7 +256,7 @@ description: '<p>Die schönsten Bilder vom Freitagabend.</p>'
 cover: IMG_1234.jpg
 
 published_from: '04.09.2026 18:00'
-published_until: '30.09.2076 23:59'
+published_until: '30.09.2027 23:59'
 
 sort_order: asc
 overview_mode: gallery
@@ -276,21 +273,6 @@ overview_mode: gallery
 | `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar |
 | `sort_order` | Sortierreihenfolge der Unterordner (`asc` oder `desc`) |
 | `overview_mode` | Legt fest, wie der Ordner behandelt wird (`gallery`, `group` oder `hidden`) |
-
-### overview_mode
-
-Der Wert `overview_mode` steuert, wie ein Ordner innerhalb der Galerie interpretiert wird.
-
-| Wert | Bedeutung |
-|------|-----------|
-| `gallery` | Der Ordner wird als normale Galerie dargestellt. |
-| `group` | Der Ordner dient als Galeriegruppe. Die enthaltenen Unterordner werden als einzelne Galerien angezeigt. |
-| `hidden` | Der Ordner wird in der Galerie-Struktur übersprungen. Seine Unterordner werden direkt in die übergeordnete Ebene übernommen. Dies eignet sich beispielsweise für rein organisatorische Zwischenordner. |
-
-> 💡 **Hinweis**
->
-> Das Coverbild muss sich im gleichen Ordner befinden wie die `_metadata.yml`. In der Metadatendatei wird
-> ausschließlich der Dateiname gespeichert.
 
 > 💡 **Hinweis**
 >
@@ -355,7 +337,7 @@ gepflegt werden.
 
 Die Galerie wird wie jedes andere Contao-Modul über ein Frontend-Modul eingebunden.
 
-Das Frontend-Modul definiert die Galerie-Wurzel und steuert die Darstellung der Galerie im Frontend.
+Das Frontend-Modul definiert die Galerie-Wurzel und steuert die Darstellung der Galerie im Frontend über die folgenden Einstellungen:
 
 | Einstellung | Beschreibung |
 |--------------|--------------|
@@ -396,13 +378,13 @@ Aktuell werden zwei Viewer unterstützt.
 
 ### Metadaten-Editor
 
-Der Metadaten-Editor dient zur komfortablen Bearbeitung der `_metadata.yml`-Dateien.
+Der Metadaten-Editor dient zur komfortablen Bearbeitung der [`_metadata.yml`-Dateien](#metadaten-_metadatayml).
 
 Auf der linken Seite wird die komplette Galerie-Struktur aller konfigurierten Galerie-Wurzeln als Baum dargestellt.
 
 Nach Auswahl eines Ordners werden auf der rechten Seite dessen Metadaten angezeigt und können direkt bearbeitet werden.
 
-Alle Änderungen werden unmittelbar wieder in die entsprechende `_metadata.yml` geschrieben. Dadurch können der
+Alle Änderungen werden unmittelbar wieder in die entsprechende [`_metadata.yml`](#metadaten-_metadatayml) geschrieben. Dadurch können der
 Backend-Editor und eine manuelle Bearbeitung der Dateien jederzeit beliebig miteinander kombiniert werden.
 
 > 💡 **Hinweis**
@@ -414,7 +396,7 @@ Backend-Editor und eine manuelle Bearbeitung der Dateien jederzeit beliebig mite
 
 ### Routing
 
-Für die Darstellung der Galerien genügt eine einzige Contao-Seite mit einem eingebundenen **Folder Gallery**-Frontend-Modul.
+Für die Darstellung der Galerien genügt **eine einzige Contao-Seite** mit einem eingebundenen **Folder Gallery**-Frontend-Modul. Je nach URL zeigt das Modul automatisch entweder die Galerie-Übersicht oder die entsprechende Galerie an.
 
 Die Erweiterung erzeugt keine eigenen Seiten und es müssen auch keine einzelnen Galerieseiten im Seitenbaum angelegt
 werden. Stattdessen wird die URL automatisch anhand der Ordnerstruktur im Dateisystem ausgewertet.
@@ -474,19 +456,19 @@ von Contao wie responsive Bilder, Bildgrößen und verschiedene Ausgabeformate (
 zusätzliche Konfiguration zur Verfügung.
 
 Enthält eine Galerie weitere Unterordner, werden diese oberhalb der Bilder ebenfalls angezeigt und können direkt
-geöffnet werden.
+geöffnet werden. Dadurch lassen sich beliebig tiefe Galerie-Strukturen aufbauen.
 
-### Eigene Anpassungen
+### Anpassung der Darstellung
 
 Das Bundle orientiert sich bewusst an den bestehenden Mechanismen von Contao und lässt sich an vielen Stellen erweitern.
 
-Unter anderem können
+Unter anderem lassen sich
 
-- eigene Twig-Templates verwendet werden,
-- eigene CSS-Regeln ergänzt werden,
-- Bildgrößen aus Contao genutzt werden,
-- der Galerie-Viewer gewählt werden,
-- die Darstellung vollständig an das eigene Theme angepasst werden.
+- eigene Twig-Templates verwenden,
+- eigene CSS-Regeln ergänzen,
+- Bildgrößen aus Contao nutzen,
+- der Galerie-Viewer wählen,
+- die Darstellung vollständig an das eigene Theme anpassen.
 
 Da sämtliche Bilder über die Contao-Bildpipeline erzeugt werden, profitieren auch individuelle Anpassungen automatisch
 von den Bildformaten und Optimierungen des Contao-Kerns.
@@ -558,7 +540,7 @@ Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert un
 
 Das Bundle verwendet ausschließlich die in Contao konfigurierten Bildgrößen.
 
-Im Frontend-Modul können unabhängig voneinander Bildgrößen für
+Im [Frontend-Modul](#frontend-modul) können unabhängig voneinander Bildgrößen für
 
 - Coverbilder der Galerie-Übersicht
 - Bilder innerhalb einer Galerie
@@ -572,11 +554,9 @@ Bildzuschnitte automatisch zur Verfügung.
 
 ### Im Metadaten-Editor werden keine Galerien angezeigt.
 
-Prüfen Sie, ob mindestens ein Frontend-Modul vom Typ **Folder Gallery** konfiguriert wurde und eine Galerie-Wurzel ausgewählt ist.
+Prüfen Sie, ob mindestens ein [Frontend-Modul](#frontend-modul) vom Typ **Folder Gallery** konfiguriert wurde und eine Galerie-Wurzel ausgewählt ist.
 
-Der Metadaten-Editor ermittelt seine Galerie-Struktur ausschließlich aus den konfigurierten Frontend-Modulen.
-
----
+Der [Metadaten-Editor](#metadaten-editor) ermittelt seine Galerie-Struktur ausschließlich aus den konfigurierten Frontend-Modulen.
 
 ### Meine Galerie wird im Frontend nicht angezeigt.
 
@@ -586,25 +566,25 @@ Prüfen Sie insbesondere folgende Punkte:
 - Liegt der aktuelle Zeitpunkt innerhalb von `published_from` und `published_until`?
 - Ist der Ordner nicht versehentlich auf `overview_mode: hidden` gesetzt?
 
----
-
 ### PhotoSwipe bzw. die Lightbox öffnet sich nicht.
 
-Prüfen Sie die Konfiguration des Seitenlayouts.
+Prüfen Sie die [Konfiguration des Seitenlayouts](#galerie-viewer).
 
 - Für **PhotoSwipe** muss das JavaScript-Template `js_photoswipe` aktiviert sein.
 - Für die **Contao-Lightbox** müssen **jQuery** sowie das Template `j_colorbox` aktiviert sein.
 
----
+### Werden die Bilder in einer Datenbank gespeichert?
+
+Nein.
+
+Das Bundle arbeitet ausschließlich mit den Dateien innerhalb des `files/`-Verzeichnisses. Die Datenbank enthält lediglich die Konfiguration des Frontend-Moduls.
 
 ### Muss ich die `_metadata.yml` manuell bearbeiten?
 
 Nein.
 
-Die Metadaten können sowohl direkt in der `_metadata.yml` als auch über den integrierten Metadaten-Editor gepflegt
+Die Metadaten können sowohl direkt in der [`_metadata.yml`](#metadaten-_metadatayml) als auch über den integrierten [Metadaten-Editor](#metadaten-editor) gepflegt
 werden. Beide Arbeitsweisen können beliebig kombiniert werden.
-
----
 
 ### Kann ich die Erweiterung später wieder entfernen?
 
@@ -615,6 +595,12 @@ Konfigurationsfelder im Frontend-Modul.
 
 Die eigentlichen Bilder und Ordner bleiben unverändert erhalten und können anschließend problemlos mit der
 Contao-Standardgalerie oder einer anderen Galerie-Erweiterung weiterverwendet werden.
+
+## Mitwirken
+
+Fehlerberichte, Verbesserungsvorschläge und Pull Requests über GitHub sind jederzeit willkommen.
+
+Falls Sie Fragen oder Ideen zur Erweiterung haben, freuen wir uns über ein Issue oder eine Diskussion auf GitHub.
 
 ## Lizenz
 
