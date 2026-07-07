@@ -5,20 +5,14 @@
 
     &__subfolders {
         display: grid;
-        grid-template-columns: repeat(
-            auto-fill,
-            minmax(var(--gallery-content-column-width), 1fr)
-        );
+        grid-template-columns: repeat(auto-fill, minmax(var(--gallery-content-column-width), 1fr));
         gap: var(--gallery-content-gap);
         margin-bottom: var(--gallery-section-spacing);
     }
 
     &__images {
         display: grid;
-        grid-template-columns: repeat(
-            auto-fill,
-            minmax(var(--gallery-content-column-width), 1fr)
-        );
+        grid-template-columns: repeat(auto-fill, minmax(var(--gallery-content-column-width), 1fr));
         gap: var(--gallery-content-gap);
     }
 
