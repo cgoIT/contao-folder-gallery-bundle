@@ -17,6 +17,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
 use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Environment;
 use Contao\Input;
 use Contao\System;
@@ -34,6 +35,7 @@ final class GalleryBackendController extends AbstractBackendController
     public const string TYPE = 'folder_gallery';
 
     public function __construct(
+        private readonly ContaoFramework $framework,
         private readonly UrlGeneratorInterface $router,
         private readonly ContaoCsrfTokenManager $csrfTokenManager,
         private readonly GalleryFolderProviderInterface $folderProvider,
@@ -49,7 +51,10 @@ final class GalleryBackendController extends AbstractBackendController
     )]
     public function __invoke(Request $request): Response
     {
-        System::loadLanguageFile(GalleryMetadata::DCA_TABLE_NAME);
+        $this->framework
+            ->getAdapter(System::class)
+            ->loadLanguageFile(GalleryMetadata::DCA_TABLE_NAME)
+        ;
 
         // Check the request token
         if (

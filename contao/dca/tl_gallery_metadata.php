@@ -12,6 +12,7 @@ use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Contao\Backend;
+use Contao\DataContainer;
 
 $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
     'config' => [
@@ -36,6 +37,7 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
         'cover' => [
             'inputType' => 'fileTree',
             'eval' => ['fieldType' => 'radio', 'filesOnly' => true, 'extensions' => '%contao.image.valid_extensions%', 'tl_class' => 'clr'],
+            'attributes_callback' => [['tl_gallery_metadata', 'getPathForCoverImage']],
         ],
 
         'publishedFrom' => [
@@ -64,6 +66,17 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
 
 class tl_gallery_metadata extends Backend
 {
+    public function getPathForCoverImage(array $attributes, DataContainer|null $dc = null): array
+    {
+        if (!($dc instanceof DC_GalleryMetadata)) {
+            return $attributes;
+        }
+
+        $attributes['path'] = $dc->id;
+
+        return $attributes;
+    }
+
     public function getSortOrders(): array
     {
         $options = [];
