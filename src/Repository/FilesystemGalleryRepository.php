@@ -122,8 +122,8 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         usort(
             $folders,
             static fn (GalleryFolder $a, GalleryFolder $b): int => match ($metadata->sortOrder) {
-                SortOrder::Asc => strcmp($a->title, $b->title),
-                SortOrder::Desc => strcmp($b->title, $a->title),
+                SortOrder::Asc => strcmp(basename($a->filesystemDirectory), basename($b->filesystemDirectory)),
+                SortOrder::Desc => strcmp(basename($b->filesystemDirectory), basename($a->filesystemDirectory)),
             },
         );
 
