@@ -26,7 +26,6 @@ use Contao\FilesModel;
 use Contao\Input;
 use Contao\ModuleModel;
 use Contao\PageModel;
-use Contao\System;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

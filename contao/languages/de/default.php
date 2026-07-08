@@ -10,4 +10,4 @@
 
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 
-$GLOBALS['TL_LANG']['FMD'][FolderGalleryModule::TYPE] = [    'Ordner-basierte Galerie',    'Ein Frontend-Modul, um die Ordner-basierte Galerie anzuzeigen.',];
+$GLOBALS['TL_LANG']['FMD'][FolderGalleryModule::TYPE] = ['Ordner-basierte Galerie', 'Ein Frontend-Modul, um die Ordner-basierte Galerie anzuzeigen.'];

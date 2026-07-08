@@ -19,17 +19,17 @@
     }
 
     &__meta {
-        margin-top: .25rem;
+        margin-top: 0.25rem;
         color: var(--gallery-meta-color, #666);
-        font-size: .875rem;
+        font-size: 0.875rem;
         display: flex;
         flex-wrap: wrap;
-        gap: .4rem;
+        gap: 0.4rem;
         align-items: center;
     }
 
     &__separator {
-        opacity: .5;
+        opacity: 0.5;
     }
 
     &__image {

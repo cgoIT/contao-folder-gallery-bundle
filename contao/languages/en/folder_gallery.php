@@ -8,7 +8,6 @@
  * @license    LGPL-3.0-or-later
  */
 
-
 $GLOBALS['TL_LANG']['folder_gallery']['image_count'] = ['Image', 'Images'];
 $GLOBALS['TL_LANG']['folder_gallery']['sub_gallery_count'] = ['sub gallery', 'sub galleries'];
 
