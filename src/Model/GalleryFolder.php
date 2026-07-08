@@ -65,6 +65,11 @@ final readonly class GalleryFolder
         return !empty($this->images);
     }
 
+    public function imageCount(): int
+    {
+        return \count($this->images);
+    }
+
     public function getDescription(): string|null
     {
         return $this->metadata->description;
@@ -88,5 +93,10 @@ final readonly class GalleryFolder
     public function isGroupInOverview(): bool
     {
         return OverviewMode::Group === $this->metadata->overviewMode;
+    }
+
+    public function isGalleryInOverview(): bool
+    {
+        return OverviewMode::Gallery === $this->metadata->overviewMode;
     }
 }

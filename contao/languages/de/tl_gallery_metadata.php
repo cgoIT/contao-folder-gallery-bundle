@@ -21,6 +21,3 @@ $GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order']['desc'] = 'Absteigend';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['group'] = 'Gruppieren';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['hidden'] = 'Versteckt';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['gallery'] = 'Galerie';
-
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['getting-started'][0] = 'Erste Schritte';
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['getting-started'][1] = 'Wählen Sie einen Ordner aus der Übersicht aus. Anschließend können Sie die Metadaten der Galerie einsehen und anpassen.';

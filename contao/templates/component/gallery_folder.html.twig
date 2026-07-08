@@ -1,3 +1,4 @@
+{% trans_default_domain 'contao_folder_gallery' %}
 {% use '@Contao/component/_figure.html.twig' %}
 
 {% if folder.isGroup %}
@@ -42,6 +43,32 @@
                     {{ folder.title }}
                 </a>
             </h3>
+
+            <div class="module-gallery-overview__meta">
+                {% if folder.imageCount > 0 %}
+                    <span class="module-gallery-overview__image-count">
+                        {{ folder.imageCount }}
+                        {{ folder.imageCount == 1
+                            ? 'folder_gallery.image_count.0'|trans
+                            : 'folder_gallery.image_count.1'|trans
+                        }}
+                    </span>
+                {% endif %}
+
+                {% if folder.folderCount > 0 %}
+                    {% if folder.imageCount > 0 %}
+                        <span class="module-gallery-overview__separator">•</span>
+                    {% endif %}
+
+                    <span class="module-gallery-overview__folder-count">
+                        {{ folder.folderCount }}
+                        {{ folder.folderCount == 1
+                            ? 'folder_gallery.sub_gallery_count.0'|trans
+                            : 'folder_gallery.sub_gallery_count.1'|trans
+                        }}
+                    </span>
+                {% endif %}
+            </div>
 
             {% if folder.description %}
                 <div class="module-gallery-overview__description">

@@ -17,6 +17,8 @@ final readonly class GalleryFolderViewModel
         public string $slug,
         public string $url,
         public array $children,
+        public int $imageCount,
+        public int $folderCount,
         public Figure|null $coverFigure,
         public string|null $description,
         public OverviewMode $overviewMode,

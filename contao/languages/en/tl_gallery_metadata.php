@@ -21,6 +21,3 @@ $GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order']['desc'] = 'Descending';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['group'] = 'Group';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['hidden'] = 'Hidden';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['gallery'] = 'Gallery';
-
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['getting-started'][0] = 'Getting Started';
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['getting-started'][1] = 'Select a folder from the browser. You can then review the metadata of the selected gallery and customize it to suit your needs.';

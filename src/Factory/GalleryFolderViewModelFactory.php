@@ -41,6 +41,8 @@ final readonly class GalleryFolderViewModelFactory
                     $folder->folders,
                 )
                 : [],
+            imageCount: $folder->imageCount(),
+            folderCount: \count(array_filter($folder->folders, static fn (GalleryFolder $child): bool => $child->isGalleryInOverview())),
             coverFigure: $coverImage
                 ? $this->figureFactory->createCoverImage($coverImage, $coverImageSize, $url)
                 : null,
