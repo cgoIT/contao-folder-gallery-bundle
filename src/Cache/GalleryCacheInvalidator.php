@@ -14,7 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Cache;
 
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-final readonly class GalleryCacheInvalidator
+readonly class GalleryCacheInvalidator
 {
     public function __construct(private TagAwareCacheInterface $cache)
     {

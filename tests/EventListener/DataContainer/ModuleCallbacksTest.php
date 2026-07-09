@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener\DataContainer;
 
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer\ModuleCallbacks;
 use Contao\BackendUser;
 use Contao\CoreBundle\Image\ImageSizes;
@@ -38,10 +39,17 @@ final class ModuleCallbacksTest extends ContaoTestCase
             ->method('getOptionsForUser')
         ;
 
+        $galleryCacheInvalidator = $this->createMock(GalleryCacheInvalidator::class);
+        $galleryCacheInvalidator
+            ->expects($this->never())
+            ->method('invalidate')
+        ;
+
         $callbacks = new ModuleCallbacks(
             $this->createStub(FinderFactory::class),
             $security,
             $imageSizes,
+            $galleryCacheInvalidator,
         );
 
         $this->assertSame([], $callbacks->getImageSizes());
@@ -69,10 +77,17 @@ final class ModuleCallbacksTest extends ContaoTestCase
             ])
         ;
 
+        $galleryCacheInvalidator = $this->createMock(GalleryCacheInvalidator::class);
+        $galleryCacheInvalidator
+            ->expects($this->never())
+            ->method('invalidate')
+        ;
+
         $callbacks = new ModuleCallbacks(
             $this->createStub(FinderFactory::class),
             $security,
             $imageSizes,
+            $galleryCacheInvalidator,
         );
 
         $this->assertSame(['small', 'large'], $callbacks->getImageSizes());
