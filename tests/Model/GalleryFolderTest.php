@@ -239,11 +239,11 @@ final class GalleryFolderTest extends TestCase
             filesystemDirectory: '/files/gallery/folder',
             trail: ['folder'],
             metadata: new GalleryMetadata(
-                overviewMode: OverviewMode::Hidden,
+                overviewMode: OverviewMode::Transparent,
             ),
         );
 
-        $this->assertTrue($folder->isHiddenInOverview());
+        $this->assertTrue($folder->isTransparentInOverview());
     }
 
     public function testDetectsVisibleFolder(): void
@@ -258,7 +258,7 @@ final class GalleryFolderTest extends TestCase
             ),
         );
 
-        $this->assertFalse($folder->isHiddenInOverview());
+        $this->assertFalse($folder->isTransparentInOverview());
     }
 
     public function testDetectsGroupFolder(): void

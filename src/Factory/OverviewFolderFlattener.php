@@ -42,7 +42,7 @@ final class OverviewFolderFlattener
         $result = [];
 
         foreach ($folders as $folder) {
-            if ($folder->isHiddenInOverview()) {
+            if ($folder->isTransparentInOverview()) {
                 $result = [
                     ...$result,
                     ...$this->doFlatten($folder->folders),

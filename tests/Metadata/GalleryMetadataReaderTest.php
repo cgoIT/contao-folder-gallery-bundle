@@ -97,13 +97,13 @@ final class GalleryMetadataReaderTest extends TestCase
         $this->assertFalse($metadata->isPublished());
     }
 
-    public function testReadsHiddenInOverview(): void
+    public function testReadsTransparentInOverview(): void
     {
         $framework = $this->createContaoFrameworkStub();
 
         $reader = new GalleryMetadataReader($framework);
-        $metadata = $reader->read($this->getFixturesDir().'/metadata/hidden');
-        $this->assertSame(OverviewMode::Hidden, $metadata->overviewMode);
+        $metadata = $reader->read($this->getFixturesDir().'/metadata/transparent');
+        $this->assertSame(OverviewMode::Transparent, $metadata->overviewMode);
     }
 
     public function testReturnsDefaultMetadataIfYamlCannotBeParsed(): void

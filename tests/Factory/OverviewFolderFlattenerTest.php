@@ -31,7 +31,7 @@ final class OverviewFolderFlattenerTest extends TestCase
         $this->flattener = new OverviewFolderFlattener();
     }
 
-    public function testReturnsFoldersUnchangedIfNothingIsHidden(): void
+    public function testReturnsFoldersUnchangedIfNothingIsTransparent(): void
     {
         $folderA = $this->createFolder('A');
         $folderB = $this->createFolder('B');
@@ -41,13 +41,13 @@ final class OverviewFolderFlattenerTest extends TestCase
         $this->assertSame([$folderA, $folderB], $result);
     }
 
-    public function testFlattensHiddenFolder(): void
+    public function testFlattensTransparentFolder(): void
     {
         $childA = $this->createFolder('Child A');
         $childB = $this->createFolder('Child B');
-        $hidden = $this->createFolder('Hidden', OverviewMode::Hidden, [$childA, $childB]);
+        $transparent = $this->createFolder('Transparent', OverviewMode::Transparent, [$childA, $childB]);
 
-        $result = $this->flattener->flatten([$hidden]);
+        $result = $this->flattener->flatten([$transparent]);
 
         $this->assertSame([$childA, $childB], $result);
     }
@@ -56,28 +56,28 @@ final class OverviewFolderFlattenerTest extends TestCase
     {
         $visible = $this->createFolder('Visible');
         $child = $this->createFolder('Child');
-        $hidden = $this->createFolder('Hidden', OverviewMode::Hidden, [$child]);
+        $transparent = $this->createFolder('Transparent', OverviewMode::Transparent, [$child]);
 
-        $result = $this->flattener->flatten([$visible, $hidden]);
+        $result = $this->flattener->flatten([$visible, $transparent]);
 
         $this->assertSame([$visible, $child], $result);
     }
 
-    public function testFallsBackIfEverythingIsHidden(): void
+    public function testFallsBackIfEverythingIsTransparent(): void
     {
-        $hiddenA = $this->createFolder('A', OverviewMode::Hidden);
-        $hiddenB = $this->createFolder('B', OverviewMode::Hidden);
+        $transparentA = $this->createFolder('A', OverviewMode::Transparent);
+        $transparentB = $this->createFolder('B', OverviewMode::Transparent);
 
-        $result = $this->flattener->flatten([$hiddenA, $hiddenB]);
+        $result = $this->flattener->flatten([$transparentA, $transparentB]);
 
-        $this->assertSame([$hiddenA, $hiddenB], $result);
+        $this->assertSame([$transparentA, $transparentB], $result);
     }
 
     public function testFlattensNestedHiddenFolders(): void
     {
         $visibleChild = $this->createFolder('Friday');
-        $hiddenLevel2 = $this->createFolder('Event Group', OverviewMode::Hidden, [$visibleChild]);
-        $hiddenLevel1 = $this->createFolder('2025', OverviewMode::Hidden, [$hiddenLevel2]);
+        $hiddenLevel2 = $this->createFolder('Event Group', OverviewMode::Transparent, [$visibleChild]);
+        $hiddenLevel1 = $this->createFolder('2025', OverviewMode::Transparent, [$hiddenLevel2]);
 
         $result = $this->flattener->flatten([$hiddenLevel1]);
 
@@ -88,8 +88,8 @@ final class OverviewFolderFlattenerTest extends TestCase
     {
         $friday = $this->createFolder('Friday');
         $saturday = $this->createFolder('Saturday');
-        $hiddenLevel2 = $this->createFolder('Event Group', OverviewMode::Hidden, [$friday, $saturday]);
-        $hiddenLevel1 = $this->createFolder('2025', OverviewMode::Hidden, [$hiddenLevel2]);
+        $hiddenLevel2 = $this->createFolder('Event Group', OverviewMode::Transparent, [$friday, $saturday]);
+        $hiddenLevel1 = $this->createFolder('2025', OverviewMode::Transparent, [$hiddenLevel2]);
 
         $result = $this->flattener->flatten([$hiddenLevel1]);
 

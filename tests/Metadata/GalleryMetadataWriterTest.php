@@ -56,7 +56,7 @@ final class GalleryMetadataWriterTest extends TestCase
             publishedFrom: new \DateTimeImmutable('2025-09-05 20:00:00'),
             publishedUntil: new \DateTimeImmutable('2025-09-10 23:59:59'),
             sortOrder: SortOrder::Desc,
-            overviewMode: OverviewMode::Hidden,
+            overviewMode: OverviewMode::Transparent,
         );
 
         $this->writer->write($this->tempDirectory, $metadata);
@@ -69,7 +69,7 @@ final class GalleryMetadataWriterTest extends TestCase
         $this->assertSame('2025-09-05 20:00', $data['published_from']);
         $this->assertSame('2025-09-10 23:59', $data['published_until']);
         $this->assertSame('desc', $data['sort_order']);
-        $this->assertSame('hidden', $data['overview_mode']);
+        $this->assertSame('transparent', $data['overview_mode']);
     }
 
     public function testOmitsNullValues(): void
@@ -96,7 +96,7 @@ final class GalleryMetadataWriterTest extends TestCase
             publishedFrom: new \DateTimeImmutable('2025-09-05 20:00'),
             publishedUntil: new \DateTimeImmutable('2025-09-10 23:59'),
             sortOrder: SortOrder::Desc,
-            overviewMode: OverviewMode::Hidden,
+            overviewMode: OverviewMode::Transparent,
         );
 
         $this->writer->write($this->tempDirectory, $metadata);

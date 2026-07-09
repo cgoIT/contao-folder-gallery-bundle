@@ -265,15 +265,15 @@ overview_mode: gallery
 
 ### Unterstützte Felder
 
-| Feld | Beschreibung |
-|------|--------------|
-| `title` | Titel der Galerie oder Galeriegruppe |
-| `description` | Beschreibung (HTML erlaubt) |
-| `cover` | Dateiname des Coverbildes innerhalb des aktuellen Ordners |
-| `published_from` | Galerie ist erst ab diesem Zeitpunkt sichtbar |
-| `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar |
-| `sort_order` | Sortierreihenfolge der Unterordner (`asc` oder `desc`) |
-| `overview_mode` | Legt fest, wie der Ordner behandelt wird (`gallery`, `group` oder `hidden`) |
+| Feld | Beschreibung                                                                     |
+|------|----------------------------------------------------------------------------------|
+| `title` | Titel der Galerie oder Galeriegruppe                                             |
+| `description` | Beschreibung (HTML erlaubt)                                                      |
+| `cover` | Dateiname des Coverbildes innerhalb des aktuellen Ordners                        |
+| `published_from` | Galerie ist erst ab diesem Zeitpunkt sichtbar                                    |
+| `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar                                 |
+| `sort_order` | Sortierreihenfolge der Unterordner (`asc` oder `desc`)                           |
+| `overview_mode` | Legt fest, wie der Ordner behandelt wird (`gallery`, `group` oder `transparent`) |
 
 > 💡 **Hinweis**
 >
@@ -283,13 +283,13 @@ overview_mode: gallery
 
 Der Wert `overview_mode` steuert, wie ein Ordner innerhalb der Galerie interpretiert wird.
 
-| Wert | Bedeutung |
-|------|-----------|
-| `gallery` | Der Ordner wird als normale Galerie dargestellt. |
-| `group` | Der Ordner dient als Galeriegruppe. Die enthaltenen Unterordner werden als einzelne Galerien angezeigt. |
-| `hidden` | Der Ordner wird in der Galerie-Struktur übersprungen. Seine Unterordner werden direkt in die übergeordnete Ebene übernommen. Dies eignet sich beispielsweise für rein organisatorische Zwischenordner. |
+| Wert          | Bedeutung |
+|---------------|-----------|
+| `gallery`     | Der Ordner wird als normale Galerie dargestellt. |
+| `group`       | Der Ordner dient als Galeriegruppe. Die enthaltenen Unterordner werden als einzelne Galerien angezeigt. |
+| `transparent` | Der Ordner wird in der Galerie-Struktur übersprungen. Seine Unterordner werden direkt in die übergeordnete Ebene übernommen. Dies eignet sich beispielsweise für rein organisatorische Zwischenordner. |
 
-#### Beispiel für `hidden`
+#### Beispiel für `transparent`
 
 Folgende Ordnerstruktur:
 
@@ -305,7 +305,7 @@ Folgende Ordnerstruktur:
 mit folgender `_metadata.yml`:
 
 ```yaml
-overview_mode: hidden
+overview_mode: transparent
 ```
 
 führt im Frontend dazu, dass der Ordner **Fotos** nicht angezeigt wird. Stattdessen erscheinen dessen Unterordner
@@ -445,7 +445,7 @@ Für jeden sichtbaren Ordner werden – abhängig von den Metadaten – unter an
 Ist ein Ordner als [`group`](#overview_mode) konfiguriert, wird dieser als Überschrift dargestellt und seine Unterordner werden
 darunter gruppiert angezeigt.
 
-Ordner mit [`overview_mode: hidden`](#overview_mode) erscheinen dagegen nicht in der Übersicht. Stattdessen werden deren Unterordner
+Ordner mit [`overview_mode: transparent`](#overview_mode) erscheinen dagegen nicht in der Übersicht. Stattdessen werden deren Unterordner
 direkt in die übergeordnete Ebene übernommen.
 
 ### Galerieansicht
@@ -565,7 +565,7 @@ Prüfen Sie insbesondere folgende Punkte:
 
 - Existiert die Galerie innerhalb der konfigurierten [Galerie-Wurzel](#frontend-modul)?
 - Liegt der aktuelle Zeitpunkt innerhalb von `published_from` und `published_until`?
-- Ist der Ordner nicht versehentlich auf `overview_mode: hidden` gesetzt?
+- Ist der Ordner nicht versehentlich auf `overview_mode: transparent` gesetzt?
 
 ### PhotoSwipe bzw. die Lightbox öffnet sich nicht.
 
