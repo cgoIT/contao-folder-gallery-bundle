@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Matcher;
 
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Contao\CoreBundle\Filesystem\Dbafs\ChangeSet\ChangeSet;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -29,7 +30,7 @@ final class GalleryPathMatcherTest extends TestCase
         $provider
             ->method('getGalleryRoots')
             ->willReturn([
-                'files/gallery',
+                new GalleryRoot('module', 1, 'files/gallery'),
             ])
         ;
 
@@ -45,7 +46,7 @@ final class GalleryPathMatcherTest extends TestCase
         $provider
             ->method('getGalleryRoots')
             ->willReturn([
-                'files/gallery',
+                new GalleryRoot('module', 1, 'files/gallery'),
             ])
         ;
 

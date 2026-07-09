@@ -16,6 +16,7 @@ use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
 use Contao\CoreBundle\Slug\Slug;
@@ -77,7 +78,7 @@ final class FilesystemGalleryRepositoryTest extends TestCase
     public function testFindOverview(): void
     {
         $overview = $this->repository->findOverview(
-            $this->getFixturesDir().'/gallery',
+            new GalleryRoot('module', 1, $this->getFixturesDir().'/gallery'),
         );
 
         $this->assertCount(2, $overview->folders);

@@ -9,6 +9,7 @@ use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Contao\CoreBundle\Slug\Slug;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -24,10 +25,12 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
     ) {
     }
 
-    public function findOverview(string $rootPath, bool $blnShowUnpublished = false): GalleryOverview
+    public function findOverview(GalleryRoot $root, bool $blnShowUnpublished = false): GalleryOverview
     {
         $folders = [];
         $folderIndex = [];
+
+        $rootPath = $root->filesystemDirectory;
 
         foreach ($this->getDirectories($rootPath) as $subFolder) {
             $folder = $this->createFolder($subFolder, $folderIndex, [], true, $blnShowUnpublished);
@@ -40,7 +43,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $metadata = $this->metadataLoader->read($rootPath);
         $folders = $this->sortFoldersByTitle($folders, $metadata);
 
-        return new GalleryOverview($rootPath, $folders, $folderIndex);
+        return new GalleryOverview($root, $folders, $folderIndex);
     }
 
     /**

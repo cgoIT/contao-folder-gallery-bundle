@@ -16,6 +16,7 @@ use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\TestCase\ContaoTestCase;
@@ -33,7 +34,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
     public function testLoadsOverviewsFromInnerProviderOnCacheMiss(): void
     {
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: new GalleryRoot('module', 1, '/gallery'),
             folders: [],
             folderIndex: [],
         );
@@ -59,7 +60,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
     public function testLoadsOverviewsFromCacheOnHit(): void
     {
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: new GalleryRoot('module', 1, '/gallery'),
             folders: [],
             folderIndex: [],
         );
@@ -89,7 +90,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
     public function testFindsOverviewByRootPath(): void
     {
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: new GalleryRoot('module', 1, '/gallery'),
             folders: [],
             folderIndex: [],
         );
@@ -111,7 +112,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
         $folder = $this->createFolder('year-2025');
 
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: new GalleryRoot('module', 1, '/gallery'),
             folders: [$folder],
             folderIndex: [
                 'year-2025' => $folder,
@@ -169,7 +170,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
         $this->assertCount(\count($expected), $actual);
 
         foreach ($expected as $i => $overview) {
-            $this->assertSame($overview->filesystemDirectory, $actual[$i]->filesystemDirectory);
+            $this->assertSame($overview->root->filesystemDirectory, $actual[$i]->root->filesystemDirectory);
             $this->assertFolderTreesEqual($overview->folders, $actual[$i]->folders);
             $this->assertSame(array_keys($overview->folderIndex), array_keys($actual[$i]->folderIndex));
         }

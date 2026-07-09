@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 
 interface GalleryRepositoryInterface
 {
-    public function findOverview(string $rootPath, bool $blnShowUnpublished = false): GalleryOverview;
+    public function findOverview(GalleryRoot $root, bool $blnShowUnpublished = false): GalleryOverview;
 }

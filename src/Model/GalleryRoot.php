@@ -10,14 +10,14 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-namespace Cgoit\ContaoFolderGalleryBundle\Provider;
+namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
-
-interface GalleryRootProviderInterface
+final readonly class GalleryRoot
 {
-    /**
-     * @return list<GalleryRoot>
-     */
-    public function getGalleryRoots(): array;
+    public function __construct(
+        public string $moduleName,
+        public int $moduleId,
+        public string $filesystemDirectory,
+    ) {
+    }
 }

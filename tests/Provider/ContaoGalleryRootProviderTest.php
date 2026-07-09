@@ -43,8 +43,8 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
 
     public function testReturnsGalleryRoots(): void
     {
-        $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 1]);
-        $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 2]);
+        $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['name' => 'module-1', 'id' => 1, 'galleryRoot' => 1]);
+        $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['name' => 'module-2', 'id' => 2, 'galleryRoot' => 2]);
         $moduleAdapter = $this->createAdapterMock(['findBy']);
         $moduleAdapter
             ->expects($this->once())
@@ -77,19 +77,21 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
 
         $provider = new ContaoGalleryRootProvider($framework);
 
-        $this->assertSame(
-            [
-                'files/gallery/2025',
-                'files/gallery/2026',
-            ],
-            $provider->getGalleryRoots(),
-        );
+        $roots = $provider->getGalleryRoots();
+
+        $this->assertCount(2, $roots);
+        $this->assertSame('module-1', $roots[0]->moduleName);
+        $this->assertSame('module-2', $roots[1]->moduleName);
+        $this->assertSame(1, $roots[0]->moduleId);
+        $this->assertSame(2, $roots[1]->moduleId);
+        $this->assertSame('files/gallery/2025', $roots[0]->filesystemDirectory);
+        $this->assertSame('files/gallery/2026', $roots[1]->filesystemDirectory);
     }
 
     public function testFiltersInvalidRoots(): void
     {
-        $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 1]);
-        $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 2]);
+        $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['name' => 'module-1', 'id' => 1, 'galleryRoot' => 1]);
+        $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['name' => 'module-2', 'id' => 2, 'galleryRoot' => 2]);
         $moduleAdapter = $this->createConfiguredAdapterStub(['findBy' => [$moduleA, $moduleB]]);
 
         $fileAdapter = $this->createAdapterMock(['findById']);
@@ -113,34 +115,11 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
 
         $provider = new ContaoGalleryRootProvider($framework);
 
-        $this->assertSame(['files/gallery'], $provider->getGalleryRoots());
-    }
+        $roots = $provider->getGalleryRoots();
 
-    public function testReturnsUniqueRootsOnly(): void
-    {
-        $moduleA = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 1]);
-        $moduleB = $this->createClassWithPropertiesStub(ModuleModel::class, ['galleryRoot' => 2]);
-
-        $moduleAdapter = $this->createConfiguredAdapterStub(['findBy' => [$moduleA, $moduleB]]);
-
-        $fileAdapter = $this->createAdapterMock(['findById']);
-        $fileAdapter
-            ->expects($this->exactly(2))
-            ->method('findById')
-            ->willReturn(
-                $this->createClassWithPropertiesStub(FilesModel::class, [
-                    'path' => 'files/gallery',
-                ]),
-            )
-        ;
-
-        $framework = $this->createContaoFrameworkStub([
-            ModuleModel::class => $moduleAdapter,
-            FilesModel::class => $fileAdapter,
-        ]);
-
-        $provider = new ContaoGalleryRootProvider($framework);
-
-        $this->assertSame(['files/gallery'], $provider->getGalleryRoots());
+        $this->assertCount(1, $roots);
+        $this->assertSame('module-1', $roots[0]->moduleName);
+        $this->assertSame(1, $roots[0]->moduleId);
+        $this->assertSame('files/gallery', $roots[0]->filesystemDirectory);
     }
 }

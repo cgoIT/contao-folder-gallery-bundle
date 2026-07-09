@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Matcher;
 
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Contao\CoreBundle\Filesystem\Dbafs\ChangeSet\ChangeSet;
 
@@ -53,16 +54,16 @@ final readonly class GalleryPathMatcher
     }
 
     /**
-     * @param array<string> $roots
+     * @param array<GalleryRoot> $roots
      */
     private function matchesRoot(string $path, array $roots): bool
     {
         foreach ($roots as $root) {
-            if (str_starts_with($path, $root.'/')) {
+            if (str_starts_with($path, $root->filesystemDirectory.'/')) {
                 return true;
             }
 
-            if ($path === $root) {
+            if ($path === $root->filesystemDirectory) {
                 return true;
             }
         }

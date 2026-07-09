@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Contao\ModuleModel;
@@ -24,7 +25,7 @@ final readonly class ContaoGalleryRootProvider implements GalleryRootProviderInt
     }
 
     /**
-     * @return array<string>
+     * @return array<GalleryRoot>
      */
     public function getGalleryRoots(): array
     {
@@ -49,9 +50,13 @@ final readonly class ContaoGalleryRootProvider implements GalleryRootProviderInt
                 continue;
             }
 
-            $roots[] = $root->path;
+            $roots[] = new GalleryRoot(
+                moduleName: $module->name,
+                moduleId: $module->id,
+                filesystemDirectory: $root->path,
+            );
         }
 
-        return array_values(array_unique($roots));
+        return $roots;
     }
 }

@@ -16,6 +16,7 @@ use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Contao\CoreBundle\Filesystem\Dbafs\ChangeSet\ChangeSet;
 use Contao\CoreBundle\Filesystem\Dbafs\DbafsChangeEvent;
@@ -46,8 +47,8 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
             ->expects($this->once())
             ->method('getGalleryRoots')
             ->willReturn([
-                'files/gallery',
-                'files/archive',
+                new GalleryRoot('module-1', 1, 'files/gallery'),
+                new GalleryRoot('module-2', 2, 'files/archive'),
             ])
         ;
 
@@ -78,8 +79,8 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
             ->expects($this->once())
             ->method('getGalleryRoots')
             ->willReturn([
-                'files/gallery',
-                'files/archive',
+                new GalleryRoot('module-1', 1, 'files/gallery'),
+                new GalleryRoot('module-2', 2, 'files/archive'),
             ])
         ;
 

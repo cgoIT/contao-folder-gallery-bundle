@@ -45,7 +45,7 @@ final readonly class GalleryFolderProvider implements GalleryFolderProviderInter
     public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null
     {
         foreach ($this->rootProvider->getGalleryRoots() as $root) {
-            if ($root === $path) {
+            if ($root->filesystemDirectory === $path) {
                 return $this->repository->findOverview($root, $blnShowUnpublished);
             }
         }

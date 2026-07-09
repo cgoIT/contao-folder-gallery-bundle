@@ -15,6 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Provider;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
@@ -49,20 +50,25 @@ final class GalleryFolderProviderTest extends ContaoTestCase
     public function testReturnsOverviewsFromSingleRoot(): void
     {
         $folder = $this->createFolder('year-2025');
+        $galleryRoot = new GalleryRoot('module', 1, '/gallery');
 
-        $overview = new GalleryOverview(filesystemDirectory: '/gallery', folders: [$folder], folderIndex: []);
+        $overview = new GalleryOverview(
+            root: $galleryRoot,
+            folders: [$folder],
+            folderIndex: [],
+        );
 
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
+            ->willReturn([$galleryRoot])
         ;
 
         $repository = $this->createMock(GalleryRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('findOverview')
-            ->with('/gallery')
+            ->with($galleryRoot)
             ->willReturn($overview)
         ;
 
@@ -79,12 +85,18 @@ final class GalleryFolderProviderTest extends ContaoTestCase
         $folderA = $this->createFolder('year-2025');
         $folderB = $this->createFolder('year-2026');
 
+        $galleryRootA = new GalleryRoot('module', 1, '/gallery-a');
+        $galleryRootB = new GalleryRoot('module', 1, '/gallery-b');
+
+        $overviewA = new GalleryOverview($galleryRootA, [$folderA], []);
+        $overviewB = new GalleryOverview($galleryRootB, [$folderB], []);
+
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
             ->willReturn([
-                '/gallery-a',
-                '/gallery-b',
+                $galleryRootA,
+                $galleryRootB,
             ])
         ;
 
@@ -93,8 +105,8 @@ final class GalleryFolderProviderTest extends ContaoTestCase
             ->expects($this->exactly(2))
             ->method('findOverview')
             ->willReturnMap([
-                ['/gallery-a', new GalleryOverview('/gallery-a', [$folderA], [])],
-                ['/gallery-b', new GalleryOverview('/gallery-b', [$folderB], [])],
+                [$galleryRootA, $overviewA],
+                [$galleryRootB, $overviewB],
             ])
         ;
 
@@ -117,12 +129,18 @@ final class GalleryFolderProviderTest extends ContaoTestCase
 
         $year2026 = $this->createFolder('year-2026');
 
-        $overview = new GalleryOverview(filesystemDirectory: '/gallery', folders: [$year2025, $year2026], folderIndex: []);
+        $root = new GalleryRoot('module', 1, '/gallery');
+
+        $overview = new GalleryOverview(
+            root: $root,
+            folders: [$year2025, $year2026],
+            folderIndex: [],
+        );
 
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
+            ->willReturn([$root])
         ;
 
         $repository = $this->createStub(GalleryRepositoryInterface::class);
@@ -158,8 +176,10 @@ final class GalleryFolderProviderTest extends ContaoTestCase
     {
         $folder = $this->createFolder('year-2025');
 
+        $root = new GalleryRoot('module', 1, '/gallery');
+
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: $root,
             folders: [$folder],
             folderIndex: [],
         );
@@ -167,14 +187,14 @@ final class GalleryFolderProviderTest extends ContaoTestCase
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
+            ->willReturn([$root])
         ;
 
         $repository = $this->createMock(GalleryRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('findOverview')
-            ->with('/gallery', false)
+            ->with($root, false)
             ->willReturn($overview)
         ;
 
@@ -190,7 +210,7 @@ final class GalleryFolderProviderTest extends ContaoTestCase
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
+            ->willReturn([new GalleryRoot('module', 1, '/gallery')])
         ;
 
         $repository = $this->createMock(GalleryRepositoryInterface::class);
@@ -209,9 +229,10 @@ final class GalleryFolderProviderTest extends ContaoTestCase
     public function testReturnsFolderByPath(): void
     {
         $folder = $this->createFolder('year-2025');
+        $root = new GalleryRoot('module', 1, '/gallery');
 
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: $root,
             folders: [$folder],
             folderIndex: [
                 'year-2025' => $folder,
@@ -221,7 +242,7 @@ final class GalleryFolderProviderTest extends ContaoTestCase
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
+            ->willReturn([$root])
         ;
 
         $repository = $this->createStub(GalleryRepositoryInterface::class);
@@ -239,8 +260,10 @@ final class GalleryFolderProviderTest extends ContaoTestCase
 
     public function testReturnsNullIfFolderPathDoesNotExist(): void
     {
+        $root = new GalleryRoot('module', 1, '/gallery');
+
         $overview = new GalleryOverview(
-            filesystemDirectory: '/gallery',
+            root: $root,
             folders: [],
             folderIndex: [],
         );
@@ -248,7 +271,7 @@ final class GalleryFolderProviderTest extends ContaoTestCase
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
             ->method('getGalleryRoots')
-            ->willReturn(['/gallery'])
+            ->willReturn([$root])
         ;
 
         $repository = $this->createStub(GalleryRepositoryInterface::class);

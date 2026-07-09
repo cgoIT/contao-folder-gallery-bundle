@@ -19,7 +19,7 @@ final readonly class GalleryOverview
      * @param array<string, GalleryFolder> $folderIndex
      */
     public function __construct(
-        public string $filesystemDirectory,
+        public GalleryRoot $root,
         public array $folders,
         public array $folderIndex,
     ) {

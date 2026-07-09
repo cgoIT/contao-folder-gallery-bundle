@@ -20,6 +20,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\PageModel;
@@ -59,7 +60,11 @@ final class GalleryOverviewFactoryTest extends TestCase
             folders: [$day],
         );
 
-        $overview = new GalleryOverview('/files/gallery', [$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
+        $overview = new GalleryOverview(
+            new GalleryRoot('module', 1, '/files/gallery'),
+            [$year],
+            ['year-2025' => $year, 'year-2025/friday' => $day],
+        );
 
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
@@ -119,7 +124,11 @@ final class GalleryOverviewFactoryTest extends TestCase
             folders: [$day],
         );
 
-        $overview = new GalleryOverview('/files/gallery', [$year], ['year-2025' => $year, 'year-2025/friday' => $day]);
+        $overview = new GalleryOverview(
+            new GalleryRoot('module', 1, '/files/gallery'),
+            [$year],
+            ['year-2025' => $year, 'year-2025/friday' => $day],
+        );
 
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory

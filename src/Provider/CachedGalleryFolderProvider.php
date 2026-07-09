@@ -38,7 +38,7 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
     public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null
     {
         foreach ($this->findAllOverviews($blnShowUnpublished) as $overview) {
-            if ($overview->filesystemDirectory === $path) {
+            if ($overview->root->filesystemDirectory === $path) {
                 return $overview;
             }
         }
