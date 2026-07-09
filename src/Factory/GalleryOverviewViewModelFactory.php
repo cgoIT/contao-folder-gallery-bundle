@@ -18,7 +18,7 @@ use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryOverviewViewModel;
 use Contao\Image\PictureConfiguration;
 use Contao\PageModel;
 
-final readonly class GalleryOverviewFactory
+final readonly class GalleryOverviewViewModelFactory
 {
     public function __construct(
         private GalleryFolderViewModelFactory $folderViewModelFactory,

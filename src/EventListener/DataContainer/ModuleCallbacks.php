@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer;
 
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
+use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Contao\BackendUser;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Image\ImageSizes;
 use Contao\CoreBundle\Twig\Finder\FinderFactory;
+use Contao\DataContainer;
 use Symfony\Bundle\SecurityBundle\Security;
 
 final readonly class ModuleCallbacks
@@ -25,6 +28,7 @@ final readonly class ModuleCallbacks
         private FinderFactory $finderFactory,
         private Security $security,
         private ImageSizes $imageSizes,
+        private GalleryCacheInvalidator $galleryCacheInvalidator,
     ) {
     }
 
@@ -95,5 +99,21 @@ final readonly class ModuleCallbacks
         }
 
         return $options;
+    }
+
+    #[AsCallback(table: 'tl_module', target: 'config.onsubmit')]
+    public function onFolderGalleryModuleSaved(DataContainer $dc): void
+    {
+        $currentData = $dc->getCurrentRecord();
+
+        if (
+            null === $currentData
+            || !\array_key_exists('type', $currentData)
+            || FolderGalleryModule::TYPE !== $currentData['type']
+        ) {
+            return;
+        }
+
+        $this->galleryCacheInvalidator->invalidate();
     }
 }

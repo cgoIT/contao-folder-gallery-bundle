@@ -17,8 +17,11 @@
         display: flex;
         flex-direction: column;
         grid-area: nav;
-        max-width: max-content;
+
+        width: 280px;
+        max-width: 30vw;
         min-width: 180px;
+
         overflow: hidden;
         resize: horizontal;
 
@@ -34,43 +37,60 @@
                 white-space: nowrap;
                 padding: 12px 4px;
 
-                ol {
-                    padding: 0;
-                    margin: 0;
-                }
+                .module-tree {
+                    margin-bottom: 1rem;
 
-                > ol > li {
-                    > ol {
-                        li {
-                            margin-left: 0.75em;
-                            border-left: thin solid var(--tree-line);
+                    &__title {
+                        margin: 0.75rem 0.5rem 0.4rem 0.25rem;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: var(--green);
+                        text-transform: uppercase;
+                        letter-spacing: 0.03em;
 
-                            &::before {
-                                content: '';
-                                width: 0.5em;
-                                height: 0.75em;
-                                vertical-align: top;
-                                border-bottom: thin solid var(--tree-line);
-                                display: inline-block;
-                            }
-
-                            &:last-child {
-                                border-left: none;
-
-                                &::before {
-                                    border-left: thin solid var(--tree-line);
-                                }
-                            }
-
-                            > :not(ol) {
-                                display: inline-flex;
-                                align-items: center;
-                            }
-                        }
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
                     }
 
-                    > .node {
-                        margin-left: 4px;
+                    ol {
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    > ol > li {
+                        > ol {
+                            li {
+                                margin-left: 0.75em;
+                                border-left: thin solid var(--tree-line);
+
+                                &::before {
+                                    content: '';
+                                    width: 0.5em;
+                                    height: 0.75em;
+                                    vertical-align: top;
+                                    border-bottom: thin solid var(--tree-line);
+                                    display: inline-block;
+                                }
+
+                                &:last-child {
+                                    border-left: none;
+
+                                    &::before {
+                                        border-left: thin solid var(--tree-line);
+                                    }
+                                }
+
+                                > :not(ol) {
+                                    display: inline-flex;
+                                    align-items: center;
+                                }
+                            }
+                        }
+
+                        > .node {
+                            margin-left: 4px;
+                        }
                     }
                 }
 
