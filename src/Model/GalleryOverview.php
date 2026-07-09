@@ -29,4 +29,14 @@ final readonly class GalleryOverview
     {
         return $this->folderIndex[$path] ?? null;
     }
+
+    public function getModuleName(): string
+    {
+        return $this->root->moduleName;
+    }
+
+    public function getModuleId(): int
+    {
+        return $this->root->moduleId;
+    }
 }
