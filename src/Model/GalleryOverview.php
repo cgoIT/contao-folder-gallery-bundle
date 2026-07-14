@@ -15,8 +15,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\Model;
 final readonly class GalleryOverview
 {
     /**
-     * @param list<GalleryFolder>          $folders
-     * @param array<string, GalleryFolder> $folderIndex
+     * @param list<GalleryFolder>              $folders
+     * @param array<string|int, GalleryFolder> $folderIndex
      */
     public function __construct(
         public GalleryRoot $root,
@@ -28,6 +28,14 @@ final readonly class GalleryOverview
     public function findFolderByPath(string $path): GalleryFolder|null
     {
         return $this->folderIndex[$path] ?? null;
+    }
+
+    /**
+     * @param array<string> $trail
+     */
+    public function findFolderByTrail(array $trail): GalleryFolder|null
+    {
+        return $this->findFolderByPath(implode('/', $trail));
     }
 
     public function getModuleName(): string

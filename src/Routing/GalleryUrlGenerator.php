@@ -25,14 +25,26 @@ final readonly class GalleryUrlGenerator implements GalleryUrlGeneratorInterface
     {
     }
 
-    public function generate(PageModel $page, GalleryFolder $folder, int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    public function generate(PageModel $page, GalleryFolder|null $folder = null, int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
+        $parameters = [];
+        if (null !== $folder) {
+            $parameters['parameters'] = '/'.$folder->getPath();
+        }
+
         return $this->contentUrlGenerator->generate(
             $page,
-            [
-                'parameters' => '/'.$folder->getPath(),
-            ],
+            $parameters,
             $referenceType,
+        );
+    }
+
+    public function generateAnchor(GalleryFolder $folder): string
+    {
+        return 'gallery-'.preg_replace(
+            '/[^a-z0-9_-]+/i',
+            '-',
+            $folder->getPath(),
         );
     }
 }

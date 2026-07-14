@@ -1,6 +1,30 @@
+{% trans_default_domain 'contao_folder_gallery' %}
 {% use '@Contao/component/_figure.html.twig' %}
 
 <div class="gallery-content">
+    {% if content.breadcrumbs %}
+        <div class="gallery-content__navigation gallery-content__navigation--top">
+            {% if content.breadcrumbs %}
+                <nav class="gallery-content__breadcrumbs" aria-label="{{ 'folder_gallery.breadcrumbs'|trans }}">
+                    <ol>
+                        {% for breadcrumb in content.breadcrumbs %}
+                            <li>
+                                {% if breadcrumb.url %}
+                                    <a href="{{ breadcrumb.url }}">
+                                        {{ breadcrumb.title }}
+                                    </a>
+                                {% else %}
+                                    <span aria-current="page">
+                                        {{ breadcrumb.title }}
+                                    </span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+            {% endif %}
+        </div>
+    {% endif %}
 
     {% if content.folder.title %}
         <h1>{{ content.folder.title }}</h1>
@@ -12,11 +36,16 @@
         </div>
     {% endif %}
 
-    <div class="gallery-content__subfolders">
-        {% for folder in content.children %}
-            {{ folder.title }}
-        {% endfor %}
-    </div>
+    {% if content.children %}
+        <div class="gallery-content__subfolders">
+            {% for folder in content.children %}
+                {{ include(folderTemplate, {
+                    folder,
+                    folderTemplate,
+                }) }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div class="gallery-content__images" data-photoswipe="pswp">
         {% for image in content.images %}
@@ -28,4 +57,13 @@
         {% endfor %}
     </div>
 
+    {% if content.backUrl %}
+        <div class="gallery-content__navigation gallery-content__navigation--bottom">
+            {% if content.backUrl %}
+                <a class="gallery-content__back" href="{{ content.backUrl }}">
+                    ← {{ 'folder_gallery.back'|trans }}
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
 </div>

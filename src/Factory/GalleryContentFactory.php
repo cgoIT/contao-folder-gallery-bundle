@@ -6,6 +6,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
@@ -17,6 +18,7 @@ final readonly class GalleryContentFactory
     public function __construct(
         private GalleryFigureFactoryInterface $figureFactory,
         private GalleryFolderViewModelFactory $folderViewModelFactory,
+        private GalleryBreadcrumbFactory $breadcrumbFactory,
     ) {
     }
 
@@ -24,8 +26,10 @@ final readonly class GalleryContentFactory
      * @param array<mixed>|PictureConfiguration|int|string|null $imageSize
      * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
      */
-    public function create(GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize, GalleryViewer $galleryViewer = GalleryViewer::None): GalleryContentViewModel
+    public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize, GalleryViewer $galleryViewer = GalleryViewer::None): GalleryContentViewModel
     {
+        $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
+
         return new GalleryContentViewModel(
             folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize, false),
             children: array_map(
@@ -41,7 +45,8 @@ final readonly class GalleryContentFactory
                 ),
                 $folder->images,
             ),
-            breadcrumbs: [],
+            breadcrumbs: $navigation['breadcrumbs'],
+            backUrl: $navigation['backUrl'],
         );
     }
 }

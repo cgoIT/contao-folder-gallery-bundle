@@ -47,6 +47,10 @@ final readonly class GalleryFolderViewModelFactory
                 ? $this->figureFactory->createCoverImage($coverImage, $coverImageSize, $url)
                 : null,
             description: $folder->getDescription(),
+            anchor: $folder->isGroupInOverview()
+                ? $this->urlGenerator->generateAnchor($folder)
+                : null,
+            level: $folder->getDepth(),
             overviewMode: $folder->getOverviewMode(),
         );
     }

@@ -5,12 +5,14 @@
     {% if content is defined %}
         {{ include(contentTemplate, {
             content,
+            contentTemplate,
+            folderTemplate,
         }) }}
     {% else %}
         {% for folder in overview.folders %}
             {{ include(folderTemplate, {
                 folder,
-                level: 1,
+                folderTemplate,
             }) }}
         {% endfor %}
     {% endif %}

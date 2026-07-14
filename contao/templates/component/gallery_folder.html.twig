@@ -2,8 +2,13 @@
 {% use '@Contao/component/_figure.html.twig' %}
 
 {% if folder.isGroup %}
-    <section class="module-gallery-overview__group level-{{ level }}">
-        <h2 class="module-gallery-overview__group-title">
+    <section class="module-gallery-overview__group level-{{ folder.level }}">
+        <h2
+            class="module-gallery-overview__group-title"
+            {% if folder.anchor %}
+                id="{{ folder.anchor }}"
+            {% endif %}
+        >
             {{ folder.title }}
         </h2>
 
@@ -18,7 +23,6 @@
                 {{ include(folderTemplate, {
                     folder: child,
                     folderTemplate,
-                    level: level + 1,
                 }) }}
             {% endfor %}
         </div>
