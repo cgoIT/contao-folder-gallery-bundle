@@ -96,27 +96,31 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
     private function renderContent(FragmentTemplate $template, ModuleModel $model, PageModel $page, FilesModel $rootDir, string $path): Response
     {
-        $folder = $this->folderProvider->findOverviewByRootPath($rootDir->path)
-            ->findFolderByPath($path)
-        ;
+        $overview = $this->folderProvider->findOverviewByRootPath($rootDir->path);
+        $folder = $overview->findFolderByPath($path);
 
         if (null === $folder) {
             throw new PageNotFoundException();
         }
 
-        $templateName = $model->galleryContentTpl ?: 'component/gallery_content';
+        $contentTemplateName = $model->galleryContentTpl ?: 'component/gallery_content';
+        $folderTemplateName = $model->galleryFolderTpl ?: 'component/gallery_folder';
 
         $galleryViewer = GalleryViewer::tryFrom($model->galleryViewer) ?: GalleryViewer::Lightbox;
 
         $template->set(
             'content',
             $this->contentFactory->create(
-                $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $galleryViewer,
+                $overview, $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $galleryViewer,
             ),
         );
         $template->set(
             'contentTemplate',
-            "@Contao/$templateName.html.twig",
+            "@Contao/$contentTemplateName.html.twig",
+        );
+        $template->set(
+            'folderTemplate',
+            "@Contao/$folderTemplateName.html.twig",
         );
 
         return $template->getResponse();

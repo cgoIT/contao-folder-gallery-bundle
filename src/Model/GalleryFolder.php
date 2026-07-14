@@ -85,6 +85,11 @@ final readonly class GalleryFolder
         return $this->metadata->isPublished();
     }
 
+    public function isVisibleInBreadcrumb(): bool
+    {
+        return $this->isGalleryInOverview();
+    }
+
     public function isTransparentInOverview(): bool
     {
         return OverviewMode::Transparent === $this->metadata->overviewMode;

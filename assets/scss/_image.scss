@@ -1,0 +1,33 @@
+.module-gallery-overview,
+.gallery-content {
+    &__image {
+        figure {
+            margin: 0;
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: var(--gallery-border-radius);
+        }
+
+        a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+
+            transition:
+                transform var(--gallery-transition-duration) ease,
+                filter var(--gallery-transition-duration) ease;
+        }
+
+        &:hover img {
+            transform: scale(var(--gallery-hover-scale));
+            filter: brightness(var(--gallery-hover-brightness));
+        }
+    }
+}

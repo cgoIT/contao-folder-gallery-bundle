@@ -93,4 +93,24 @@ final class GalleryUrlGeneratorTest extends TestCase
         $generator = new GalleryUrlGenerator($contentUrlGenerator);
         $generator->generate($page, $folder, UrlGeneratorInterface::ABSOLUTE_URL);
     }
+
+    public function testGeneratesUrlForNullFolder(): void
+    {
+        $page = $this->createStub(PageModel::class);
+
+        $contentUrlGenerator = $this->createMock(ContentUrlGenerator::class);
+        $contentUrlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with(
+                $page,
+                [],
+                UrlGeneratorInterface::ABSOLUTE_PATH,
+            )
+            ->willReturn('/gallery')
+        ;
+
+        $generator = new GalleryUrlGenerator($contentUrlGenerator);
+        $generator->generate($page);
+    }
 }

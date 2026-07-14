@@ -21,6 +21,7 @@ final readonly class GalleryFolderViewModel
         public int $folderCount,
         public Figure|null $coverFigure,
         public string|null $description,
+        public int $level,
         public OverviewMode $overviewMode,
     ) {
     }

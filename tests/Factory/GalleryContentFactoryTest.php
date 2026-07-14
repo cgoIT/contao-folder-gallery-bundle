@@ -12,12 +12,15 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 
+use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryBreadcrumbFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
@@ -33,6 +36,7 @@ use Psr\Container\ContainerInterface;
 
 #[CoversClass(GalleryContentFactory::class)]
 #[UsesClass(GalleryContentViewModel::class)]
+#[UsesClass(GalleryOverview::class)]
 #[UsesClass(GalleryFolder::class)]
 #[UsesClass(GalleryImage::class)]
 #[UsesClass(GalleryMetadata::class)]
@@ -77,6 +81,12 @@ final class GalleryContentFactoryTest extends ContaoTestCase
             images: [$imageA, $imageB],
         );
 
+        $overview = new GalleryOverview(
+            root: new GalleryRoot('folderGallery', 1, '/files/gallery'),
+            folders: [$folder],
+            folderIndex: ['parent' => $folder],
+        );
+
         $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
         $figureFactory
             ->expects($this->atMost(3))
@@ -97,9 +107,10 @@ final class GalleryContentFactoryTest extends ContaoTestCase
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
         $urlGenerator
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('generate')
             ->willReturnOnConsecutiveCalls(
+                '/gallery/parent',
                 '/gallery/parent',
                 '/gallery/parent/child',
             )
@@ -109,9 +120,12 @@ final class GalleryContentFactoryTest extends ContaoTestCase
 
         $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
-        $factory = new GalleryContentFactory($figureFactory, $folderViewModelFactory);
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
+
+        $factory = new GalleryContentFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory);
 
         $result = $factory->create(
+            $overview,
             $folder,
             $page,
             'image-size',
@@ -125,6 +139,6 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         $this->assertCount(2, $result->images);
         $this->assertSame($figureA, $result->images[0]);
         $this->assertSame($figureB, $result->images[1]);
-        $this->assertSame([], $result->breadcrumbs);
+        $this->assertCount(1, $result->breadcrumbs);
     }
 }

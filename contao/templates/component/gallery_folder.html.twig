@@ -2,7 +2,7 @@
 {% use '@Contao/component/_figure.html.twig' %}
 
 {% if folder.isGroup %}
-    <section class="module-gallery-overview__group level-{{ level }}">
+    <section class="module-gallery-overview__group level-{{ folder.level }}">
         <h2 class="module-gallery-overview__group-title">
             {{ folder.title }}
         </h2>
@@ -18,7 +18,6 @@
                 {{ include(folderTemplate, {
                     folder: child,
                     folderTemplate,
-                    level: level + 1,
                 }) }}
             {% endfor %}
         </div>

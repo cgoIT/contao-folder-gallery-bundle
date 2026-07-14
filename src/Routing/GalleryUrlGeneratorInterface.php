@@ -18,5 +18,5 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 interface GalleryUrlGeneratorInterface
 {
-    public function generate(PageModel $page, GalleryFolder $folder, int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string;
+    public function generate(PageModel $page, GalleryFolder|null $folder = null, int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string;
 }
