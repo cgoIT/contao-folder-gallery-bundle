@@ -14,11 +14,11 @@
             {{ folder.title }}
         </{{ heading_tag }}>
 
-{#        {% if folder.description %}#}
-{#            <div class="module-gallery-overview__description">#}
-{#                {{ folder.description|raw }}#}
-{#            </div>#}
-{#        {% endif %}#}
+{# {% if folder.description %} #}
+{# <div class="module-gallery-overview__description"> #}
+{# {{ folder.description|raw }} #}
+{# </div> #}
+{# {% endif %} #}
 
         <div class="module-gallery-overview__folders">
             {% for child in folder.children %}
@@ -76,11 +76,11 @@
                 {% endif %}
             </div>
 
-{#            {% if folder.description %}#}
-{#                <div class="module-gallery-overview__description">#}
-{#                    {{ folder.description|raw }}#}
-{#                </div>#}
-{#            {% endif %}#}
+{# {% if folder.description %} #}
+{# <div class="module-gallery-overview__description"> #}
+{# {{ folder.description|raw }} #}
+{# </div> #}
+{# {% endif %} #}
         </div>
     </article>
 {% endif %}
