@@ -19,5 +19,5 @@ $GLOBALS['TL_LANG']['tl_gallery_metadata']['overviewMode'] = ['Overview mode', '
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order']['asc'] = 'Ascending';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order']['desc'] = 'Descending';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['group'] = 'Group';
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['hidden'] = 'Hidden';
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['transparent'] = 'Transparent';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['gallery'] = 'Gallery';
