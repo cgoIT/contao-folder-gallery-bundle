@@ -1,22 +1,21 @@
 {% trans_default_domain 'contao_folder_gallery' %}
 {% use '@Contao/component/_figure.html.twig' %}
 
-{% set heading_tag = 'h' ~ min(folder.level + 1, 6) %}
-
 {% if folder.isGroup %}
     <section class="module-gallery-overview__group level-{{ folder.level }}">
-        <{{ heading_tag }}
+        <h{{ folderHeadingLevel }}
             class="module-gallery-overview__group-title"
             {% if folder.anchor %}
                 id="{{ folder.anchor }}"
             {% endif %}
         >
             {{ folder.title }}
-        </{{ heading_tag }}>
+        </h{{ folderHeadingLevel }}>
 
         <div class="module-gallery-overview__folders">
             {% for child in folder.children %}
                 {{ include(folderTemplate, {
+                    folderHeadingLevel: min(folderHeadingLevel + 1, 6),
                     folder: child,
                     folderTemplate,
                 }) }}
@@ -38,11 +37,13 @@
         {% endif %}
 
         <div class="module-gallery-overview__content">
-            <h3 class="module-gallery-overview__folder-title">
+            <h{{ folderHeadingLevel }}
+                class="module-gallery-overview__folder-title"
+            >
                 <a href="{{ folder.url }}">
                     {{ folder.title }}
                 </a>
-            </h3>
+            </h{{ folderHeadingLevel }}>
 
             <div class="module-gallery-overview__meta">
                 {% if folder.imageCount > 0 %}

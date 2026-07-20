@@ -40,6 +40,7 @@
         <div class="gallery-content__subfolders">
             {% for folder in content.children %}
                 {{ include(folderTemplate, {
+                    folderHeadingLevel: 2,
                     folder,
                     folderTemplate,
                 }) }}

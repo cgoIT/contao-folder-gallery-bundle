@@ -11,6 +11,7 @@
     {% else %}
         {% for folder in overview.folders %}
             {{ include(folderTemplate, {
+                folderHeadingLevel: 1,
                 folder,
                 folderTemplate,
             }) }}
