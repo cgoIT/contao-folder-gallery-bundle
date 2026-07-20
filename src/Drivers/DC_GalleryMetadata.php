@@ -91,6 +91,11 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
     {
         self::loadDataContainer(GalleryMetadata::DCA_TABLE_NAME);
 
+        $this->framework
+            ->getAdapter(System::class)
+            ->loadLanguageFile('default')
+        ;
+
         $this->intId = $id;
         $this->strTable = GalleryMetadata::DCA_TABLE_NAME;
 
