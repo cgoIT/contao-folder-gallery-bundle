@@ -7,28 +7,8 @@ on:
 permissions: read-all
 
 jobs:
-    ecs:
-        name: build-tools
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: 8.3 # Run with the lowest supported to avoid incompatible fixes
-                    extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                    coverage: none
-                env:
-                    COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            -   name: Checkout
-                uses: actions/checkout@v7
-
-            -   name: Install the dependencies
-                run: |
-                    composer install --no-interaction --no-progress
-
-            -   name: Run all build-tools to validate code
-                run: composer run build-tools
+    ci:
+        uses: 'terminal42/contao-build-tools/.github/workflows/build-tools.yml@main'
 
     tests:
         name: PHP ${{ matrix.php }}
