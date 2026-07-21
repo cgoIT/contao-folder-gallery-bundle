@@ -15,7 +15,6 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;
-use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
@@ -84,7 +83,7 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
-        $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory, new OverviewFolderFlattener());
+        $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory);
 
         $viewModel = $factory->create($overview, $pageModel, 'gallery_cover');
 
@@ -147,7 +146,7 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
-        $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory, new OverviewFolderFlattener());
+        $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory);
 
         $viewModel = $factory->create($overview, $pageModel, 'gallery_cover');
 

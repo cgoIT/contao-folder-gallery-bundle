@@ -20,10 +20,8 @@ use Contao\PageModel;
 
 final readonly class GalleryOverviewViewModelFactory
 {
-    public function __construct(
-        private GalleryFolderViewModelFactory $folderViewModelFactory,
-        private OverviewFolderFlattener $overviewFolderFlattener,
-    ) {
+    public function __construct(private GalleryFolderViewModelFactory $folderViewModelFactory)
+    {
     }
 
     /**
@@ -31,7 +29,7 @@ final readonly class GalleryOverviewViewModelFactory
      */
     public function create(GalleryOverview $overview, PageModel $page, PictureConfiguration|array|int|string|null $coverImageSize): GalleryOverviewViewModel
     {
-        $folders = $this->overviewFolderFlattener->flatten($overview->folders);
+        $folders = $this->getVisibleFolders($overview->folders);
         $folders = array_map(
             fn (GalleryFolder $folder) => $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
             $folders,
@@ -40,5 +38,30 @@ final readonly class GalleryOverviewViewModelFactory
         return new GalleryOverviewViewModel(
             folders: $folders,
         );
+    }
+
+    /**
+     * @param list<GalleryFolder> $folders
+     *
+     * @return list<GalleryFolder>
+     */
+    private function getVisibleFolders(array $folders): array
+    {
+        $result = [];
+
+        foreach ($folders as $folder) {
+            if ($folder->isTransparentInOverview()) {
+                $result = [
+                    ...$result,
+                    ...$this->getVisibleFolders($folder->folders),
+                ];
+
+                continue;
+            }
+
+            $result[] = $folder;
+        }
+
+        return $result;
     }
 }

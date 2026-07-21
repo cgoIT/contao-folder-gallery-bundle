@@ -58,7 +58,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
             return null;
         }
 
-        $slug = $this->slug->generate($metadata->title ?? basename($directory));
+        $slug = $this->slug->generate($metadata->title ?? basename($directory), [], null, '');
         $trail = [
             ...$parentTrail,
             $slug,

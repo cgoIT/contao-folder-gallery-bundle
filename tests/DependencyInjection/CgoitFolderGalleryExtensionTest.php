@@ -27,7 +27,6 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryMetadataFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;
-use Cgoit\ContaoFolderGalleryBundle\Factory\OverviewFolderFlattener;
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
 use Cgoit\ContaoFolderGalleryBundle\Loader\ContaoGalleryImageLoader;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
@@ -68,7 +67,6 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         GalleryFolderViewModelFactory::class,
         GalleryMetadataFactory::class,
         GalleryOverviewViewModelFactory::class,
-        OverviewFolderFlattener::class,
 
         FolderGalleryModule::class,
 
