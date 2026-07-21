@@ -22,6 +22,10 @@ final class GalleryCache
 
     public const string KEY_PUBLISHED_OVERVIEWS = self::PREFIX.'.overviews.published';
 
+    public const string TAG_FILESYSTEM = self::PREFIX.'.filesystem';
+
+    public const string KEY_FILESYSTEM_FINGERPRINT = self::PREFIX.'.filesystem_fingerprint';
+
     /**
      * @codeCoverageIgnore
      *
@@ -31,6 +35,7 @@ final class GalleryCache
     {
         return [
             self::TAG_OVERVIEWS,
+            self::TAG_FILESYSTEM,
         ];
     }
 }

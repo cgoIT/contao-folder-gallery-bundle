@@ -32,7 +32,7 @@ final readonly class GalleryMetadataWriter
 
     public function write(string $directory, GalleryMetadata $metadata): void
     {
-        $filename = rtrim($directory, '/').'/_metadata.yml';
+        $filename = rtrim($directory, '/').GalleryMetadata::METADATA_FILE_NAME;
 
         $data = [
             'title' => $metadata->title,

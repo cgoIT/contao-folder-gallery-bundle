@@ -16,6 +16,8 @@ final readonly class GalleryMetadata
 {
     public const string DCA_TABLE_NAME = 'tl_gallery_metadata';
 
+    public const string METADATA_FILE_NAME = '_metadata.yml';
+
     public function __construct(
         public string|null $title = null,
         public string|null $description = null,

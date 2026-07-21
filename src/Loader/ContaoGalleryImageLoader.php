@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Loader;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Contao\StringUtil;
@@ -39,7 +40,7 @@ final readonly class ContaoGalleryImageLoader implements GalleryImageLoaderInter
 
         if (!empty($arrFiles)) {
             foreach ($arrFiles as $file) {
-                if ('.' === $file->name || '..' === $file->name || '_metadata.yml' === $file->name) {
+                if ('.' === $file->name || '..' === $file->name || GalleryMetadata::METADATA_FILE_NAME === $file->name) {
                     continue;
                 }
 

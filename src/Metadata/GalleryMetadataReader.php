@@ -40,7 +40,7 @@ final readonly class GalleryMetadataReader
 
     public function read(string $directory): GalleryMetadata
     {
-        $filename = rtrim($directory, '/').'/_metadata.yml';
+        $filename = rtrim($directory, '/').GalleryMetadata::METADATA_FILE_NAME;
 
         if (!is_file($filename)) {
             return new GalleryMetadata();

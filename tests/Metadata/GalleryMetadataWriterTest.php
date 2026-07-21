@@ -42,7 +42,7 @@ final class GalleryMetadataWriterTest extends TestCase
 
     protected function tearDown(): void
     {
-        (new Filesystem())->remove($this->tempDirectory);
+        // (new Filesystem())->remove($this->tempDirectory);
 
         parent::tearDown();
     }
@@ -61,7 +61,7 @@ final class GalleryMetadataWriterTest extends TestCase
 
         $this->writer->write($this->tempDirectory, $metadata);
 
-        $data = Yaml::parseFile($this->tempDirectory.'/_metadata.yml');
+        $data = Yaml::parseFile($this->tempDirectory.'/'.GalleryMetadata::METADATA_FILE_NAME);
 
         $this->assertSame('Friday', $data['title']);
         $this->assertSame('Test', $data['description']);
@@ -76,7 +76,7 @@ final class GalleryMetadataWriterTest extends TestCase
     {
         $this->writer->write($this->tempDirectory, new GalleryMetadata());
 
-        $data = Yaml::parseFile($this->tempDirectory.'/_metadata.yml');
+        $data = Yaml::parseFile($this->tempDirectory.'/'.GalleryMetadata::METADATA_FILE_NAME);
 
         $this->assertSame(
             [

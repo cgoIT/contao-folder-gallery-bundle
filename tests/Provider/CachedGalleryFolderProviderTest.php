@@ -18,6 +18,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFilesystemFingerprintProviderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -49,9 +50,16 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->willReturn([$overview])
         ;
 
+        $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
+        $filesystemFingerprintProvider
+            ->method('getFilesystemFingerprint')
+            ->willReturn('fingerprint')
+        ;
+
         $provider = new CachedGalleryFolderProvider(
             $inner,
             $cache,
+            $filesystemFingerprintProvider,
         );
 
         $this->assertSame([$overview], $provider->findAllOverviews());
@@ -79,9 +87,16 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->method('findAllOverviews')
         ;
 
+        $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
+        $filesystemFingerprintProvider
+            ->method('getFilesystemFingerprint')
+            ->willReturn('fingerprint')
+        ;
+
         $provider = new CachedGalleryFolderProvider(
             $inner,
             $cache,
+            $filesystemFingerprintProvider,
         );
 
         $this->assertOverviewsEqual([$overview], $provider->findAllOverviews(true));
@@ -144,9 +159,16 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
 
         $cache->save($item);
 
+        $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
+        $filesystemFingerprintProvider
+            ->method('getFilesystemFingerprint')
+            ->willReturn('fingerprint')
+        ;
+
         return new CachedGalleryFolderProvider(
             $this->createStub(GalleryFolderProviderInterface::class),
             $cache,
+            $filesystemFingerprintProvider,
         );
     }
 
