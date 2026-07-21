@@ -69,7 +69,10 @@ final class FilesystemGalleryRepositoryTest extends TestCase
 
         $framework = $this->createContaoFrameworkStub();
 
-        $dbafsManager = $this->createClassWithPropertiesStub(DbafsManager::class);
+        $dbafsManager = $this->createStub(DbafsManager::class);
+        $dbafsManager
+            ->method('sync')
+        ;
 
         $this->repository = new FilesystemGalleryRepository(
             new GalleryMetadataReader($framework),
