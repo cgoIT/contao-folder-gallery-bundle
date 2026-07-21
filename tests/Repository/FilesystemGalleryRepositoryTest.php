@@ -19,6 +19,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
+use Contao\CoreBundle\Filesystem\Dbafs\DbafsManager;
 use Contao\CoreBundle\Slug\Slug;
 use Contao\StringUtil;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -68,10 +69,16 @@ final class FilesystemGalleryRepositoryTest extends TestCase
 
         $framework = $this->createContaoFrameworkStub();
 
+        $dbafsManager = $this->createStub(DbafsManager::class);
+        $dbafsManager
+            ->method('sync')
+        ;
+
         $this->repository = new FilesystemGalleryRepository(
             new GalleryMetadataReader($framework),
             $imageLoader,
             $slug,
+            $dbafsManager,
         );
     }
 

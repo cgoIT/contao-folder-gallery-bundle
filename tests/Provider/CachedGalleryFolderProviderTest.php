@@ -18,6 +18,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFilesystemFingerprintProviderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -31,6 +32,8 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 #[UsesClass(GalleryOverview::class)]
 final class CachedGalleryFolderProviderTest extends ContaoTestCase
 {
+    private const string FINGERPRINT = 'fingerprint';
+
     public function testLoadsOverviewsFromInnerProviderOnCacheMiss(): void
     {
         $overview = new GalleryOverview(
@@ -49,9 +52,16 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->willReturn([$overview])
         ;
 
+        $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
+        $filesystemFingerprintProvider
+            ->method('getFilesystemFingerprint')
+            ->willReturn(self::FINGERPRINT)
+        ;
+
         $provider = new CachedGalleryFolderProvider(
             $inner,
             $cache,
+            $filesystemFingerprintProvider,
         );
 
         $this->assertSame([$overview], $provider->findAllOverviews());
@@ -66,7 +76,9 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
         );
 
         $cache = new TagAwareAdapter(new ArrayAdapter());
-        $item = $cache->getItem(GalleryCache::KEY_ALL_OVERVIEWS);
+        $item = $cache->getItem(
+            \sprintf('%s.%s', GalleryCache::KEY_ALL_OVERVIEWS, self::FINGERPRINT),
+        );
 
         $item->set([$overview]);
         $item->tag(GalleryCache::TAG_OVERVIEWS);
@@ -79,9 +91,16 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->method('findAllOverviews')
         ;
 
+        $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
+        $filesystemFingerprintProvider
+            ->method('getFilesystemFingerprint')
+            ->willReturn(self::FINGERPRINT)
+        ;
+
         $provider = new CachedGalleryFolderProvider(
             $inner,
             $cache,
+            $filesystemFingerprintProvider,
         );
 
         $this->assertOverviewsEqual([$overview], $provider->findAllOverviews(true));
@@ -137,16 +156,29 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
     private function createProviderWithCachedOverviews(array $overviews): CachedGalleryFolderProvider
     {
         $cache = new TagAwareAdapter(new ArrayAdapter());
-        $item = $cache->getItem(GalleryCache::KEY_PUBLISHED_OVERVIEWS);
+        $item = $cache->getItem(
+            \sprintf(
+                '%s.%s',
+                GalleryCache::KEY_PUBLISHED_OVERVIEWS,
+                self::FINGERPRINT,
+            ),
+        );
 
         $item->set($overviews);
         $item->tag(GalleryCache::TAG_OVERVIEWS);
 
         $cache->save($item);
 
+        $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
+        $filesystemFingerprintProvider
+            ->method('getFilesystemFingerprint')
+            ->willReturn(self::FINGERPRINT)
+        ;
+
         return new CachedGalleryFolderProvider(
             $this->createStub(GalleryFolderProviderInterface::class),
             $cache,
+            $filesystemFingerprintProvider,
         );
     }
 

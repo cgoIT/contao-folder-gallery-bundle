@@ -11,6 +11,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
+use Contao\CoreBundle\Filesystem\Dbafs\DbafsManager;
 use Contao\CoreBundle\Slug\Slug;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
@@ -22,6 +23,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         private GalleryMetadataReader $metadataLoader,
         private GalleryImageLoaderInterface $galleryImageLoader,
         private Slug $slug,
+        private DbafsManager $dbafsManager,
     ) {
     }
 
@@ -77,6 +79,9 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         }
 
         $folders = $this->sortFoldersByTitle($folders, $metadata);
+
+        // sync filesystem directory to dbafs to ensure dbafs is up to date before reading images
+        $this->dbafsManager->sync($directory);
 
         $folder = new GalleryFolder(
             slug: $slug,

@@ -21,6 +21,7 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
         #[AutowireDecorated]
         private GalleryFolderProviderInterface $inner,
         private TagAwareCacheInterface $cache,
+        private GalleryFilesystemFingerprintProviderInterface $filesystemVersionProvider,
     ) {
     }
 
@@ -30,7 +31,10 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
     public function findAllOverviews(bool $blnShowUnpublished = false): array
     {
         return $this->cache->get(
-            $this->getCacheKey($blnShowUnpublished),
+            $this->getCacheKey(
+                $blnShowUnpublished,
+                $this->filesystemVersionProvider->getFilesystemFingerprint(),
+            ),
             fn ($item) => $this->findUncachedEntry($item, $blnShowUnpublished),
         );
     }
@@ -69,10 +73,14 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
         return $overviews;
     }
 
-    private function getCacheKey(bool $showUnpublished): string
+    private function getCacheKey(bool $showUnpublished, string $version): string
     {
-        return $showUnpublished
-            ? GalleryCache::KEY_ALL_OVERVIEWS
-            : GalleryCache::KEY_PUBLISHED_OVERVIEWS;
+        return \sprintf(
+            '%s.%s',
+            $showUnpublished
+                ? GalleryCache::KEY_ALL_OVERVIEWS
+                : GalleryCache::KEY_PUBLISHED_OVERVIEWS,
+            $version,
+        );
     }
 }
