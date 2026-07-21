@@ -107,9 +107,10 @@ final class GalleryContentFactoryTest extends ContaoTestCase
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
         $urlGenerator
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('generate')
             ->willReturnOnConsecutiveCalls(
+                '/gallery',
                 '/gallery/parent',
                 '/gallery/parent',
                 '/gallery/parent/child',
@@ -117,6 +118,12 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         ;
 
         $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
 
         $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
@@ -139,6 +146,6 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         $this->assertCount(2, $result->images);
         $this->assertSame($figureA, $result->images[0]);
         $this->assertSame($figureB, $result->images[1]);
-        $this->assertCount(1, $result->breadcrumbs);
+        $this->assertCount(2, $result->breadcrumbs);
     }
 }

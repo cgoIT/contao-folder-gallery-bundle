@@ -34,6 +34,11 @@ final readonly class GalleryBreadcrumbFactory
     {
         $breadcrumbs = [];
 
+        $breadcrumbs[] = new GalleryBreadcrumbViewModel(
+            title: $page->title,
+            url: $this->urlGenerator->generate($page),
+        );
+
         $parentGallery = null;
         $currentGallery = null;
 

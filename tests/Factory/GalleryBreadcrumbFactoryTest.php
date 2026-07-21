@@ -34,6 +34,13 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
             ->willReturn('/gallery')
         ;
 
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
         $gallery2026 = $this->createFolder('2026', ['2026'], OverviewMode::Gallery);
 
         $friday = $this->createFolder('Friday', ['2026', 'friday'], OverviewMode::Gallery);
@@ -52,9 +59,10 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
         $urlGenerator
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('generate')
             ->willReturnMap([
+                [$page, null, '/gallery'],
                 [$page, $gallery2026, '/gallery/2026'],
                 [$page, $friday, '/gallery/2026/friday'],
                 [$page, $bands, '/gallery/2026/friday/bands'],
@@ -67,16 +75,19 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $this->assertSame('/gallery/2026/friday', $result['backUrl']);
 
-        $this->assertCount(3, $result['breadcrumbs']);
+        $this->assertCount(4, $result['breadcrumbs']);
 
-        $this->assertSame('2026', $result['breadcrumbs'][0]->title);
-        $this->assertSame('/gallery/2026', $result['breadcrumbs'][0]->url);
+        $this->assertSame('Gallery', $result['breadcrumbs'][0]->title);
+        $this->assertSame('/gallery', $result['breadcrumbs'][0]->url);
 
-        $this->assertSame('Friday', $result['breadcrumbs'][1]->title);
-        $this->assertSame('/gallery/2026/friday', $result['breadcrumbs'][1]->url);
+        $this->assertSame('2026', $result['breadcrumbs'][1]->title);
+        $this->assertSame('/gallery/2026', $result['breadcrumbs'][1]->url);
 
-        $this->assertSame('Bands', $result['breadcrumbs'][2]->title);
-        $this->assertNull($result['breadcrumbs'][2]->url);
+        $this->assertSame('Friday', $result['breadcrumbs'][2]->title);
+        $this->assertSame('/gallery/2026/friday', $result['breadcrumbs'][2]->url);
+
+        $this->assertSame('Bands', $result['breadcrumbs'][3]->title);
+        $this->assertNull($result['breadcrumbs'][3]->url);
     }
 
     public function testHandlesGroupFolders(): void
@@ -85,6 +96,13 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
         $page
             ->method('getFrontendUrl')
             ->willReturn('/gallery')
+        ;
+
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
         ;
 
         $gallery2026 = $this->createFolder('2026', ['2026'], OverviewMode::Gallery);
@@ -113,7 +131,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
         ;
 
         $urlGenerator
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('generate')
             ->willReturnMap([
                 [$page, $gallery2026, '/gallery/2026'],
@@ -126,23 +144,33 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $result = $factory->create($overview, $bands, $page);
 
-        $this->assertCount(3, $result['breadcrumbs']);
+        $this->assertCount(4, $result['breadcrumbs']);
 
-        $this->assertSame('2026', $result['breadcrumbs'][0]->title);
-        $this->assertSame('Music', $result['breadcrumbs'][1]->title);
-        $this->assertSame('Bands', $result['breadcrumbs'][2]->title);
+        $this->assertSame('Gallery', $result['breadcrumbs'][0]->title);
+        $this->assertSame('/gallery', $result['breadcrumbs'][0]->url);
 
+        $this->assertSame('2026', $result['breadcrumbs'][1]->title);
+        $this->assertSame('/gallery/2026', $result['breadcrumbs'][1]->url);
+
+        $this->assertSame('Music', $result['breadcrumbs'][2]->title);
         $this->assertSame(
             '/gallery/2026#gallery-2026-music',
-            $result['breadcrumbs'][1]->url,
+            $result['breadcrumbs'][2]->url,
         );
 
-        $this->assertSame('/gallery/2026', $result['backUrl']);
+        $this->assertSame('Bands', $result['breadcrumbs'][3]->title);
+        $this->assertNull($result['breadcrumbs'][3]->url);
     }
 
     public function testHandlesGroupBeforeFirstGallery(): void
     {
         $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
 
         $group = $this->createFolder('2026', ['2026'], OverviewMode::Group);
         $friday = $this->createFolder('Friday', ['2026', 'friday'], OverviewMode::Gallery);
@@ -158,7 +186,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
         $urlGenerator
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('generate')
             ->willReturnMap([
                 [$page, null, '/gallery'],
@@ -177,13 +205,16 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $result = $factory->create($overview, $friday, $page);
 
-        $this->assertCount(2, $result['breadcrumbs']);
+        $this->assertCount(3, $result['breadcrumbs']);
 
-        $this->assertSame('2026', $result['breadcrumbs'][0]->title);
-        $this->assertSame('/gallery#gallery-2026', $result['breadcrumbs'][0]->url);
+        $this->assertSame('Gallery', $result['breadcrumbs'][0]->title);
+        $this->assertSame('/gallery', $result['breadcrumbs'][0]->url);
 
-        $this->assertSame('Friday', $result['breadcrumbs'][1]->title);
-        $this->assertNull($result['breadcrumbs'][1]->url);
+        $this->assertSame('2026', $result['breadcrumbs'][1]->title);
+        $this->assertSame('/gallery#gallery-2026', $result['breadcrumbs'][1]->url);
+
+        $this->assertSame('Friday', $result['breadcrumbs'][2]->title);
+        $this->assertNull($result['breadcrumbs'][2]->url);
 
         $this->assertSame('/gallery', $result['backUrl']);
     }
@@ -191,6 +222,12 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
     public function testHandlesNestedGroups(): void
     {
         $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
 
         $gallery = $this->createFolder('2026', ['2026'], OverviewMode::Gallery);
         $music = $this->createFolder('Music', ['2026', 'music'], OverviewMode::Group);
@@ -210,9 +247,10 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
         $urlGenerator
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(5))
             ->method('generate')
             ->willReturnMap([
+                [$page, null, '/gallery'],
                 [$page, $gallery, '/gallery/2026'],
             ])
         ;
@@ -230,10 +268,22 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $result = $factory->create($overview, $band, $page);
 
-        $this->assertCount(4, $result['breadcrumbs']);
+        $this->assertCount(5, $result['breadcrumbs']);
 
-        $this->assertSame('/gallery/2026#gallery-2026-music', $result['breadcrumbs'][1]->url);
-        $this->assertSame('/gallery/2026#gallery-2026-music-rock', $result['breadcrumbs'][2]->url);
+        $this->assertSame('Gallery', $result['breadcrumbs'][0]->title);
+        $this->assertSame('/gallery', $result['breadcrumbs'][0]->url);
+
+        $this->assertSame('2026', $result['breadcrumbs'][1]->title);
+        $this->assertSame('/gallery/2026', $result['breadcrumbs'][1]->url);
+
+        $this->assertSame('Music', $result['breadcrumbs'][2]->title);
+        $this->assertSame('/gallery/2026#gallery-2026-music', $result['breadcrumbs'][2]->url);
+
+        $this->assertSame('Rock', $result['breadcrumbs'][3]->title);
+        $this->assertSame('/gallery/2026#gallery-2026-music-rock', $result['breadcrumbs'][3]->url);
+
+        $this->assertSame('Band', $result['breadcrumbs'][4]->title);
+        $this->assertNull($result['breadcrumbs'][4]->url);
 
         $this->assertSame('/gallery/2026', $result['backUrl']);
     }
@@ -241,6 +291,12 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
     public function testSkipsTransparentFolders(): void
     {
         $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
 
         $gallery = $this->createFolder('2026', ['2026'], OverviewMode::Gallery);
         $music = $this->createFolder('Music', ['2026', 'music'], OverviewMode::Group);
@@ -260,7 +316,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
         $urlGenerator
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('generate')
             ->willReturnMap([
                 [$page, $gallery, '/gallery/2026'],
@@ -280,14 +336,19 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
 
         $result = $factory->create($overview, $band, $page);
 
-        $this->assertCount(3, $result['breadcrumbs']);
+        $this->assertCount(4, $result['breadcrumbs']);
 
-        $this->assertSame('2026', $result['breadcrumbs'][0]->title);
-        $this->assertSame('Music', $result['breadcrumbs'][1]->title);
-        $this->assertSame('Band', $result['breadcrumbs'][2]->title);
+        $this->assertSame('Gallery', $result['breadcrumbs'][0]->title);
+        $this->assertSame('/gallery', $result['breadcrumbs'][0]->url);
 
-        $this->assertSame('/gallery/2026#gallery-2026-music', $result['breadcrumbs'][1]->url);
-        $this->assertNull($result['breadcrumbs'][2]->url);
+        $this->assertSame('2026', $result['breadcrumbs'][1]->title);
+        $this->assertSame('/gallery/2026', $result['breadcrumbs'][1]->url);
+
+        $this->assertSame('Music', $result['breadcrumbs'][2]->title);
+        $this->assertSame('/gallery/2026#gallery-2026-music', $result['breadcrumbs'][2]->url);
+
+        $this->assertSame('Band', $result['breadcrumbs'][3]->title);
+        $this->assertNull($result['breadcrumbs'][3]->url);
 
         $this->assertSame('/gallery/2026', $result['backUrl']);
     }
