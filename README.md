@@ -289,6 +289,13 @@ Der Wert `overview_mode` steuert, wie ein Ordner innerhalb der Galerie interpret
 | `group`       | Der Ordner dient als Galeriegruppe. Die enthaltenen Unterordner werden als einzelne Galerien angezeigt. |
 | `transparent` | Der Ordner wird in der Galerie-Struktur übersprungen. Seine Unterordner werden direkt in die übergeordnete Ebene übernommen. Dies eignet sich beispielsweise für rein organisatorische Zwischenordner. |
 
+> 💡 **Hinweis**
+>
+> Ordner mit `overview_mode: group` dienen ausschließlich der Strukturierung der Galerie. Bilder, die sich direkt in
+> einem solchen Ordner befinden, werden derzeit weder in der Galerie-Übersicht noch in einer Galerieansicht angezeigt.
+> Sollen Bilder dargestellt werden, sollten sie in einem Unterordner mit overview_mode: gallery (oder ohne
+> explizite Angabe) abgelegt werden.
+
 #### Beispiel für `transparent`
 
 Folgende Ordnerstruktur:
