@@ -7,7 +7,7 @@ on:
 permissions: read-all
 
 jobs:
-    ci:
+    build-tools:
         uses: 'terminal42/contao-build-tools/.github/workflows/build-tools.yml@main'
 
     tests:
