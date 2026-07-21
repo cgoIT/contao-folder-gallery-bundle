@@ -31,11 +31,7 @@ final readonly class GalleryContentFactory
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
 
         return new GalleryContentViewModel(
-            folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize, false),
-            children: array_map(
-                fn (GalleryFolder $child) => $this->folderViewModelFactory->create($child, $page, $coverImageSize, false),
-                $folder->folders,
-            ),
+            folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
             images: array_map(
                 fn (GalleryImage $image): Figure => $this->figureFactory->create(
                     $image,

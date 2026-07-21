@@ -134,8 +134,8 @@ final class GalleryContentFactoryTest extends ContaoTestCase
 
         $this->assertSame('Parent Folder', $result->folder->title);
         $this->assertSame('/gallery/parent', $result->folder->url);
-        $this->assertCount(1, $result->children);
-        $this->assertSame('Child Folder', $result->children[0]->title);
+        $this->assertCount(1, $result->folder->children);
+        $this->assertSame('Child Folder', $result->folder->children[0]->title);
         $this->assertCount(2, $result->images);
         $this->assertSame($figureA, $result->images[0]);
         $this->assertSame($figureB, $result->images[1]);

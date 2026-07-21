@@ -21,28 +21,21 @@ final readonly class GalleryFolderViewModelFactory
     /**
      * @param PictureConfiguration|array<mixed>|int|string|null $coverImageSize
      */
-    public function create(GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $coverImageSize, bool $recursive = true): GalleryFolderViewModel
+    public function create(GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $coverImageSize): GalleryFolderViewModel
     {
         $coverImage = $folder->getCoverImage();
         $url = $this->urlGenerator->generate($page, $folder);
+
+        $children = $this->createChildren($folder->folders, $page, $coverImageSize);
+        $subGalleryCount = $this->countDirectSubGalleries($folder);
 
         return new GalleryFolderViewModel(
             title: $folder->title,
             slug: $folder->slug,
             url: $url,
-            children: $recursive
-                ? array_map(
-                    fn (GalleryFolder $child) => $this->create(
-                        $child,
-                        $page,
-                        $coverImageSize,
-                        true,
-                    ),
-                    $folder->folders,
-                )
-                : [],
+            children: $children,
             imageCount: $folder->imageCount(),
-            folderCount: \count(array_filter($folder->folders, static fn (GalleryFolder $child): bool => $child->isGalleryInOverview())),
+            galleryCount: $subGalleryCount,
             coverFigure: $coverImage
                 ? $this->figureFactory->createCoverImage($coverImage, $coverImageSize, $url)
                 : null,
@@ -53,5 +46,56 @@ final readonly class GalleryFolderViewModelFactory
             level: $folder->getDepth(),
             overviewMode: $folder->getOverviewMode(),
         );
+    }
+
+    /**
+     * @param list<GalleryFolder>                               $folders
+     * @param PictureConfiguration|array<mixed>|int|string|null $coverImageSize
+     *
+     * @return list<GalleryFolderViewModel>
+     */
+    private function createChildren(array $folders, PageModel $page, PictureConfiguration|array|int|string|null $coverImageSize): array
+    {
+        $children = [];
+
+        foreach ($folders as $folder) {
+            if ($folder->isTransparentInOverview()) {
+                $children = [
+                    ...$children,
+                    ...$this->createChildren(
+                        $folder->folders,
+                        $page,
+                        $coverImageSize,
+                    ),
+                ];
+
+                continue;
+            }
+
+            $children[] = $this->create($folder, $page, $coverImageSize);
+        }
+
+        return $children;
+    }
+
+    private function countDirectSubGalleries(GalleryFolder $folder): int
+    {
+        $count = 0;
+
+        foreach ($folder->folders as $child) {
+            if ($child->isTransparentInOverview()) {
+                $count += $this->countDirectSubGalleries($child);
+                continue;
+            }
+
+            if ($child->isGroupInOverview()) {
+                $count += $this->countDirectSubGalleries($child);
+                continue;
+            }
+
+            ++$count;
+        }
+
+        return $count;
     }
 }

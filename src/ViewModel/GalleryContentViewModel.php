@@ -17,13 +17,11 @@ use Contao\CoreBundle\Image\Studio\Figure;
 final readonly class GalleryContentViewModel
 {
     /**
-     * @param list<GalleryFolderViewModel>     $children
      * @param list<Figure>                     $images
      * @param list<GalleryBreadcrumbViewModel> $breadcrumbs
      */
     public function __construct(
         public GalleryFolderViewModel $folder,
-        public array $children,
         public array $images,
         public array $breadcrumbs,
         public string|null $backUrl,

@@ -10,11 +10,13 @@
         }) }}
     {% else %}
         {% for folder in overview.folders %}
-            {{ include(folderTemplate, {
-                folderHeadingLevel: 1,
-                folder,
-                folderTemplate,
-            }) }}
+            <div class="module-gallery-overview__folders">
+                {{ include(folderTemplate, {
+                    folderHeadingLevel: 1,
+                    folder,
+                    folderTemplate,
+                }) }}
+            </div>
         {% endfor %}
     {% endif %}
 

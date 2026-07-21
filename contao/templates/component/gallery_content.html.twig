@@ -36,9 +36,9 @@
         </div>
     {% endif %}
 
-    {% if content.children %}
+    {% if content.folder.children %}
         <div class="gallery-content__subfolders">
-            {% for folder in content.children %}
+            {% for folder in content.folder.children %}
                 {{ include(folderTemplate, {
                     folderHeadingLevel: 2,
                     folder,
