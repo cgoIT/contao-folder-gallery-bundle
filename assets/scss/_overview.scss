@@ -1,5 +1,6 @@
 .module-gallery-overview {
     &__group {
+        grid-column: 1 / -1;
         margin-bottom: var(--gallery-section-spacing);
     }
 

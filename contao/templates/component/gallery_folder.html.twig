@@ -12,13 +12,15 @@
             {{ folder.title }}
         </h{{ folderHeadingLevel }}>
 
-        {% for child in folder.children %}
-            {{ include(folderTemplate, {
-                folderHeadingLevel: min(folderHeadingLevel + 1, 6),
-                folder: child,
-                folderTemplate,
-            }) }}
-        {% endfor %}
+        <div class="module-gallery-overview__folders">
+            {% for child in folder.children %}
+                {{ include(folderTemplate, {
+                    folderHeadingLevel: min(folderHeadingLevel + 1, 6),
+                    folder: child,
+                    folderTemplate,
+                }) }}
+            {% endfor %}
+        </div>
     </section>
 {% else %}
     {% set wrapper_attributes = attrs()
@@ -46,12 +48,12 @@
             <div class="module-gallery-overview__meta">
                 {% if folder.imageCount > 0 %}
                     <span class="module-gallery-overview__image-count">
-                    {{ folder.imageCount }}
+                        {{ folder.imageCount }}
                         {{ folder.imageCount == 1
                         ? 'folder_gallery.image_count.0'|trans
                         : 'folder_gallery.image_count.1'|trans
                         }}
-                </span>
+                    </span>
                 {% endif %}
 
                 {% if folder.galleryCount > 0 %}
@@ -60,12 +62,12 @@
                     {% endif %}
 
                     <span class="module-gallery-overview__folder-count">
-                    {{ folder.galleryCount }}
+                        {{ folder.galleryCount }}
                         {{ folder.galleryCount == 1
                         ? 'folder_gallery.sub_gallery_count.0'|trans
                         : 'folder_gallery.sub_gallery_count.1'|trans
                         }}
-                </span>
+                    </span>
                 {% endif %}
             </div>
         </div>
