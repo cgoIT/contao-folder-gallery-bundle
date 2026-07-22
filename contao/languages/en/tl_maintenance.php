@@ -8,4 +8,4 @@
  * @license    LGPL-3.0-or-later
  */
 
-$GLOBALS['TL_LANG']['tl_maintenance_jobs']['purgeFolderGalleryCache'] = ['Purge the Folder Gallery Cache', 'Deletes the cached data for all folder-based galleries.'];
+$GLOBALS['TL_LANG']['tl_maintenance_jobs']['purgeFolderGalleryCache'] = ['Purge the Folder Gallery cache', 'Deletes the cached data for all folder-based galleries.'];
