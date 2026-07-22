@@ -52,14 +52,15 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
 
         'sortOrder' => [
             'inputType' => 'select',
-            'options_callback' => ['tl_gallery_metadata', 'getSortOrders'],
+            'enum' => SortOrder::class,
             'eval' => ['tl_class' => 'w50'],
         ],
 
         'overviewMode' => [
             'inputType' => 'select',
-            'options_callback' => ['tl_gallery_metadata', 'getOverviewModes'],
-            'eval' => ['tl_class' => 'w50'],
+            'enum' => OverviewMode::class,
+            'explanation' => 'folderGalleryOverviewMode',
+            'eval' => ['helpwizard' => true, 'tl_class' => 'w50'],
         ],
     ],
 ];
@@ -75,27 +76,5 @@ class tl_gallery_metadata extends Backend
         $attributes['path'] = $dc->id;
 
         return $attributes;
-    }
-
-    public function getSortOrders(): array
-    {
-        $options = [];
-
-        foreach (SortOrder::cases() as $sortOrder) {
-            $options[$sortOrder->value] = &$GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order'][$sortOrder->value];
-        }
-
-        return $options;
-    }
-
-    public function getOverviewModes(): array
-    {
-        $options = [];
-
-        foreach (OverviewMode::cases() as $overviewMode) {
-            $options[$overviewMode->value] = &$GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode'][$overviewMode->value];
-        }
-
-        return $options;
     }
 }

@@ -14,7 +14,6 @@ namespace Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer;
 
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
-use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Contao\BackendUser;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Image\ImageSizes;
@@ -82,23 +81,6 @@ final readonly class ModuleCallbacks
             ->excludePartials()
             ->asTemplateOptions()
         ;
-    }
-
-    /**
-     * @return array<mixed>
-     *
-     * @codeCoverageIgnore
-     */
-    #[AsCallback(table: 'tl_module', target: 'fields.galleryViewer.options')]
-    public function getGalleryViewerOptions(): array
-    {
-        $options = [];
-
-        foreach (GalleryViewer::cases() as $galleryViewer) {
-            $options[$galleryViewer->value] = &$GLOBALS['TL_LANG']['tl_module']['gallery_viewer'][$galleryViewer->value];
-        }
-
-        return $options;
     }
 
     #[AsCallback(table: 'tl_module', target: 'config.onsubmit')]

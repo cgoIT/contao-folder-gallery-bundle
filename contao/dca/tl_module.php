@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 
 /*
  * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
@@ -66,6 +67,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryContentTpl'] = [
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['galleryViewer'] = [
     'inputType' => 'select',
+    'enum' => GalleryViewer::class,
     'eval' => ['chosen' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default 'lightbox'",
 ];

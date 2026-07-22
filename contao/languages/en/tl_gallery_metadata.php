@@ -13,7 +13,7 @@ $GLOBALS['TL_LANG']['tl_gallery_metadata']['description'] = ['Description', 'Des
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['cover'] = ['Cover image', 'Select the image that should be used as the gallery cover. If no image is selected, the first image from the corresponding gallery folder will be used.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['publishedFrom'] = ['Published from', 'Publish the gallery starting at this date and time.'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['publishedUntil'] = ['Published until', 'Publish the gallery only until this date and time.'];
-$GLOBALS['TL_LANG']['tl_gallery_metadata']['sortOrder'] = ['Sort order', 'Choose how child galleries should be sorted.'];
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['sortOrder'] = ['Sort order', 'Choose how child galleries should be sorted. The name of the folder in the file system is always the key factor here!'];
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overviewMode'] = ['Overview mode', 'Choose how this folder should appear in the gallery overview.'];
 
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order']['asc'] = 'Ascending';

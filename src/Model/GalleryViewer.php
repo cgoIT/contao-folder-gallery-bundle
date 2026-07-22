@@ -12,9 +12,30 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-enum GalleryViewer: string
+use Contao\CoreBundle\Translation\TranslatableLabelInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+
+enum GalleryViewer: string implements TranslatableLabelInterface
 {
     case None = 'none';
     case Lightbox = 'lightbox';
     case Photoswipe = 'photoswipe';
+
+    public function label(): TranslatableMessage
+    {
+        return new TranslatableMessage(
+            'tl_module.gallery_viewer.'.$this->getTranslationKey(),
+            [],
+            'contao_tl_module',
+        );
+    }
+
+    private function getTranslationKey(): string
+    {
+        return match ($this) {
+            self::None => 'none',
+            self::Lightbox => 'lightbox',
+            self::Photoswipe => 'photoswipe',
+        };
+    }
 }

@@ -12,8 +12,28 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-enum SortOrder: string
+use Contao\CoreBundle\Translation\TranslatableLabelInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+
+enum SortOrder: string implements TranslatableLabelInterface
 {
     case Asc = 'asc';
     case Desc = 'desc';
+
+    public function label(): TranslatableMessage
+    {
+        return new TranslatableMessage(
+            'tl_gallery_metadata.sort_order.'.$this->getTranslationKey(),
+            [],
+            'contao_tl_gallery_metadata',
+        );
+    }
+
+    private function getTranslationKey(): string
+    {
+        return match ($this) {
+            self::Asc => 'asc',
+            self::Desc => 'desc',
+        };
+    }
 }

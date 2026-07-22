@@ -12,9 +12,30 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Model;
 
-enum OverviewMode: string
+use Contao\CoreBundle\Translation\TranslatableLabelInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+
+enum OverviewMode: string implements TranslatableLabelInterface
 {
     case Gallery = 'gallery';
     case Group = 'group';
     case Transparent = 'transparent';
+
+    public function label(): TranslatableMessage
+    {
+        return new TranslatableMessage(
+            'tl_gallery_metadata.overview_mode.'.$this->getTranslationKey(),
+            [],
+            'contao_tl_gallery_metadata',
+        );
+    }
+
+    private function getTranslationKey(): string
+    {
+        return match ($this) {
+            self::Gallery => 'gallery',
+            self::Group => 'group',
+            self::Transparent => 'transparent',
+        };
+    }
 }
