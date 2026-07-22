@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.0.0...v1.1.0) (2026-07-22)
+
+
+### Features
+
+* add custom maintenance task to purge the folder gallery cache ([8a5e91a](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/8a5e91a3bbcb7f4bbab4c6ad55be13d36b720dc3))
+* add explanation and use enum instead of options_callback in tl_gallery_metadata dca ([ed500c0](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/ed500c0b5ee1effb9c35187658bab6d14349362b))
+
+
+### Bug Fixes
+
+* adapt some labels and descriptions in tl_module to better align with contao standards ([eb263fa](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/eb263fa117aee0caeb6e41cf4a3e2179c1061539))
+* adapt some labels and descriptions in tl_module to better align with contao standards ([7ae6b5a](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/7ae6b5a5663e7078754458d99e1b589eb169c3e8))
+
 ## 1.0.0 (2026-07-21)
 
 
