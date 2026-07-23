@@ -36,6 +36,7 @@ use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataWriter;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryEntryPointProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
@@ -82,6 +83,7 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         ContaoFilesModelProvider::class,
         ContaoGalleryRootProvider::class,
         GalleryFolderProvider::class,
+        GalleryEntryPointProvider::class,
 
         FilesystemGalleryRepository::class,
 
