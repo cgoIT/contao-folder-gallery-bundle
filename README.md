@@ -16,6 +16,7 @@
 - [Metadaten (`_metadata.yml`)](#metadaten-_metadatayml)
 - [Backend](#backend)
 - [Frontend](#frontend)
+- [Sitemap](#sitemap)
 - [FAQ](#faq)
 - [Mitwirken](#mitwirken)
 - [Lizenz](#lizenz)
@@ -558,6 +559,44 @@ ausgewählt werden.
 Dadurch stehen sämtliche Funktionen der Contao-Bildpipeline wie responsive Bilder, verschiedene Ausgabeformate und
 Bildzuschnitte automatisch zur Verfügung.
 
+## Sitemap
+
+Das Bundle integriert sich automatisch in die von Contao erzeugte `sitemap.xml`.
+
+Alle über das **Folder Gallery**-Frontend-Modul erreichbaren Galerien werden automatisch als zusätzliche
+Sitemap-Einträge aufgenommen. Dabei werden sämtliche sichtbaren Galerie-URLs berücksichtigt – unabhängig davon,
+wie tief sie innerhalb der Ordnerstruktur verschachtelt sind.
+
+Aus der folgenden Ordnerstruktur
+
+```text
+files/
+└── galerie/
+    ├── 2026/
+    │   ├── Freitag/
+    │   ├── Samstag/
+    │   └── Sonntag/
+    └── 2025/
+```
+
+werden beispielsweise automatisch folgende zusätzliche Sitemap-Einträge erzeugt:
+
+```text
+https://your-website-domain.com/galerie/2026
+https://your-website-domain.com/galerie/2026/freitag
+https://your-website-domain.com/galerie/2026/samstag
+https://your-website-domain.com/galerie/2026/sonntag
+https://your-website-domain.com/galerie/2025
+```
+
+Dadurch können Suchmaschinen sämtliche Galerien ohne weitere Konfiguration finden und indexieren.
+
+> 💡 **Hinweis**
+>
+> Es ist keine zusätzliche Konfiguration erforderlich. Die Erweiterung ergänzt die von Contao erzeugte Sitemap
+> automatisch.
+
+
 ## FAQ
 
 ### Im Metadaten-Editor werden keine Galerien angezeigt.
@@ -593,6 +632,13 @@ Nein.
 
 Die Metadaten können sowohl direkt in der [`_metadata.yml`](#metadaten-_metadatayml) als auch über den integrierten [Metadaten-Editor](#metadaten-editor) gepflegt
 werden. Beide Arbeitsweisen können beliebig kombiniert werden.
+
+### Werden Galerien automatisch in die Sitemap aufgenommen?
+
+Ja.
+
+Alle über ein **Folder Gallery**-Frontend-Modul erreichbaren Galerien werden automatisch in die von Contao
+erzeugte `sitemap.xml` aufgenommen. Eine zusätzliche Konfiguration ist nicht erforderlich.
 
 ### Kann ich die Erweiterung später wieder entfernen?
 
