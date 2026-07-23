@@ -29,6 +29,7 @@ use Contao\EditableDataContainerInterface;
 use Contao\FilesModel;
 use Contao\Input;
 use Contao\Message;
+use Contao\StringUtil;
 use Contao\System;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -206,6 +207,8 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
             )
         ;
 
+        $content = $this->renderHeader().$content;
+
         $content .= '
 </div>
   '.$buttons.'
@@ -227,6 +230,30 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
             .'">'
             .$content
         ;
+    }
+
+    private function renderHeader(): string
+    {
+        return \sprintf(
+            '<div class="tl_header">
+    <table class="tl_header_table">
+        <tbody>
+            <tr>
+                <td><span class="tl_label">%s</span></td>
+                <td>%s</td>
+            </tr>
+            <tr>
+                <td><span class="tl_label">%s</span></td>
+                <td>%s</td>
+            </tr>
+        </tbody>
+    </table>
+</div>',
+            $GLOBALS['TL_LANG']['tl_gallery_metadata']['header_label']['gallery'],
+            StringUtil::specialchars($this->metadata->title ?: basename((string) $this->intId)),
+            $GLOBALS['TL_LANG']['tl_gallery_metadata']['header_label']['filesystemDirectory'],
+            StringUtil::specialchars($this->intId),
+        );
     }
 
     private function handleSubmit(): void

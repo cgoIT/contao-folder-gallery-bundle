@@ -21,3 +21,6 @@ $GLOBALS['TL_LANG']['tl_gallery_metadata']['sort_order']['desc'] = 'Absteigend';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['group'] = 'Gruppieren';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['transparent'] = 'Transparent';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['gallery'] = 'Galerie';
+
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['header_label']['gallery'] = 'Galerie';
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['header_label']['filesystemDirectory'] = 'Dateipfad';
