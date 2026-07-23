@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Provider;
 
 use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
-use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProvider;
 use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(ContaoGalleryRootProvider::class)]
+#[CoversClass(GalleryRootProvider::class)]
 #[UsesClass(FolderGalleryModule::class)]
-final class ContaoGalleryRootProviderTest extends ContaoTestCase
+final class GalleryRootProviderTest extends ContaoTestCase
 {
     public function testReturnsEmptyArrayIfNoModulesExist(): void
     {
@@ -36,7 +36,7 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
 
         $framework = $this->createContaoFrameworkStub([ModuleModel::class => $moduleAdapter]);
 
-        $provider = new ContaoGalleryRootProvider($framework);
+        $provider = new GalleryRootProvider($framework);
 
         $this->assertSame([], $provider->getGalleryRoots());
     }
@@ -75,7 +75,7 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
             FilesModel::class => $fileAdapter,
         ]);
 
-        $provider = new ContaoGalleryRootProvider($framework);
+        $provider = new GalleryRootProvider($framework);
 
         $roots = $provider->getGalleryRoots();
 
@@ -113,7 +113,7 @@ final class ContaoGalleryRootProviderTest extends ContaoTestCase
             FilesModel::class => $fileAdapter,
         ]);
 
-        $provider = new ContaoGalleryRootProvider($framework);
+        $provider = new GalleryRootProvider($framework);
 
         $roots = $provider->getGalleryRoots();
 

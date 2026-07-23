@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener;
 
-use Cgoit\ContaoFolderGalleryBundle\EventListener\GenerateSitemapListener;
+use Cgoit\ContaoFolderGalleryBundle\EventListener\GallerySitemapListener;
 use Cgoit\ContaoFolderGalleryBundle\Model\SitemapEntry;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GallerySitemapProviderInterface;
 use Contao\CoreBundle\Event\SitemapEvent;
@@ -20,9 +20,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(GenerateSitemapListener::class)]
+#[CoversClass(GallerySitemapListener::class)]
 #[UsesClass(SitemapEntry::class)]
-final class GenerateSitemapListenerTest extends TestCase
+final class GallerySitemapListenerTest extends TestCase
 {
     public function testAddsAllUrlsToSitemapEvent(): void
     {
@@ -51,7 +51,7 @@ final class GenerateSitemapListenerTest extends TestCase
             )
         ;
 
-        $listener = new GenerateSitemapListener($provider);
+        $listener = new GallerySitemapListener($provider);
         $listener($event);
 
         $this->assertSame(
@@ -77,7 +77,7 @@ final class GenerateSitemapListenerTest extends TestCase
             ->method('addUrlToDefaultUrlSet')
         ;
 
-        $listener = new GenerateSitemapListener($provider);
+        $listener = new GallerySitemapListener($provider);
 
         $listener($event);
     }

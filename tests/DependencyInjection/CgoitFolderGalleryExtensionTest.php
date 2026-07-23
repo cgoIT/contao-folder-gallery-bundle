@@ -20,6 +20,7 @@ use Cgoit\ContaoFolderGalleryBundle\DependencyInjection\CgoitFolderGalleryExtens
 use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer\ModuleCallbacks;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener;
+use Cgoit\ContaoFolderGalleryBundle\EventListener\GallerySitemapListener;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\Menu\BackendFolderGalleryListener;
 use Cgoit\ContaoFolderGalleryBundle\EventSubscriber\AddBackendAssetsSubscriber;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
@@ -34,10 +35,10 @@ use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataWriter;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
-use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
-use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoGalleryRootProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryEntryPointProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -60,6 +61,7 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         ModuleCallbacks::class,
         BackendFolderGalleryListener::class,
         GalleryCacheInvalidateListener::class,
+        GallerySitemapListener::class,
 
         AddBackendAssetsSubscriber::class,
 
@@ -80,8 +82,8 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         GalleryMetadataWriter::class,
 
         CachedGalleryFolderProvider::class,
-        ContaoFilesModelProvider::class,
-        ContaoGalleryRootProvider::class,
+        GalleryFilesModelProvider::class,
+        GalleryRootProvider::class,
         GalleryFolderProvider::class,
         GalleryEntryPointProvider::class,
 

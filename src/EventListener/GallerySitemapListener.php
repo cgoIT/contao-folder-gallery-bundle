@@ -17,7 +17,7 @@ use Contao\CoreBundle\Event\SitemapEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsEventListener]
-final readonly class GenerateSitemapListener
+final readonly class GallerySitemapListener
 {
     public function __construct(private GallerySitemapProviderInterface $gallerySitemapProvider)
     {

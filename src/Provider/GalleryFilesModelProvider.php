@@ -10,7 +10,7 @@ use Contao\StringUtil;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(FilesModelProviderInterface::class)]
-final readonly class ContaoFilesModelProvider implements FilesModelProviderInterface
+final readonly class GalleryFilesModelProvider implements FilesModelProviderInterface
 {
     public function __construct(private ContaoFramework $framework)
     {

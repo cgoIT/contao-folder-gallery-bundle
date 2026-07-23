@@ -18,7 +18,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\FilesModel;
 use Contao\ModuleModel;
 
-final readonly class ContaoGalleryRootProvider implements GalleryRootProviderInterface
+final readonly class GalleryRootProvider implements GalleryRootProviderInterface
 {
     public function __construct(private ContaoFramework $framework)
     {

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Provider;
 
-use Cgoit\ContaoFolderGalleryBundle\Provider\ContaoFilesModelProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFilesModelProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\ImageFile;
 use Contao\FilesModel;
 use Contao\StringUtil;
@@ -20,9 +20,9 @@ use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(ContaoFilesModelProvider::class)]
+#[CoversClass(GalleryFilesModelProvider::class)]
 #[UsesClass(ImageFile::class)]
-final class ContaoFilesModelProviderTest extends ContaoTestCase
+final class GalleryFilesModelProviderTest extends ContaoTestCase
 {
     public function testReturnsImageFile(): void
     {
@@ -41,7 +41,7 @@ final class ContaoFilesModelProviderTest extends ContaoTestCase
 
         $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
 
-        $provider = new ContaoFilesModelProvider($framework);
+        $provider = new GalleryFilesModelProvider($framework);
 
         $result = $provider->findByPath('files/gallery/image.jpg');
 
@@ -62,7 +62,7 @@ final class ContaoFilesModelProviderTest extends ContaoTestCase
 
         $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
 
-        $provider = new ContaoFilesModelProvider($framework);
+        $provider = new GalleryFilesModelProvider($framework);
 
         $this->assertNotInstanceOf(ImageFile::class, $provider->findByPath('files/gallery/image.jpg'));
     }
