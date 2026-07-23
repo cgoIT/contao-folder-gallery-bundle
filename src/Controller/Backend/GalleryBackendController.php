@@ -87,6 +87,7 @@ final class GalleryBackendController extends AbstractBackendController
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
             'overviews' => $this->folderProvider->findAllOverviews(true),
             'editor' => $editor,
+            'id' => $this->dataContainer->id,
         ]);
     }
 }
