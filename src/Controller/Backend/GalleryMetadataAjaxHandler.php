@@ -31,7 +31,6 @@ final readonly class GalleryMetadataAjaxHandler
             return;
         }
 
-        $intId = Input::get('id', true);
         $strField = $dataContainer->inputName = Input::post('name');
 
         if (!isset($GLOBALS['TL_DCA'][$dataContainer->table]['fields'][$strField])) {
@@ -40,13 +39,6 @@ final readonly class GalleryMetadataAjaxHandler
 
         $dcaField = $GLOBALS['TL_DCA'][$dataContainer->table]['fields'][$strField];
         $varValue = Input::post('value', true);
-
-        if (
-            '' !== $varValue
-            && !$this->ensureFileIsInsideGallery($intId, $varValue)
-        ) {
-            throw new BadRequestHttpException('Image from invalid folder selected: '.$varValue);
-        }
 
         $file = null;
 
@@ -68,11 +60,5 @@ final readonly class GalleryMetadataAjaxHandler
             $varCoverUuid, $strField, $dataContainer->table, $dataContainer));
 
         throw new ResponseException(new Response($objWidget->generate()));
-    }
-
-    private function ensureFileIsInsideGallery(string $galleryPath, string $selectedFile): bool
-    {
-        return \dirname($selectedFile) === $galleryPath
-            && str_starts_with($selectedFile, rtrim($galleryPath, '/').'/');
     }
 }

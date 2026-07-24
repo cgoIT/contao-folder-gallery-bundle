@@ -24,3 +24,5 @@ $GLOBALS['TL_LANG']['tl_gallery_metadata']['overview_mode']['gallery'] = 'Galeri
 
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['header_label']['gallery'] = 'Galerie';
 $GLOBALS['TL_LANG']['tl_gallery_metadata']['header_label']['filesystemDirectory'] = 'Dateipfad';
+
+$GLOBALS['TL_LANG']['tl_gallery_metadata']['error']['imageOutsideGalleryFolder'] = 'Das Vorschaubild einer Galerie muss sich im Ordner der Galerie befinden.<br>Ausgewählte Datei: %s<br>Galerieordner: %s';

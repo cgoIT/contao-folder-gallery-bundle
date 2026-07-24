@@ -70,10 +70,11 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
     public function edit(): string
     {
         $this->handleSubmit();
+        $content = $this->renderForm();
 
-        return $this->renderForm(
-            $this->renderBoxes(),
-        );
+        Message::reset();
+
+        return $content;
     }
 
     public function create(): void
@@ -195,7 +196,7 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
         return $this->row();
     }
 
-    private function renderForm(string $content): string
+    private function renderForm(): string
     {
         $buttons = $this->buttonsBuilder
             ->generateEditButtons(
@@ -207,7 +208,9 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
             )
         ;
 
-        $content = $this->renderHeader().$content;
+        $content = $this->renderHeader()
+                .Message::generate()
+                .$this->renderBoxes();
 
         $content .= '
 </div>
@@ -258,9 +261,43 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
 
     private function handleSubmit(): void
     {
-        if ($this->noReload || Input::post('FORM_SUBMIT') !== $this->strTable) {
+        if (Input::post('FORM_SUBMIT') !== $this->strTable) {
             return;
         }
+
+        $arrValues = $this->createArrSubmit();
+
+        if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['onbeforesubmit_callback'] ?? null)) {
+            foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['onbeforesubmit_callback'] as $callback) {
+                try {
+                    if (\is_array($callback)) {
+                        $arrValues = System::importStatic($callback[0])->{$callback[1]}($arrValues, $this);
+                    } elseif (\is_callable($callback)) {
+                        $arrValues = $callback($arrValues, $this);
+                    }
+                } catch (\Exception $e) {
+                    $this->noReload = true;
+                    Message::addError($e->getMessage());
+                    System::getContainer()->get('request_stack')?->getMainRequest()->attributes->set('_contao_widget_error', true);
+
+                    break;
+                }
+
+                if (!\is_array($arrValues)) {
+                    throw new \RuntimeException('The onbeforesubmit_callback must return the values!');
+                }
+            }
+        }
+
+        if ($this->noReload) {
+            return;
+        }
+
+        $this->metadata = $this->createMetadataFromPost($arrValues);
+
+        $this->metadataManager->write($this->intId, $this->metadata);
+
+        $this->cacheInvalidator->invalidate();
 
         if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['onsubmit_callback'] ?? null)) {
             foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['onsubmit_callback'] as $callback) {
@@ -272,12 +309,6 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
             }
         }
 
-        $this->metadata = $this->createMetadataFromPost();
-
-        $this->metadataManager->write($this->intId, $this->metadata);
-
-        $this->cacheInvalidator->invalidate();
-
         if (null !== Input::post('saveNclose')) {
             Message::reset();
             $this->redirect($this->router->generate(GalleryBackendController::ROUTE_NAME));
@@ -288,29 +319,37 @@ class DC_GalleryMetadata extends DataContainer implements EditableDataContainerI
         );
     }
 
-    private function createMetadataFromPost(): GalleryMetadata
+    /**
+     * @return array<string, mixed>
+     */
+    private function createArrSubmit(): array
     {
         $title = Input::post('title');
         $description = Input::post('description');
 
         $cover = Input::post('cover');
 
-        if ($cover) {
-            $cover = FilesModel::findByUuid($cover)?->name;
+        return [
+            'title' => $title,
+            'description' => $description,
+            'cover' => $cover,
+            'publishedFrom' => Input::post('publishedFrom'),
+            'publishedUntil' => Input::post('publishedUntil'),
+            'sortOrder' => Input::post('sortOrder'),
+            'overviewMode' => Input::post('overviewMode'),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $arrSubmit
+     */
+    private function createMetadataFromPost(array $arrSubmit): GalleryMetadata
+    {
+        if ($arrSubmit['cover']) {
+            $arrSubmit['cover'] = FilesModel::findByUuid($arrSubmit['cover'])?->name;
         }
 
-        return $this->metadataFactory->create(
-            [
-                'title' => $title,
-                'description' => $description,
-                'cover' => $cover,
-                'publishedFrom' => Input::post('publishedFrom'),
-                'publishedUntil' => Input::post('publishedUntil'),
-                'sortOrder' => Input::post('sortOrder'),
-                'overviewMode' => Input::post('overviewMode'),
-            ],
-            $this->dateTimeZone,
-        );
+        return $this->metadataFactory->create($arrSubmit, $this->dateTimeZone);
     }
 
     private function normalizeValue(string $field): mixed

@@ -60,28 +60,4 @@ final class GalleryMetadataAjaxHandlerTest extends ContaoTestCase
 
         $handler->executePostActions('reloadFiletree', $dc);
     }
-
-    public function testThrowsExceptionIfImageIsOutsideGalleryFolder(): void
-    {
-        $_GET['id'] = 'files/gallery';
-        $_POST['name'] = 'cover';
-        $_POST['value'] = 'files/other/image.jpg';
-
-        $dc = $this->createMock(DataContainer::class);
-        $dc
-            ->expects($this->exactly(2))
-            ->method('__get')
-            ->with('table')
-            ->willReturn('tl_gallery_metadata')
-        ;
-
-        $GLOBALS['TL_DCA']['tl_gallery_metadata']['fields']['cover'] = [];
-
-        $handler = new GalleryMetadataAjaxHandler();
-
-        $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('Image from invalid folder selected');
-
-        $handler->executePostActions('reloadFiletree', $dc);
-    }
 }
