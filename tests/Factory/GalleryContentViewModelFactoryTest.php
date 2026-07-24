@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryBreadcrumbFactory;
-use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
+use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
@@ -34,14 +34,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Psr\Container\ContainerInterface;
 
-#[CoversClass(GalleryContentFactory::class)]
+#[CoversClass(GalleryContentViewModelFactory::class)]
 #[UsesClass(GalleryContentViewModel::class)]
 #[UsesClass(GalleryOverview::class)]
 #[UsesClass(GalleryFolder::class)]
 #[UsesClass(GalleryImage::class)]
 #[UsesClass(GalleryMetadata::class)]
 #[UsesClass(GalleryFolderViewModel::class)]
-final class GalleryContentFactoryTest extends ContaoTestCase
+final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 {
     public function testCreatesContentViewModel(): void
     {
@@ -129,7 +129,7 @@ final class GalleryContentFactoryTest extends ContaoTestCase
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
-        $factory = new GalleryContentFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory);
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory);
 
         $result = $factory->create(
             $overview,
@@ -146,6 +146,111 @@ final class GalleryContentFactoryTest extends ContaoTestCase
         $this->assertCount(2, $result->images);
         $this->assertSame($figureA, $result->images[0]);
         $this->assertSame($figureB, $result->images[1]);
+        $this->assertCount(2, $result->breadcrumbs);
+    }
+
+    public function testExcludesCoverImageFromGalleryContentIfConfigured(): void
+    {
+        $container = $this->createStub(ContainerInterface::class);
+
+        $childFolder = new GalleryFolder(
+            slug: 'child',
+            title: 'Child Folder',
+            filesystemDirectory: '/files/gallery/parent/child',
+            trail: ['parent', 'child'],
+            metadata: new GalleryMetadata(),
+        );
+
+        $imageA = new GalleryImage(
+            uuid: 'uuid-a',
+            path: '/gallery/image-a.jpg',
+            filename: 'image-a.jpg',
+            isCover: true,
+        );
+        $figureA = new Figure(new ImageResult($container, 'project-dir', 'image-a.jpg'));
+
+        $imageB = new GalleryImage(
+            uuid: 'uuid-b',
+            path: '/gallery/image-b.jpg',
+            filename: 'image-b.jpg',
+            isCover: false,
+        );
+        $figureB = new Figure(new ImageResult($container, 'project-dir', 'image-b.jpg'));
+
+        $folder = new GalleryFolder(
+            slug: 'parent',
+            title: 'Parent Folder',
+            filesystemDirectory: '/files/gallery/parent',
+            trail: ['parent'],
+            metadata: new GalleryMetadata(hideCoverInGallery: true),
+            folders: [$childFolder],
+            images: [$imageA, $imageB],
+        );
+
+        $overview = new GalleryOverview(
+            root: new GalleryRoot('folderGallery', 1, '/files/gallery'),
+            folders: [$folder],
+            folderIndex: ['parent' => $folder],
+        );
+
+        $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
+        $figureFactory
+            ->expects($this->exactly(1))
+            ->method('create')
+            ->willReturnCallback(
+                function ($image, PictureConfiguration|array|int|string|null $size, $viewer, string|null $group) use ($imageA, $imageB, $figureA, $figureB): Figure|null {
+                    $this->assertIsString($size);
+                    $this->assertSame(GalleryViewer::None, $viewer);
+
+                    return match ($image) {
+                        $imageA => $figureA,
+                        $imageB => $figureB,
+                        default => null,
+                    };
+                },
+            )
+        ;
+
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->exactly(4))
+            ->method('generate')
+            ->willReturnOnConsecutiveCalls(
+                '/gallery',
+                '/gallery/parent',
+                '/gallery/parent',
+                '/gallery/parent/child',
+            )
+        ;
+
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
+        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
+
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory);
+
+        $result = $factory->create(
+            $overview,
+            $folder,
+            $page,
+            'image-size',
+            'cover-size',
+        );
+
+        $this->assertSame('Parent Folder', $result->folder->title);
+        $this->assertSame('/gallery/parent', $result->folder->url);
+        $this->assertCount(1, $result->folder->children);
+        $this->assertSame('Child Folder', $result->folder->children[0]->title);
+        $this->assertCount(1, $result->images);
+        $this->assertSame($figureB, $result->images[array_key_first($result->images)]);
         $this->assertCount(2, $result->breadcrumbs);
     }
 }

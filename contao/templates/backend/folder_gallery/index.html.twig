@@ -28,8 +28,8 @@
             <div class="editor">
                 {% block panel_content %}
                     <div class="panel">
-                    {% if editor %}
-                        {{ editor|raw }}
+                    {% if boxes %}
+                        {{ include('@Contao/backend/folder_gallery/editor/_editor.html.twig') }}
                     {% endif %}
                     </div>
                 {% endblock %}

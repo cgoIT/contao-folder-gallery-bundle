@@ -17,9 +17,11 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
 use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
+use Contao\CoreBundle\DataContainer\ButtonsBuilder;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Environment;
 use Contao\Input;
+use Contao\Message;
 use Contao\System;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +38,7 @@ final class GalleryBackendController extends AbstractBackendController
 
     public function __construct(
         private readonly ContaoFramework $framework,
+        private readonly ButtonsBuilder $buttonsBuilder,
         private readonly UrlGeneratorInterface $router,
         private readonly ContaoCsrfTokenManager $csrfTokenManager,
         private readonly GalleryFolderProviderInterface $folderProvider,
@@ -78,16 +81,62 @@ final class GalleryBackendController extends AbstractBackendController
             $this->ajaxHandler->executePostActions($action, $this->dataContainer);
         }
 
-        $editor = null;
+        Message::reset();
+
+        $this->dataContainer->handleSubmit();
+
+        $boxes = null;
+        $header = null;
 
         if (null !== $this->dataContainer->id) {
-            $editor = $this->dataContainer->edit();
+            $boxes = $this->getBoxes();
+            $header = $this->dataContainer->getHeader();
         }
 
+        $buttons = $this->buttonsBuilder->generateEditButtons(
+            $this->dataContainer->table,
+            false,
+            false,
+            false,
+            $this->dataContainer,
+        );
+
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
-            'overviews' => $this->folderProvider->findAllOverviews(true),
-            'editor' => $editor,
             'id' => $this->dataContainer->id,
+            'overviews' => $this->folderProvider->findAllOverviews(true),
+
+            'table' => GalleryMetadata::DCA_TABLE_NAME,
+            'is_upload_form' => false,
+            'header' => $header,
+            'boxes' => $boxes,
+            'form_buttons' => $buttons,
+
+            'message' => Message::generate(),
         ]);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    private function getBoxes(): array
+    {
+        $boxes = $this->dataContainer->getBoxes();
+
+        return array_map($this->mapBox(...), $boxes);
+    }
+
+    /**
+     * @param array{key: string, class: string, fields: array<int, string>} $box
+     *
+     * @return array<mixed>
+     */
+    private function mapBox(array $box): array
+    {
+        return [
+            'id' => $box['key'],
+            'class' => $box['class'],
+            'label' => $GLOBALS['TL_LANG'][GalleryMetadata::DCA_TABLE_NAME][$box['key']],
+            'widget_groups_tree' => array_map($this->dataContainer->renderField(...), $box['fields']),
+        ];
     }
 }

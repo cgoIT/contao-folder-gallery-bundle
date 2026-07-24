@@ -22,13 +22,23 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
     ],
 
     'palettes' => [
-        'default' => '{general},title,description,cover,publishedFrom,publishedUntil,sortOrder,overviewMode',
+        '__selector__' => ['overviewMode'],
+        'gallery' => '{general_legend},title,overviewMode,description;{cover_legend},cover,hideCoverInGallery;{sorting_legend:collapsed},sortOrder;{publish_legend:collapsed},publishedFrom,publishedUntil',
+        'group' => '{general_legend},title,overviewMode;{sorting_legend},sortOrder;{publish_legend:collapsed},publishedFrom,publishedUntil',
+        'transparent' => '{general_legend},title,overviewMode',
     ],
 
     'fields' => [
         'title' => [
             'inputType' => 'text',
             'eval' => ['mandatory' => false, 'maxlength' => 255, 'tl_class' => 'w50'],
+        ],
+
+        'overviewMode' => [
+            'inputType' => 'select',
+            'enum' => OverviewMode::class,
+            'explanation' => 'folderGalleryOverviewMode',
+            'eval' => ['helpwizard' => true, 'submitOnChange' => true, 'tl_class' => 'w50'],
         ],
 
         'description' => [
@@ -38,19 +48,15 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
 
         'cover' => [
             'inputType' => 'fileTree',
-            'eval' => ['fieldType' => 'radio', 'filesOnly' => true, 'extensions' => '%contao.image.valid_extensions%', 'tl_class' => 'clr'],
+            'eval' => ['fieldType' => 'radio', 'filesOnly' => true, 'extensions' => '%contao.image.valid_extensions%', 'tl_class' => 'clr w100'],
             'attributes_callback' => [['tl_gallery_metadata', 'getPathForCoverImage']],
             'save_callback' => [['tl_gallery_metadata', 'onCoverSaved']],
         ],
 
-        'publishedFrom' => [
-            'inputType' => 'text',
-            'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
-        ],
-
-        'publishedUntil' => [
-            'inputType' => 'text',
-            'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+        'hideCoverInGallery' => [
+            'inputType' => 'checkbox',
+            'explanation' => 'folderGalleryHideCoverInGallery',
+            'eval' => ['helpwizard' => true, 'tl_class' => 'clr w50 m12'],
         ],
 
         'sortOrder' => [
@@ -59,11 +65,14 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
             'eval' => ['tl_class' => 'w50'],
         ],
 
-        'overviewMode' => [
-            'inputType' => 'select',
-            'enum' => OverviewMode::class,
-            'explanation' => 'folderGalleryOverviewMode',
-            'eval' => ['helpwizard' => true, 'tl_class' => 'w50'],
+        'publishedFrom' => [
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'clr w50 wizard'],
+        ],
+
+        'publishedUntil' => [
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
         ],
     ],
 ];
@@ -99,12 +108,8 @@ class tl_gallery_metadata extends Backend
         if ($cover) {
             $cover = FilesModel::findByUuid($cover);
 
-            if (!$cover) {
-                throw new Exception('Das Coverbild existiert nicht!');
-            }
-
             if (dirname($cover->path) !== $dc->id) {
-                throw new Exception('Das Coverbild ist nicht Teil dieser Galerie!');
+                throw new Exception(sprintf($GLOBALS['TL_LANG']['tl_gallery_metadata']['error']['imageOutsideGalleryFolder'], dirname($cover->path), $dc->id));
             }
         }
 

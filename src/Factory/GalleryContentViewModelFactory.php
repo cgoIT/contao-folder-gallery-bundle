@@ -13,7 +13,7 @@ use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\Image\PictureConfiguration;
 use Contao\PageModel;
 
-final readonly class GalleryContentFactory
+final readonly class GalleryContentViewModelFactory
 {
     public function __construct(
         private GalleryFigureFactoryInterface $figureFactory,
@@ -29,6 +29,7 @@ final readonly class GalleryContentFactory
     public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize, GalleryViewer $galleryViewer = GalleryViewer::None): GalleryContentViewModel
     {
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
+        $images = $this->getImages($folder);
 
         return new GalleryContentViewModel(
             folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
@@ -39,10 +40,22 @@ final readonly class GalleryContentFactory
                     $galleryViewer,
                     'lb-'.$page->id.'-'.$folder->slug,
                 ),
-                $folder->images,
+                $images,
             ),
             breadcrumbs: $navigation['breadcrumbs'],
             backUrl: $navigation['backUrl'],
         );
+    }
+
+    /**
+     * @return list<GalleryImage>
+     */
+    private function getImages(GalleryFolder $folder): array
+    {
+        if (!$folder->metadata->hideCoverInGallery) {
+            return $folder->images;
+        }
+
+        return array_filter($folder->images, static fn (GalleryImage $image) => !$image->isCover);
     }
 }

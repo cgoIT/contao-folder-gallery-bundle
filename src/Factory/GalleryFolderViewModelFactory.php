@@ -29,12 +29,16 @@ final readonly class GalleryFolderViewModelFactory
         $children = $this->createChildren($folder->folders, $page, $coverImageSize);
         $subGalleryCount = $this->countDirectSubGalleries($folder);
 
+        $imageCount = $folder->metadata->hideCoverInGallery
+            ? min($folder->imageCount() - 1, 0)
+            : $folder->imageCount();
+
         return new GalleryFolderViewModel(
             title: $folder->title,
             slug: $folder->slug,
             url: $url,
             children: $children,
-            imageCount: $folder->imageCount(),
+            imageCount: $imageCount,
             galleryCount: $subGalleryCount,
             coverFigure: $coverImage
                 ? $this->figureFactory->createCoverImage($coverImage, $coverImageSize, $url)

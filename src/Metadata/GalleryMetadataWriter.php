@@ -38,6 +38,7 @@ final readonly class GalleryMetadataWriter
             'title' => $metadata->title,
             'description' => $metadata->description,
             'cover' => $metadata->cover,
+            'hide_cover_in_gallery' => $metadata->hideCoverInGallery,
             'published_from' => $metadata->publishedFrom?->format($this->datimFormat),
             'published_until' => $metadata->publishedUntil?->format($this->datimFormat),
             'sort_order' => $metadata->sortOrder->value,

@@ -266,15 +266,16 @@ overview_mode: gallery
 
 ### Unterstützte Felder
 
-| Feld | Beschreibung                                                                     |
-|------|----------------------------------------------------------------------------------|
-| `title` | Titel der Galerie oder Galeriegruppe                                             |
-| `description` | Beschreibung (HTML erlaubt)                                                      |
-| `cover` | Dateiname des Coverbildes innerhalb des aktuellen Ordners                        |
-| `published_from` | Galerie ist erst ab diesem Zeitpunkt sichtbar                                    |
-| `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar                                 |
-| `sort_order` | Sortierreihenfolge der Unterordner (`asc` oder `desc`)                           |
-| `overview_mode` | Legt fest, wie der Ordner behandelt wird (`gallery`, `group` oder `transparent`) |
+| Feld | Beschreibung                                                                                                 |
+|------|--------------------------------------------------------------------------------------------------------------|
+| `title` | Titel der Galerie oder Galeriegruppe                                                                         |
+| `description` | Beschreibung (HTML erlaubt)                                                                                  |
+| `cover` | Dateiname des Coverbildes innerhalb des aktuellen Ordners                                                    |
+| `hide_cover_in_gallery` | Verwendet das Coverbild ausschließlich als Vorschaubild. Innerhalb der Galerie wird dieses Bild nicht angezeigt.    |
+| `published_from` | Galerie ist erst ab diesem Zeitpunkt sichtbar                                                                |
+| `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar                                                             |
+| `sort_order` | Sortierreihenfolge der Unterordner (`asc` oder `desc`)                                                       |
+| `overview_mode` | Legt fest, wie der Ordner in einer Galerieübersicht dargestellt wird (`gallery`, `group` oder `transparent`) |
 
 > 💡 **Hinweis**
 >
@@ -282,7 +283,7 @@ overview_mode: gallery
 
 ### overview_mode
 
-Der Wert `overview_mode` steuert, wie ein Ordner innerhalb der Galerie interpretiert wird.
+Der Wert `overview_mode` steuert, wie ein Ordner innerhalb der Galerie dargestellt bzw. interpretiert wird.
 
 | Wert          | Bedeutung |
 |---------------|-----------|
@@ -328,6 +329,42 @@ direkt unter **2026**:
 
 Dadurch lassen sich zusätzliche Zwischenordner ausschließlich zur besseren Organisation im Dateisystem verwenden, ohne
 dass sie im Frontend sichtbar werden.
+
+### Coverbild nur als Vorschaubild verwenden
+
+In manchen Fällen dient ein Ordner hauptsächlich als Einstieg in weitere Untergalerien. Soll der Ordner dennoch als normale Galerie dargestellt werden, kann ein eigenes Coverbild hinterlegt werden, ohne dass dieses innerhalb der Galerie erscheint.
+
+Dazu kann das Feld
+
+```yaml
+hide_cover_in_gallery: true
+```
+
+gesetzt werden.
+
+Beispiel:
+
+```text
+Produkte/
+├── cover.jpg
+├── Fahrräder/
+├── Roller/
+└── Zubehör/
+```
+
+```yaml
+cover: cover.jpg
+hide_cover_in_gallery: true
+```
+
+Im Frontend erscheint der Ordner Produkte mit cover.jpg als Vorschaubild.
+
+Beim Öffnen der Galerie wird das Coverbild jedoch nicht angezeigt. Stattdessen sieht der Besucher direkt die Untergalerien Fahrräder, Roller und Zubehör.
+
+> 💡 **Hinweis**
+>
+> Im Gegensatz zu `overview_mode: group` bleibt der Ordner eine normale Galerie mit eigener URL und eigenem Galerieeintrag.
+> Lediglich das als Coverbild verwendete Bild wird innerhalb der Galerie ausgeblendet.
 
 ### Manuelle Bearbeitung oder Backend-Editor
 
@@ -619,6 +656,17 @@ Prüfen Sie die [Konfiguration des Seitenlayouts](#galerie-viewer).
 
 - Für **PhotoSwipe** muss das JavaScript-Template `js_photoswipe` aktiviert sein.
 - Für die **Contao-Lightbox** müssen **jQuery** sowie das Template `j_colorbox` aktiviert sein.
+
+### Kann ich ein eigenes Coverbild verwenden, das in der Galerie selbst nicht angezeigt wird?
+
+Mit
+
+```yaml
+hide_cover_in_gallery: true
+```
+wird das ausgewählte Coverbild ausschließlich als Vorschaubild der Galerie verwendet. Innerhalb der Galerie selbst wird dieses Bild ausgeblendet.
+
+Dies eignet sich insbesondere für Galerien, die hauptsächlich weitere Untergalerien enthalten und dennoch mit einem eigenen Vorschaubild dargestellt werden sollen.
 
 ### Werden die Bilder in einer Datenbank gespeichert?
 

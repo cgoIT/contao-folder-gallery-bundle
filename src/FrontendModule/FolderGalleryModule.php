@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 
-use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
+use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
@@ -41,7 +41,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
     public function __construct(
         private readonly CachedGalleryFolderProviderInterface $folderProvider,
         private readonly GalleryOverviewViewModelFactory $overviewFactory,
-        private readonly GalleryContentFactory $contentFactory,
+        private readonly GalleryContentViewModelFactory $contentFactory,
         private readonly PageFinder $pageFinder,
         private readonly ContaoFramework $framework,
     ) {

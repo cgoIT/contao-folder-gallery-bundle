@@ -42,7 +42,7 @@ final class GalleryMetadataWriterTest extends TestCase
 
     protected function tearDown(): void
     {
-        // (new Filesystem())->remove($this->tempDirectory);
+        (new Filesystem())->remove($this->tempDirectory);
 
         parent::tearDown();
     }
@@ -53,6 +53,7 @@ final class GalleryMetadataWriterTest extends TestCase
             title: 'Friday',
             description: 'Test',
             cover: 'image.jpg',
+            hideCoverInGallery: true,
             publishedFrom: new \DateTimeImmutable('2025-09-05 20:00:00'),
             publishedUntil: new \DateTimeImmutable('2025-09-10 23:59:59'),
             sortOrder: SortOrder::Desc,
@@ -66,6 +67,7 @@ final class GalleryMetadataWriterTest extends TestCase
         $this->assertSame('Friday', $data['title']);
         $this->assertSame('Test', $data['description']);
         $this->assertSame('image.jpg', $data['cover']);
+        $this->assertTrue($data['hide_cover_in_gallery']);
         $this->assertSame('2025-09-05 20:00', $data['published_from']);
         $this->assertSame('2025-09-10 23:59', $data['published_until']);
         $this->assertSame('desc', $data['sort_order']);
@@ -80,6 +82,7 @@ final class GalleryMetadataWriterTest extends TestCase
 
         $this->assertSame(
             [
+                'hide_cover_in_gallery' => false,
                 'sort_order' => 'asc',
                 'overview_mode' => 'gallery',
             ],
@@ -93,6 +96,7 @@ final class GalleryMetadataWriterTest extends TestCase
             title: 'Friday',
             description: 'Test',
             cover: 'image.jpg',
+            hideCoverInGallery: true,
             publishedFrom: new \DateTimeImmutable('2025-09-05 20:00'),
             publishedUntil: new \DateTimeImmutable('2025-09-10 23:59'),
             sortOrder: SortOrder::Desc,
@@ -109,6 +113,7 @@ final class GalleryMetadataWriterTest extends TestCase
         $this->assertSame($metadata->title, $loaded->title);
         $this->assertSame($metadata->description, $loaded->description);
         $this->assertSame($metadata->cover, $loaded->cover);
+        $this->assertSame($metadata->hideCoverInGallery, $loaded->hideCoverInGallery);
         $this->assertSame($metadata->publishedFrom->getTimestamp(), $loaded->publishedFrom?->getTimestamp());
         $this->assertSame($metadata->publishedUntil->getTimestamp(), $loaded->publishedUntil?->getTimestamp());
         $this->assertSame($metadata->sortOrder, $loaded->sortOrder);

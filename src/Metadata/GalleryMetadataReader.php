@@ -85,6 +85,7 @@ final readonly class GalleryMetadataReader
             title: $this->getString($data, 'title'),
             description: $this->getString($data, 'description'),
             cover: $this->getString($data, 'cover'),
+            hideCoverInGallery: $this->getBoolean($data, 'hide_cover_in_gallery'),
             publishedFrom: $this->getDateTime($data, 'published_from'),
             publishedUntil: $this->getDateTime($data, 'published_until'),
             sortOrder: $this->getSortOrder($data),
@@ -129,6 +130,33 @@ final readonly class GalleryMetadataReader
         return \is_string($value) && '' !== trim($value)
             ? $value
             : null;
+    }
+
+    /**
+     * @param array<string, string> $data
+     */
+    private function getBoolean(array $data, string $key): bool
+    {
+        $value = $data[$key] ?? null;
+
+        if (null === $value) {
+            return false;
+        }
+
+        if (\is_bool($value)) {
+            return $value;
+        }
+
+        $value = !\is_string($value) ? (string) $value : $value;
+
+        return match (strtolower($value)) {
+            'true' => true,
+            'ja' => true,
+            'yes' => true,
+            'on' => true,
+            '1' => true,
+            default => false,
+        };
     }
 
     /**

@@ -23,7 +23,7 @@ use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener
 use Cgoit\ContaoFolderGalleryBundle\EventListener\GallerySitemapListener;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\Menu\BackendFolderGalleryListener;
 use Cgoit\ContaoFolderGalleryBundle\EventSubscriber\AddBackendAssetsSubscriber;
-use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentFactory;
+use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryMetadataFactory;
@@ -65,7 +65,7 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
 
         AddBackendAssetsSubscriber::class,
 
-        GalleryContentFactory::class,
+        GalleryContentViewModelFactory::class,
         GalleryFigureFactory::class,
         GalleryFolderViewModelFactory::class,
         GalleryMetadataFactory::class,

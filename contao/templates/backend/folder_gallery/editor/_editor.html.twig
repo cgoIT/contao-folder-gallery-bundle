@@ -1,0 +1,34 @@
+{% trans_default_domain 'contao_default' %}
+{% extends '@Contao/backend/data_container/table/edit/_edit.html.twig' %}
+
+{% block header %}
+    {{ parent() }}
+
+    {% if header %}
+        <div class="tl_header">
+            <table class="tl_header_table">
+                <tbody>
+                <tr>
+                    <td><span class="tl_label">{{ header[0].label }}</span></td>
+                    <td>{{ header[0].value }}</td>
+                </tr>
+                <tr>
+                    <td><span class="tl_label">{{ header[1].label }}</span></td>
+                    <td>{{ header[1].value }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block form_body %}
+    <input type="hidden" name="FORM_SUBMIT" value="{{ table }}">
+    <input type="hidden" name="REQUEST_TOKEN" value="{{ contao.request_token }}">
+
+    {% embed '@Contao/backend/data_container/table/edit/_boxes.html.twig' %}
+        {% block widget_groups %}
+            <div class="widget-group">{{ parent() }}</div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
