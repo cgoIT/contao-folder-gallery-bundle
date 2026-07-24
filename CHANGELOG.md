@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.1.0...v1.2.0) (2026-07-24)
+
+
+### Features
+
+* add gallery urls to generated sitemap ([8a524fa](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/8a524fa9a1221ded7c5117c0c1911849e2b798e7))
+* optimize backend editor, add option to hide a cover image in gallery and use it only for the gallery overview ([2607cb0](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/2607cb0078b4ac8b495b37bdf2bae423177ff390))
+* show information about selected node in backend editor ([ce34ece](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/ce34ecea1130ca5e5103ec4ca38babcb2c5bdacb))
+
+
+### Bug Fixes
+
+* add class `node--active` in backend folder for selected item ([56b95e6](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/56b95e60557e8af9c0c5c9a00e79a345e9cf973f))
+* close file picker and show error message in case of an invalid cover image before saving the _metadata.yml ([73e9a15](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/73e9a15d29ae4096e4466e625e97697188da9039))
+* map hideCoverInGallery to new property in backend dca ([25e62f3](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/25e62f3661728c9352c915ca31e2a965685e7ed5))
+
+
+### Miscellaneous Chores
+
+* fix linting error in GalleryMetadataFactory ([12979ef](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/12979ef8231973714932a71a5303e414a2552d2d))
+
 ## [1.1.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.0.0...v1.1.0) (2026-07-22)
 
 
