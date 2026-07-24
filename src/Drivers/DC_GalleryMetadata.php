@@ -233,15 +233,11 @@ class DC_GalleryMetadata extends DataContainer
      */
     private function createArrSubmit(): array
     {
-        $title = Input::post('title');
-        $description = Input::post('description');
-
-        $cover = Input::post('cover');
-
         return [
-            'title' => $title,
-            'description' => $description,
-            'cover' => $cover,
+            'title' => Input::post('title'),
+            'description' => Input::post('description'),
+            'cover' => Input::post('cover'),
+            'hideCoverInGallery' => Input::post('hideCoverInGallery'),
             'publishedFrom' => Input::post('publishedFrom'),
             'publishedUntil' => Input::post('publishedUntil'),
             'sortOrder' => Input::post('sortOrder'),

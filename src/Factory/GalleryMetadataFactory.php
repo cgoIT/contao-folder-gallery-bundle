@@ -38,6 +38,7 @@ final readonly class GalleryMetadataFactory
             title: $this->normalizeString($data['title'] ?? null),
             description: $this->normalizeHtml($data['description'] ?? null),
             cover: $this->normalizeString($data['cover'] ?? null),
+            hideCoverInGallery: $this->normalizeBool($data['hideCoverInGallery'] ?? false),
             publishedFrom: $publishedFrom,
             publishedUntil: $publishedUntil,
             sortOrder: !empty($data['sortOrder'])
@@ -65,5 +66,20 @@ final readonly class GalleryMetadataFactory
         return null !== $value
             ? StringUtil::decodeEntities($value)
             : null;
+    }
+
+    private function normalizeBool(mixed $value): bool|null
+    {
+        if (\is_bool($value)) {
+            return $value;
+        }
+
+        $value = $this->normalizeString($value);
+
+        if (null === $value) {
+            return null;
+        }
+
+        return $value === '1';
     }
 }

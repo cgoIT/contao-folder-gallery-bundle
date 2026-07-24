@@ -19,6 +19,7 @@ final readonly class GalleryMetadataReader
         'title',
         'description',
         'cover',
+        'hide_cover_in_gallery',
         'published_from',
         'published_until',
         'sort_order',
