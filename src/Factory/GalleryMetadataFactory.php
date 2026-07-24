@@ -80,6 +80,6 @@ final readonly class GalleryMetadataFactory
             return null;
         }
 
-        return $value === '1';
+        return '1' === $value;
     }
 }
