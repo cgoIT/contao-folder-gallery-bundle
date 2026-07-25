@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.2.1...v1.2.2) (2026-07-25)
+
+
+### Bug Fixes
+
+* add better responsive behaviour for gallery overview and content layouts ([01de9f1](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/01de9f1d1afd8429290da5f4005838175b6d18ba))
+
 ## [1.2.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.2.0...v1.2.1) (2026-07-25)
 
 
