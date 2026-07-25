@@ -38,7 +38,7 @@ final readonly class GalleryMetadataFactory
             title: $this->normalizeString($data['title'] ?? null),
             description: $this->normalizeHtml($data['description'] ?? null),
             cover: $this->normalizeString($data['cover'] ?? null),
-            hideCoverInGallery: $this->normalizeBool($data['hideCoverInGallery'] ?? false),
+            hideCoverInGallery: $this->normalizeBool($data['hideCoverInGallery'] ?? null),
             publishedFrom: $publishedFrom,
             publishedUntil: $publishedUntil,
             sortOrder: !empty($data['sortOrder'])
@@ -68,7 +68,7 @@ final readonly class GalleryMetadataFactory
             : null;
     }
 
-    private function normalizeBool(mixed $value): bool|null
+    private function normalizeBool(mixed $value): bool
     {
         if (\is_bool($value)) {
             return $value;
@@ -77,7 +77,7 @@ final readonly class GalleryMetadataFactory
         $value = $this->normalizeString($value);
 
         if (null === $value) {
-            return null;
+            return false;
         }
 
         return '1' === $value;
