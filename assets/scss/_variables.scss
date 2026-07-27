@@ -29,7 +29,6 @@
     // Typography
     --gallery-title-size: clamp(0.9rem, 1.2vw + 0.5rem, 1.5rem);
     --gallery-title-weight: 600;
-
     --gallery-meta-size: clamp(0.65rem, 1.1vw + 0.5rem, 1rem);
     --gallery-meta-weight: 400;
     --gallery-meta-color: #666;
@@ -43,10 +42,8 @@
     @media (width <= #{breakpoints.$sm}) {
         --gallery-spacing: 0.75rem;
         --gallery-section-spacing: 1.5rem;
-
         --gallery-overview-column-width: 80px;
         --gallery-overview-gap: 1rem;
-
         --gallery-content-column-width: 60px;
         --gallery-content-gap: 0.75rem;
     }
@@ -54,10 +51,8 @@
     @media (width <= #{breakpoints.$md}) {
         --gallery-spacing: 0.95rem;
         --gallery-section-spacing: 1.75rem;
-
         --gallery-overview-column-width: 100px;
         --gallery-overview-gap: 1.15rem;
-
         --gallery-content-column-width: 80px;
         --gallery-content-gap: 0.95rem;
     }
@@ -65,10 +60,8 @@
     @media (width <= #{breakpoints.$lg}) {
         --gallery-spacing: 1rem;
         --gallery-section-spacing: 2rem;
-
         --gallery-overview-column-width: 140px;
         --gallery-overview-gap: 1.5rem;
-
         --gallery-content-column-width: 100px;
         --gallery-content-gap: 1rem;
     }
