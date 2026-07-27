@@ -542,10 +542,9 @@ Alle Templates können wie gewohnt über das Contao-Template-System überschrieb
 
 #### CSS-Variablen
 
-Das Standard-Stylesheet verwendet CSS-Variablen, um die wichtigsten Layout-Parameter einfach anpassen zu können.
+Das Standard-Stylesheet verwendet CSS-Variablen, um die wichtigsten Layout- und Designparameter einfach anpassen zu können.
 
-Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert und können problemlos im eigenen Theme
-überschrieben werden.
+Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert und können problemlos im eigenen Theme überschrieben werden.
 
 ##### Abstände
 
@@ -568,11 +567,34 @@ Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert un
 | `--gallery-content-column-width` | `200px` | Mindestbreite der Bilder innerhalb einer Galerie. |
 | `--gallery-content-gap` | `1rem` | Abstand zwischen den Bildern. |
 
+##### Karten
+
+| Variable | Standardwert | Beschreibung |
+|-----------|--------------|--------------|
+| `--gallery-card-background` | `transparent` | Hintergrund einer Kartenansicht in der Galerie-Übersicht. |
+| `--gallery-card-border` | `none` | Rahmen einer Karte. |
+| `--gallery-card-border-radius` | `var(--gallery-border-radius)` | Abrundung der Karte. |
+| `--gallery-card-padding` | `0` | Innenabstand des Inhaltsbereichs einer Karte. |
+| `--gallery-card-gap` | `0.5rem` | Abstand zwischen Vorschaubild und Inhaltsbereich einer Karte. |
+| `--gallery-card-shadow` | `none` | Standardschatten einer Karte. |
+| `--gallery-card-shadow-hover` | `none` | Schatten einer Karte beim Überfahren mit der Maus. |
+
 ##### Bilder
 
 | Variable | Standardwert | Beschreibung |
 |-----------|--------------|--------------|
-| `--gallery-border-radius` | `0.5rem` | Abrundung der Bilder. |
+| `--gallery-border-radius` | `0.5rem` | Abrundung der Vorschaubilder. |
+| `--gallery-image-aspect-ratio` | `1` | Seitenverhältnis der Vorschaubilder (z. B. `1`, `4 / 3` oder `16 / 9`). |
+
+##### Typografie
+
+| Variable | Standardwert | Beschreibung |
+|-----------|--------------|--------------|
+| `--gallery-title-size` | `clamp(0.9rem, 1.2vw + 0.5rem, 1.5rem)` | Schriftgröße des Galerietitels. |
+| `--gallery-title-weight` | `600` | Schriftstärke des Galerietitels. |
+| `--gallery-meta-size` | `clamp(0.65rem, 1.1vw + 0.5rem, 1rem)` | Schriftgröße der Metadaten (z. B. Anzahl der Bilder). |
+| `--gallery-meta-weight` | `400` | Schriftstärke der Metadaten. |
+| `--gallery-meta-color` | `#666` | Textfarbe der Metadaten. |
 
 ##### Hover-Effekte
 
@@ -580,6 +602,7 @@ Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert un
 |-----------|--------------|--------------|
 | `--gallery-hover-scale` | `1.04` | Vergrößerung des Bildes beim Überfahren mit der Maus. |
 | `--gallery-hover-brightness` | `0.95` | Helligkeit des Bildes beim Hover-Effekt. |
+| `--gallery-hover-translate-y` | `0` | Vertikale Verschiebung einer Karte beim Hover-Effekt. |
 | `--gallery-transition-duration` | `0.2s` | Dauer der Hover-Animationen. |
 
 #### Bildgrößen
