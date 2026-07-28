@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.2.2...v1.3.0) (2026-07-27)
+
+
+### Features
+
+* more usage of css variables for gallery ([3ae8c6b](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/3ae8c6b11620166f7cf36982456c773f4ee1d48a))
+
+
+### Miscellaneous Chores
+
+* fix linting errors ([69dc884](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/69dc88498d6b7d45b8e81bdf70effe54d54368a2))
+
 ## [1.2.2](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.2.1...v1.2.2) (2026-07-25)
 
 
