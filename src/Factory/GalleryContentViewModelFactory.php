@@ -26,7 +26,7 @@ final readonly class GalleryContentViewModelFactory
      * @param array<mixed>|PictureConfiguration|int|string|null $imageSize
      * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
      */
-    public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize, GalleryViewer $galleryViewer = GalleryViewer::None): GalleryContentViewModel
+    public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize, bool $showEmptyGalleryMessage, string|null $emptyGalleryMessage, GalleryViewer $galleryViewer = GalleryViewer::None): GalleryContentViewModel
     {
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
         $images = $this->getImages($folder);
@@ -42,6 +42,8 @@ final readonly class GalleryContentViewModelFactory
                 ),
                 $images,
             ),
+            showEmptyMessage: $showEmptyGalleryMessage && $this->isEmpty($images, $folder->folders),
+            emptyMessage: $showEmptyGalleryMessage ? $emptyGalleryMessage : null,
             breadcrumbs: $navigation['breadcrumbs'],
             backUrl: $navigation['backUrl'],
         );
@@ -57,5 +59,23 @@ final readonly class GalleryContentViewModelFactory
         }
 
         return array_filter($folder->images, static fn (GalleryImage $image) => !$image->isCover);
+    }
+
+    /**
+     * @param list<GalleryImage>  $images
+     * @param list<GalleryFolder> $children
+     */
+    private function isEmpty(array $images, array $children): bool
+    {
+        $visibleImageCount = \count($images);
+
+        $visibleChildFolders = \count(
+            array_filter(
+                $children,
+                static fn (GalleryFolder $folder) => $folder->isPublished(),
+            ),
+        );
+
+        return 0 === $visibleImageCount && 0 === $visibleChildFolders;
     }
 }

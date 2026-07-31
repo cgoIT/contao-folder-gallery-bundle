@@ -14,7 +14,7 @@
 - [Designprinzipien](#designprinzipien)
 - [Galerie-Struktur](#galerie-struktur)
 - [Metadaten (`_metadata.yml`)](#metadaten-_metadatayml)
-- [Backend](#backend)
+- [Backend](#backend-konfiguration)
 - [Frontend](#frontend)
 - [Sitemap](#sitemap)
 - [FAQ](#faq)
@@ -386,7 +386,7 @@ Beide Wege können beliebig kombiniert werden. Änderungen, die manuell an der D
 Backend sofort sichtbar. Ebenso können Dateien zunächst manuell angelegt und später bequem über den Backend-Editor
 gepflegt werden.
 
-## Backend
+## Backend-Konfiguration
 
 ### Frontend-Modul
 
@@ -399,6 +399,7 @@ Das Frontend-Modul definiert die [Galerie-Wurzel](#galerie-struktur) und steuert
 | **Galerie-Wurzel** | Wurzelordner der Galerie. Alle Unterordner werden automatisch als Galerie-Struktur interpretiert. |
 | **Galeriebildgröße** | Bildgröße der Bilder innerhalb einer Galerie. |
 | **Coverbildgröße** | Bildgröße der Vorschaubilder in der Galerie-Übersicht. |
+| **Meldung bei leeren Galerien** | Zeigt eine frei definierbare Meldung an, wenn eine veröffentlichte Galerie weder sichtbare Untergalerien noch sichtbare Bilder enthält. |
 | **Galerie-Viewer** | Legt fest, ob die Bilder mit der Contao-Lightbox oder mit PhotoSwipe geöffnet werden. |
 | **Übersichts-Template** | Twig-Template für die Darstellung der Galerie-Übersicht. |
 | **Galerie-Template** | Twig-Template für die Darstellung einer einzelnen Galerie. |
@@ -512,6 +513,26 @@ zusätzliche Konfiguration zur Verfügung.
 
 Enthält eine Galerie weitere Unterordner, werden diese oberhalb der Bilder ebenfalls angezeigt und können direkt
 geöffnet werden. Dadurch lassen sich beliebig tiefe Galerie-Strukturen aufbauen.
+
+### Leere Galerien
+
+Manchmal werden Galerien bereits veröffentlicht, obwohl die eigentlichen Bilder erst zu einem späteren Zeitpunkt hochgeladen
+werden. Dies kommt beispielsweise bei Veranstaltungen vor, wenn Fotografen ihre Bilder zeitversetzt bereitstellen.
+
+Für diesen Fall kann im Frontend-Modul optional eine Meldung konfiguriert werden.
+
+Wird die Option aktiviert, erscheint diese Meldung automatisch, wenn eine Galerie
+
+* veröffentlicht ist,
+* keine sichtbaren Untergalerien besitzt und
+* keine sichtbaren Bilder enthält.
+
+Dadurch können Besucher beispielsweise darüber informiert werden, dass die Bilder in Kürze veröffentlicht werden.
+
+> 💡 **Hinweis**
+>
+> Bilder, die ausschließlich als Coverbild verwendet werden (`hide_cover_in_gallery: true`), gelten hierbei nicht
+> als sichtbare Bilder.
 
 ### Anpassung der Darstellung
 
@@ -699,6 +720,13 @@ hide_cover_in_gallery: true
 wird das ausgewählte Coverbild ausschließlich als Vorschaubild der Galerie verwendet. Innerhalb der Galerie selbst wird dieses Bild ausgeblendet.
 
 Dies eignet sich insbesondere für Galerien, die hauptsächlich weitere Untergalerien enthalten und dennoch mit einem eigenen Vorschaubild dargestellt werden sollen.
+
+### Meine Galerie ist sichtbar, aber es werden keine Bilder angezeigt.
+
+Wenn im Frontend-Modul die Option Meldung bei leeren Galerien anzeigen aktiviert wurde, erscheint die konfigurierte Meldung automatisch, sobald eine
+veröffentlichte Galerie weder sichtbare Bilder noch sichtbare Untergalerien enthält.
+
+Dies eignet sich insbesondere für Galerien, deren Bilder erst zu einem späteren Zeitpunkt hochgeladen werden.
 
 ### Werden die Bilder in einer Datenbank gespeichert?
 

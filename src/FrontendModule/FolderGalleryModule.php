@@ -111,7 +111,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         $template->set(
             'content',
             $this->contentFactory->create(
-                $overview, $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $galleryViewer,
+                $overview, $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $model->showEmptyGalleryMessage, $model->emptyGalleryMessage, $galleryViewer,
             ),
         );
         $template->set(
