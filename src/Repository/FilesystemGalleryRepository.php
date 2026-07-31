@@ -115,7 +115,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
             return [];
         }
 
-        sort($directories);
+        sort($directories, SORT_NATURAL | SORT_FLAG_CASE);
 
         return $directories;
     }
