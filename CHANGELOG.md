@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.3.0...v1.4.0) (2026-07-31)
+
+
+### Features
+
+* add a new option to configure a message for empty galleries. ([e60ef8e](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/e60ef8eabc8315ee8e80a141d5840290fab8c123))
+* add standard ISO-8601 format for published dates in _metadata.yml ([45dc9af](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/45dc9afe9bd85b6155de963b751c93f8539858a2))
+
+
+### Bug Fixes
+
+* fix caching logic, so that time-based publication is correctly handled ([feeeddb](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/feeeddb232d975e1e84f09748c85d1c0ca29fc60))
+
 ## [1.3.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.2.2...v1.3.0) (2026-07-27)
 
 
