@@ -35,9 +35,7 @@ final class GalleryMetadataWriterTest extends TestCase
 
         (new Filesystem())->mkdir($this->tempDirectory);
 
-        $contaoFramework = $this->createContaoFrameworkStub();
-
-        $this->writer = new GalleryMetadataWriter($contaoFramework, new Filesystem());
+        $this->writer = new GalleryMetadataWriter(new Filesystem());
     }
 
     protected function tearDown(): void
@@ -68,8 +66,8 @@ final class GalleryMetadataWriterTest extends TestCase
         $this->assertSame('Test', $data['description']);
         $this->assertSame('image.jpg', $data['cover']);
         $this->assertTrue($data['hide_cover_in_gallery']);
-        $this->assertSame('2025-09-05 20:00', $data['published_from']);
-        $this->assertSame('2025-09-10 23:59', $data['published_until']);
+        $this->assertSame('2025-09-05T20:00:00+00:00', $data['published_from']);
+        $this->assertSame('2025-09-10T23:59:59+00:00', $data['published_until']);
         $this->assertSame('desc', $data['sort_order']);
         $this->assertSame('transparent', $data['overview_mode']);
     }
@@ -105,9 +103,7 @@ final class GalleryMetadataWriterTest extends TestCase
 
         $this->writer->write($this->tempDirectory, $metadata);
 
-        $framework = $this->createContaoFrameworkStub();
-
-        $reader = new GalleryMetadataReader($framework);
+        $reader = new GalleryMetadataReader();
         $loaded = $reader->read($this->tempDirectory);
 
         $this->assertSame($metadata->title, $loaded->title);

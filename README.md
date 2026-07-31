@@ -257,8 +257,8 @@ description: '<p>Die schönsten Bilder vom Freitagabend.</p>'
 
 cover: IMG_1234.jpg
 
-published_from: '04.09.2026 18:00'
-published_until: '30.09.2027 23:59'
+published_from: '2026-09-04T18:00:00+02:00'
+published_until: '2027-09-30T23:59:59+02:00'
 
 sort_order: asc
 overview_mode: gallery
@@ -279,7 +279,16 @@ overview_mode: gallery
 
 > 💡 **Hinweis**
 >
-> Datums- und Uhrzeitangaben werden im Datumsformat gespeichert, das in den **Contao-Einstellungen** konfiguriert ist.
+> Datums- und Uhrzeitangaben werden im internationalen Standardformat **ISO 8601** gespeichert (z. B.
+> `2026-09-04T18:00:00+02:00`).
+> Das Format enthält die Zeitzone und kann daher unabhängig von den regionalen Einstellungen oder der
+> Serverkonfiguration eindeutig interpretiert werden.
+
+> ℹ️ **Kompatibilität**
+>
+> Bereits vorhandene Metadatendateien mit Datumsangaben im bisherigen Format (bis einschließlich Version 1.3.0)
+> werden weiterhin unterstützt. Beim nächsten Speichern einer Galerie werden die Datumswerte automatisch im
+> ISO-8601-Format gespeichert.
 
 ### overview_mode
 

@@ -2,7 +2,7 @@ title: Friday
 description: Test
 cover: image.jpg
 hide_cover_in_gallery: true
-published_from: 2025-09-05 20:00:00
-published_until: 2025-09-10 23:59:59
+published_from: 2025-09-05T20:00:00+02:00
+published_until: 2025-09-10T23:59:59+02:00
 sort_order: desc
 overview_mode: gallery

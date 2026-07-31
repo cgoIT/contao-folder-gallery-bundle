@@ -7,8 +7,6 @@ namespace Cgoit\ContaoFolderGalleryBundle\Metadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
-use Contao\Config;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -26,17 +24,17 @@ final readonly class GalleryMetadataReader
         'overview_mode',
     ];
 
-    private \DateTimeZone|null $tz;
+    private const array DATIM_FORMATS = [
+        GalleryMetadataManager::DATIM_FORMAT,
+        'Y-m-d H:i',
+        'd.m.Y H:i',
+    ];
 
-    private string $datimFormat;
+    private \DateTimeZone $installationTimezone;
 
-    public function __construct(
-        private ContaoFramework $framework,
-        private LoggerInterface|null $logger = null,
-    ) {
-        $config = $this->framework->getAdapter(Config::class);
-        $this->tz = $config->get('timeZone') ? new \DateTimeZone($config->get('timeZone')) : null;
-        $this->datimFormat = $config->get('datimFormat') ?? GalleryMetadataManager::DATIM_FORMAT;
+    public function __construct(private LoggerInterface|null $logger = null)
+    {
+        $this->installationTimezone = $this->getInstallationTimezone();
     }
 
     public function read(string $directory): GalleryMetadata
@@ -172,13 +170,19 @@ final readonly class GalleryMetadataReader
         }
 
         try {
-            if (\is_int($value) || \is_float($value) || ctype_digit((string) $value)) {
-                $date = new \DateTimeImmutable('@'.(int) $value);
-
-                return $this->tz ? $date->setTimezone($this->tz) : $date;
+            if (is_numeric($value)) {
+                return new \DateTimeImmutable('@'.(int) $value, $this->installationTimezone);
             }
 
-            return \DateTimeImmutable::createFromFormat($this->datimFormat, (string) $value, $this->tz);
+            foreach (self::DATIM_FORMATS as $format) {
+                $date = \DateTimeImmutable::createFromFormat($format, (string) $value, $this->installationTimezone);
+
+                if (false !== $date) {
+                    return $date;
+                }
+            }
+
+            return null;
         } catch (\Throwable) {
             return null;
         }
@@ -210,5 +214,28 @@ final readonly class GalleryMetadataReader
         }
 
         return OverviewMode::tryFrom(strtolower(trim($overviewMode))) ?? OverviewMode::Gallery;
+    }
+
+    private function getInstallationTimezone(): \DateTimeZone
+    {
+        $tz = date_default_timezone_get();
+
+        try {
+            return new \DateTimeZone($tz);
+        } catch (\DateInvalidTimeZoneException $exception) {
+            $this->logger?->warning(
+                \sprintf(
+                    'Invalid timezone configuration. Timezone: %s, error: %s',
+                    $tz,
+                    $exception->getMessage(),
+                ),
+                [
+                    'tz' => $tz,
+                    'exception' => $exception,
+                ],
+            );
+
+            return new \DateTimeZone('UTC');
+        }
     }
 }
