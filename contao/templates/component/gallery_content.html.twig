@@ -48,15 +48,21 @@
         </div>
     {% endif %}
 
-    <div class="gallery-content__images" data-photoswipe="pswp">
-        {% for image in content.images %}
-            <div class="gallery-content__image">
-                {% with {figure: image} %}
-                    {{ block('figure_component') }}
-                {% endwith %}
-            </div>
-        {% endfor %}
-    </div>
+    {% if content.images %}
+        <div class="gallery-content__images" data-photoswipe="pswp">
+            {% for image in content.images %}
+                <div class="gallery-content__image">
+                    {% with {figure: image} %}
+                        {{ block('figure_component') }}
+                    {% endwith %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if content.showEmptyMessage %}
+        {{ content.emptyMessage|insert_tag|raw }}
+    {% endif %}
 
     {% if content.backUrl %}
         <div class="gallery-content__navigation gallery-content__navigation--bottom">

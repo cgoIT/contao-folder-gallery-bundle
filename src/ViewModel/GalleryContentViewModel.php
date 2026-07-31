@@ -23,6 +23,8 @@ final readonly class GalleryContentViewModel
     public function __construct(
         public GalleryFolderViewModel $folder,
         public array $images,
+        public bool $showEmptyMessage,
+        public string|null $emptyMessage,
         public array $breadcrumbs,
         public string|null $backUrl,
     ) {

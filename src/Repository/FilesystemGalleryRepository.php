@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
+ *
+ * @copyright  Copyright (c) cgoIT
+ * @author     cgoIT <https://cgo-it.de>
+ * @license    LGPL-3.0-or-later
+ */
+
 namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
@@ -27,7 +35,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
     ) {
     }
 
-    public function findOverview(GalleryRoot $root, bool $blnShowUnpublished = false): GalleryOverview
+    public function findOverview(GalleryRoot $root): GalleryOverview
     {
         $folders = [];
         $folderIndex = [];
@@ -35,11 +43,9 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         $rootPath = $root->filesystemDirectory;
 
         foreach ($this->getDirectories($rootPath) as $subFolder) {
-            $folder = $this->createFolder($subFolder, $folderIndex, [], true, $blnShowUnpublished);
+            $folder = $this->createFolder($subFolder, $folderIndex, [], true);
 
-            if (null !== $folder) {
-                $folders[] = $folder;
-            }
+            $folders[] = $folder;
         }
 
         $metadata = $this->metadataLoader->read($rootPath);
@@ -52,13 +58,9 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
      * @param array<string>                $parentTrail
      * @param array<string, GalleryFolder> $folderIndex
      */
-    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true, bool $blnShowUnpublished = false): GalleryFolder|null
+    private function createFolder(string $directory, array &$folderIndex, array $parentTrail = [], bool $recursive = true): GalleryFolder
     {
         $metadata = $this->metadataLoader->read($directory);
-
-        if (!$blnShowUnpublished && !$metadata->isPublished()) {
-            return null;
-        }
 
         $slug = $this->slug->generate($metadata->title ?? basename($directory), [], null, '');
         $trail = [
@@ -70,11 +72,9 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
 
         if ($recursive) {
             foreach ($this->getDirectories($directory) as $subFolder) {
-                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive, $blnShowUnpublished);
+                $folder = $this->createFolder($subFolder, $folderIndex, $trail, $recursive);
 
-                if (null !== $folder) {
-                    $folders[] = $folder;
-                }
+                $folders[] = $folder;
             }
         }
 

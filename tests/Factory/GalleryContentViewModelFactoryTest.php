@@ -137,8 +137,12 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $page,
             'image-size',
             'cover-size',
+            true,
+            'This is the empty message',
         );
 
+        $this->assertFalse($result->showEmptyMessage);
+        $this->assertSame('This is the empty message', $result->emptyMessage);
         $this->assertSame('Parent Folder', $result->folder->title);
         $this->assertSame('/gallery/parent', $result->folder->url);
         $this->assertCount(1, $result->folder->children);
@@ -243,8 +247,12 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $page,
             'image-size',
             'cover-size',
+            true,
+            'This is the empty message',
         );
 
+        $this->assertFalse($result->showEmptyMessage);
+        $this->assertSame('This is the empty message', $result->emptyMessage);
         $this->assertSame('Parent Folder', $result->folder->title);
         $this->assertSame('/gallery/parent', $result->folder->url);
         $this->assertCount(1, $result->folder->children);
@@ -252,5 +260,148 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $this->assertCount(1, $result->images);
         $this->assertSame($figureB, $result->images[array_key_first($result->images)]);
         $this->assertCount(2, $result->breadcrumbs);
+    }
+
+    public function testShowsEmptyGalleryMessageForEmptyGallery(): void
+    {
+        $folder = new GalleryFolder(
+            slug: 'parent',
+            title: 'Parent Folder',
+            filesystemDirectory: '/files/gallery/parent',
+            trail: ['parent'],
+            metadata: new GalleryMetadata(),
+            folders: [],
+            images: [],
+        );
+
+        $overview = new GalleryOverview(
+            root: new GalleryRoot('folderGallery', 1, '/files/gallery'),
+            folders: [$folder],
+            folderIndex: ['parent' => $folder],
+        );
+
+        $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
+        $figureFactory
+            ->expects($this->never())
+            ->method('create')
+        ;
+
+        $urlGenerator = $this->createStub(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->method('generate')
+            ->willReturnOnConsecutiveCalls(
+                '/gallery',
+                '/gallery/parent',
+                '/gallery/parent',
+            )
+        ;
+
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
+        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
+
+        $factory = new GalleryContentViewModelFactory(
+            $figureFactory,
+            $folderViewModelFactory,
+            $galleryBreadcrumbFactory,
+        );
+
+        $result = $factory->create(
+            $overview,
+            $folder,
+            $page,
+            'image-size',
+            'cover-size',
+            true,
+            '<p>Bilder folgen in Kürze.</p>',
+        );
+
+        $this->assertTrue($result->showEmptyMessage);
+        $this->assertSame('<p>Bilder folgen in Kürze.</p>', $result->emptyMessage);
+        $this->assertCount(0, $result->images);
+        $this->assertCount(0, $result->folder->children);
+    }
+
+    public function testShowsEmptyGalleryMessageIfOnlyCoverImageExistsAndHideCoverInGalleryIsEnabled(): void
+    {
+        $container = $this->createStub(ContainerInterface::class);
+
+        $coverImage = new GalleryImage(
+            uuid: 'uuid-cover',
+            path: '/files/gallery/cover.jpg',
+            filename: 'cover.jpg',
+            isCover: true,
+        );
+        $figureCover = new Figure(new ImageResult($container, 'project-dir', 'cover.jpg'));
+
+        $folder = new GalleryFolder(
+            slug: 'parent',
+            title: 'Parent Folder',
+            filesystemDirectory: '/files/gallery/parent',
+            trail: ['parent'],
+            metadata: new GalleryMetadata(
+                hideCoverInGallery: true,
+            ),
+            folders: [],
+            images: [$coverImage],
+        );
+
+        $overview = new GalleryOverview(
+            root: new GalleryRoot('folderGallery', 1, '/files/gallery'),
+            folders: [$folder],
+            folderIndex: ['parent' => $folder],
+        );
+
+        $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
+        $figureFactory
+            ->expects($this->never())
+            ->method('create')
+            ->willReturn($figureCover)
+        ;
+
+        $urlGenerator = $this->createStub(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->method('generate')
+            ->willReturn('/gallery')
+        ;
+
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
+        $factory = new GalleryContentViewModelFactory(
+            $figureFactory,
+            new GalleryFolderViewModelFactory($figureFactory, $urlGenerator),
+            new GalleryBreadcrumbFactory($urlGenerator),
+        );
+
+        $result = $factory->create(
+            $overview,
+            $folder,
+            $page,
+            'image-size',
+            'cover-size',
+            true,
+            '<p>Bilder folgen in Kürze.</p>',
+        );
+
+        $this->assertCount(0, $result->images);
+        $this->assertTrue($result->showEmptyMessage);
+        $this->assertSame(
+            '<p>Bilder folgen in Kürze.</p>',
+            $result->emptyMessage,
+        );
     }
 }

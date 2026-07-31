@@ -34,10 +34,9 @@ use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataManager;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataWriter;
-use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryEntryPointProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFilesModelProvider;
-use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProvider;
 use Cgoit\ContaoFolderGalleryBundle\Repository\FilesystemGalleryRepository;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGenerator;
@@ -81,10 +80,9 @@ final class CgoitFolderGalleryExtensionTest extends TestCase
         GalleryMetadataReader::class,
         GalleryMetadataWriter::class,
 
-        CachedGalleryFolderProvider::class,
+        GalleryProvider::class,
         GalleryFilesModelProvider::class,
         GalleryRootProvider::class,
-        GalleryFolderProvider::class,
         GalleryEntryPointProvider::class,
 
         FilesystemGalleryRepository::class,

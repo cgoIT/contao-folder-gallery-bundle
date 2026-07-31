@@ -18,9 +18,7 @@ final class GalleryCache
 
     public const string TAG_OVERVIEWS = self::PREFIX.'.overviews';
 
-    public const string KEY_ALL_OVERVIEWS = self::PREFIX.'.overviews.all';
-
-    public const string KEY_PUBLISHED_OVERVIEWS = self::PREFIX.'.overviews.published';
+    public const string KEY_OVERVIEWS = self::PREFIX.'.overviews';
 
     public const string TAG_FILESYSTEM = self::PREFIX.'.filesystem';
 

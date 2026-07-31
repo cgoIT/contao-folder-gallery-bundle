@@ -23,12 +23,16 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
-    .'{config_legend},galleryRoot,galleryCoverImageSize,galleryImageSize;'
+    .'{config_legend},galleryRoot,galleryCoverImageSize,galleryImageSize,showEmptyGalleryMessage;'
     .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl;'
     .'{viewer_legend:collapsed},galleryViewer;'
     .'{protected_legend:collapsed},protected;'
     .'{expert_legend:collapsed},guests,cssID;'
     .'{invisible_legend:collapsed},invisible,start,stop';
+
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'showEmptyGalleryMessage';
+
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['showEmptyGalleryMessage'] = 'emptyGalleryMessage';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['galleryRoot'] = [
     'exclude' => true,
@@ -51,6 +55,21 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryImageSize'] =
     'reference' => &$GLOBALS['TL_LANG']['MSC'],
     'eval' => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
     'sql' => ['type' => 'string', 'length' => 255, 'default' => '', 'platformOptions' => ['collation' => 'ascii_bin']],
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['showEmptyGalleryMessage'] = [
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['submitOnChange' => true, 'tl_class' => 'clr w50'],
+    'sql' => ['type' => 'boolean', 'default' => false],
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['emptyGalleryMessage'] = [
+    'exclude' => true,
+    'inputType' => 'textarea',
+    'eval' => ['rte' => 'tinyMCE', 'helpwizard' => true, 'tl_class' => 'clr'],
+    'explanation' => 'insertTags',
+    'sql' => 'text NULL',
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['galleryFolderTpl'] = [

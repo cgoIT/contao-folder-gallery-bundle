@@ -15,7 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
-use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
 use Contao\CoreBundle\Exception\PageNotFoundException;
@@ -39,7 +39,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
     public const string TYPE = 'folder_gallery';
 
     public function __construct(
-        private readonly CachedGalleryFolderProviderInterface $folderProvider,
+        private readonly GalleryProviderInterface $folderProvider,
         private readonly GalleryOverviewViewModelFactory $overviewFactory,
         private readonly GalleryContentViewModelFactory $contentFactory,
         private readonly PageFinder $pageFinder,
@@ -99,7 +99,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         $overview = $this->folderProvider->findOverviewByRootPath($rootDir->path);
         $folder = $overview->findFolderByPath($path);
 
-        if (null === $folder) {
+        if (null === $folder || !$folder->isPublished()) {
             throw new PageNotFoundException();
         }
 
@@ -111,7 +111,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         $template->set(
             'content',
             $this->contentFactory->create(
-                $overview, $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $galleryViewer,
+                $overview, $folder, $page, $model->galleryImageSize, $model->galleryCoverImageSize, $model->showEmptyGalleryMessage, $model->emptyGalleryMessage, $galleryViewer,
             ),
         );
         $template->set(

@@ -13,21 +13,13 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Metadata;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
-use Contao\Config;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 final readonly class GalleryMetadataWriter
 {
-    private string $datimFormat;
-
-    public function __construct(
-        private ContaoFramework $framework,
-        private Filesystem $filesystem,
-    ) {
-        $config = $this->framework->getAdapter(Config::class);
-        $this->datimFormat = $config->get('datimFormat') ?? GalleryMetadataManager::DATIM_FORMAT;
+    public function __construct(private Filesystem $filesystem)
+    {
     }
 
     public function write(string $directory, GalleryMetadata $metadata): void
@@ -39,8 +31,8 @@ final readonly class GalleryMetadataWriter
             'description' => $metadata->description,
             'cover' => $metadata->cover,
             'hide_cover_in_gallery' => $metadata->hideCoverInGallery,
-            'published_from' => $metadata->publishedFrom?->format($this->datimFormat),
-            'published_until' => $metadata->publishedUntil?->format($this->datimFormat),
+            'published_from' => $metadata->publishedFrom?->format(GalleryMetadataManager::DATIM_FORMAT),
+            'published_until' => $metadata->publishedUntil?->format(GalleryMetadataManager::DATIM_FORMAT),
             'sort_order' => $metadata->sortOrder->value,
             'overview_mode' => $metadata->overviewMode->value,
         ];

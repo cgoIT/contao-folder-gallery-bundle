@@ -17,5 +17,5 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 
 interface GalleryRepositoryInterface
 {
-    public function findOverview(GalleryRoot $root, bool $blnShowUnpublished = false): GalleryOverview;
+    public function findOverview(GalleryRoot $root): GalleryOverview;
 }

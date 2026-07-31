@@ -50,6 +50,10 @@ final readonly class GalleryOverviewViewModelFactory
         $result = [];
 
         foreach ($folders as $folder) {
+            if (!$folder->isPublished()) {
+                continue;
+            }
+
             if ($folder->isTransparentInOverview()) {
                 $result = [
                     ...$result,
