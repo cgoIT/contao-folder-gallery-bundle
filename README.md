@@ -14,7 +14,7 @@
 - [Designprinzipien](#designprinzipien)
 - [Galerie-Struktur](#galerie-struktur)
 - [Metadaten (`_metadata.yml`)](#metadaten-_metadatayml)
-- [Backend](#backend-konfiguration)
+- [Backend-Konfiguration](#backend-konfiguration)
 - [Frontend](#frontend)
 - [Sitemap](#sitemap)
 - [FAQ](#faq)
