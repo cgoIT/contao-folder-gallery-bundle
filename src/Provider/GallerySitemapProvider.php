@@ -23,7 +23,7 @@ final readonly class GallerySitemapProvider implements GallerySitemapProviderInt
 {
     public function __construct(
         private GalleryEntryPointProviderInterface $entryPointProvider,
-        private CachedGalleryFolderProviderInterface $galleryFolderProvider,
+        private GalleryProviderInterface $galleryProvider,
         private GalleryUrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -49,7 +49,7 @@ final readonly class GallerySitemapProvider implements GallerySitemapProviderInt
      */
     private function createEntriesFromEntryPoint(GalleryEntryPoint $entryPoint): array
     {
-        $overview = $this->galleryFolderProvider
+        $overview = $this->galleryProvider
             ->findOverviewByRootPath($entryPoint->galleryRoot->filesystemDirectory)
         ;
 
@@ -60,6 +60,10 @@ final readonly class GallerySitemapProvider implements GallerySitemapProviderInt
         $entries = [];
 
         foreach ($overview->folderIndex as $galleryFolder) {
+            if (!$galleryFolder->isPublished()) {
+                continue;
+            }
+
             $entries[] = $this->createSitemapEntry(
                 $entryPoint->page,
                 $galleryFolder,

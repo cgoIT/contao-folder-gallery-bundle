@@ -15,14 +15,14 @@ namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 
-interface GalleryFolderProviderInterface
+interface GalleryProviderInterface
 {
     /**
      * @return list<GalleryOverview>
      */
-    public function findAllOverviews(bool $blnShowUnpublished = false): array;
+    public function findAllOverviews(): array;
 
-    public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null;
+    public function findOverviewByRootPath(string $path): GalleryOverview|null;
 
-    public function findFolderByPath(string $path, bool $blnShowUnpublished = false): GalleryFolder|null;
+    public function findFolderByPath(string $path): GalleryFolder|null;
 }

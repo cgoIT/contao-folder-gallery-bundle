@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Cache;
 
-use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
@@ -22,7 +22,7 @@ final readonly class GalleryCacheWarmer implements CacheWarmerInterface
 {
     public function __construct(
         private ContaoFramework $framework,
-        private CachedGalleryFolderProviderInterface $folderProvider,
+        private GalleryProviderInterface $galleryProvider,
     ) {
     }
 
@@ -41,6 +41,6 @@ final readonly class GalleryCacheWarmer implements CacheWarmerInterface
 
     public function warmGalleryCaches(): void
     {
-        $this->folderProvider->findAllOverviews();
+        $this->galleryProvider->findAllOverviews();
     }
 }

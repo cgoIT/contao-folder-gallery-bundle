@@ -30,7 +30,7 @@ final readonly class GalleryFolderViewModelFactory
         $subGalleryCount = $this->countDirectSubGalleries($folder);
 
         $imageCount = $folder->metadata->hideCoverInGallery
-            ? min($folder->imageCount() - 1, 0)
+            ? max($folder->imageCount() - 1, 0)
             : $folder->imageCount();
 
         return new GalleryFolderViewModel(
@@ -63,6 +63,10 @@ final readonly class GalleryFolderViewModelFactory
         $children = [];
 
         foreach ($folders as $folder) {
+            if (!$folder->isPublished()) {
+                continue;
+            }
+
             if ($folder->isTransparentInOverview()) {
                 $children = [
                     ...$children,
@@ -87,6 +91,10 @@ final readonly class GalleryFolderViewModelFactory
         $count = 0;
 
         foreach ($folder->folders as $child) {
+            if (!$child->isPublished()) {
+                continue;
+            }
+
             if ($child->isTransparentInOverview()) {
                 $count += $this->countDirectSubGalleries($child);
                 continue;

@@ -17,16 +17,18 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
-use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProvider;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFilesystemFingerprintProviderInterface;
-use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProvider;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
-#[CoversClass(CachedGalleryFolderProvider::class)]
+#[CoversClass(GalleryProvider::class)]
+#[UsesClass(GalleryRoot::class)]
 #[UsesClass(GalleryFolder::class)]
 #[UsesClass(GalleryMetadata::class)]
 #[UsesClass(GalleryOverview::class)]
@@ -36,20 +38,27 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
 
     public function testLoadsOverviewsFromInnerProviderOnCacheMiss(): void
     {
+        $root = new GalleryRoot('module', 1, '/gallery');
+
         $overview = new GalleryOverview(
-            root: new GalleryRoot('module', 1, '/gallery'),
+            root: $root,
             folders: [],
             folderIndex: [],
         );
 
         $cache = new TagAwareAdapter(new ArrayAdapter());
 
-        $inner = $this->createMock(GalleryFolderProviderInterface::class);
-        $inner
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn([$root])
+        ;
+
+        $repository = $this->createMock(GalleryRepositoryInterface::class);
+        $repository
             ->expects($this->once())
-            ->method('findAllOverviews')
-            ->with(false)
-            ->willReturn([$overview])
+            ->method('findOverview')
+            ->willReturn($overview)
         ;
 
         $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
@@ -58,8 +67,9 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->willReturn(self::FINGERPRINT)
         ;
 
-        $provider = new CachedGalleryFolderProvider(
-            $inner,
+        $provider = new GalleryProvider(
+            $rootProvider,
+            $repository,
             $cache,
             $filesystemFingerprintProvider,
         );
@@ -77,7 +87,7 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
 
         $cache = new TagAwareAdapter(new ArrayAdapter());
         $item = $cache->getItem(
-            \sprintf('%s.%s', GalleryCache::KEY_ALL_OVERVIEWS, self::FINGERPRINT),
+            \sprintf('%s.%s', GalleryCache::KEY_OVERVIEWS, self::FINGERPRINT),
         );
 
         $item->set([$overview]);
@@ -85,10 +95,18 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
 
         $cache->save($item);
 
-        $inner = $this->createMock(GalleryFolderProviderInterface::class);
-        $inner
+        $rootProvider = $this->createMock(GalleryRootProviderInterface::class);
+        $rootProvider
             ->expects($this->never())
-            ->method('findAllOverviews')
+            ->method('getGalleryRoots')
+            ->willReturn([])
+        ;
+
+        $repository = $this->createMock(GalleryRepositoryInterface::class);
+        $repository
+            ->expects($this->never())
+            ->method('findOverview')
+            ->willReturn($overview)
         ;
 
         $filesystemFingerprintProvider = $this->createStub(GalleryFilesystemFingerprintProviderInterface::class);
@@ -97,13 +115,14 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->willReturn(self::FINGERPRINT)
         ;
 
-        $provider = new CachedGalleryFolderProvider(
-            $inner,
+        $provider = new GalleryProvider(
+            $rootProvider,
+            $repository,
             $cache,
             $filesystemFingerprintProvider,
         );
 
-        $this->assertOverviewsEqual([$overview], $provider->findAllOverviews(true));
+        $this->assertOverviewsEqual([$overview], $provider->findAllOverviews());
     }
 
     public function testFindsOverviewByRootPath(): void
@@ -153,13 +172,13 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
     /**
      * @param list<GalleryOverview> $overviews
      */
-    private function createProviderWithCachedOverviews(array $overviews): CachedGalleryFolderProvider
+    private function createProviderWithCachedOverviews(array $overviews): GalleryProvider
     {
         $cache = new TagAwareAdapter(new ArrayAdapter());
         $item = $cache->getItem(
             \sprintf(
                 '%s.%s',
-                GalleryCache::KEY_PUBLISHED_OVERVIEWS,
+                GalleryCache::KEY_OVERVIEWS,
                 self::FINGERPRINT,
             ),
         );
@@ -175,8 +194,9 @@ final class CachedGalleryFolderProviderTest extends ContaoTestCase
             ->willReturn(self::FINGERPRINT)
         ;
 
-        return new CachedGalleryFolderProvider(
-            $this->createStub(GalleryFolderProviderInterface::class),
+        return new GalleryProvider(
+            $this->createStub(GalleryRootProviderInterface::class),
+            $this->createStub(GalleryRepositoryInterface::class),
             $cache,
             $filesystemFingerprintProvider,
         );

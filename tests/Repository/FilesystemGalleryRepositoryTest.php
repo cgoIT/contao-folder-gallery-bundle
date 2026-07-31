@@ -100,7 +100,7 @@ final class FilesystemGalleryRepositoryTest extends TestCase
         $year2026 = $overview->folders[0];
         $this->assertSame('Year 2026', $year2026->title);
         $this->assertSame('year-2026', $year2026->slug);
-        $this->assertCount(0, $year2026->folders);
+        $this->assertCount(1, $year2026->folders);
         $this->assertSame('year-2026', $year2026->getPath());
 
         $friday2025 = $overview->findFolderByPath('year-2025/friday-year-2025');

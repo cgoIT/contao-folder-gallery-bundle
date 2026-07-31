@@ -18,8 +18,8 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Model\SitemapEntry;
-use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryEntryPointProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GallerySitemapProvider;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\PageModel;
@@ -59,8 +59,8 @@ final class GallerySitemapProviderTest extends ContaoTestCase
             ->willReturn([$entryPoint])
         ;
 
-        $galleryFolderProvider = $this->createMock(CachedGalleryFolderProviderInterface::class);
-        $galleryFolderProvider
+        $galleryProvider = $this->createMock(GalleryProviderInterface::class);
+        $galleryProvider
             ->expects($this->once())
             ->method('findOverviewByRootPath')
             ->with('files/gallery')
@@ -94,7 +94,7 @@ final class GallerySitemapProviderTest extends ContaoTestCase
 
         $provider = new GallerySitemapProvider(
             $entryPointProvider,
-            $galleryFolderProvider,
+            $galleryProvider,
             $urlGenerator,
         );
 
@@ -117,8 +117,8 @@ final class GallerySitemapProviderTest extends ContaoTestCase
             ->willReturn([$entryPoint])
         ;
 
-        $galleryFolderProvider = $this->createMock(CachedGalleryFolderProviderInterface::class);
-        $galleryFolderProvider
+        $galleryProvider = $this->createMock(GalleryProviderInterface::class);
+        $galleryProvider
             ->expects($this->once())
             ->method('findOverviewByRootPath')
             ->willReturn(null)
@@ -132,7 +132,7 @@ final class GallerySitemapProviderTest extends ContaoTestCase
 
         $provider = new GallerySitemapProvider(
             $entryPointProvider,
-            $galleryFolderProvider,
+            $galleryProvider,
             $urlGenerator,
         );
 
@@ -175,8 +175,8 @@ final class GallerySitemapProviderTest extends ContaoTestCase
             ->willReturn([$entryPoint1, $entryPoint2])
         ;
 
-        $galleryFolderProvider = $this->createMock(CachedGalleryFolderProviderInterface::class);
-        $galleryFolderProvider
+        $galleryProvider = $this->createMock(GalleryProviderInterface::class);
+        $galleryProvider
             ->expects($this->exactly(2))
             ->method('findOverviewByRootPath')
             ->willReturnMap([
@@ -197,7 +197,7 @@ final class GallerySitemapProviderTest extends ContaoTestCase
 
         $provider = new GallerySitemapProvider(
             $entryPointProvider,
-            $galleryFolderProvider,
+            $galleryProvider,
             $urlGenerator,
         );
 

@@ -7,19 +7,17 @@ namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCache;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Repository\GalleryRepositoryInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
-use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
-use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-#[AsAlias(CachedGalleryFolderProviderInterface::class)]
-#[AsDecorator(GalleryFolderProvider::class)]
-final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderProviderInterface
+#[AsAlias(GalleryProviderInterface::class)]
+final readonly class GalleryProvider implements GalleryProviderInterface
 {
     public function __construct(
-        #[AutowireDecorated]
-        private GalleryFolderProviderInterface $inner,
+        private GalleryRootProviderInterface $rootProvider,
+        private GalleryRepositoryInterface $repository,
         private TagAwareCacheInterface $cache,
         private GalleryFilesystemFingerprintProviderInterface $filesystemVersionProvider,
     ) {
@@ -28,20 +26,19 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
     /**
      * @return list<GalleryOverview>
      */
-    public function findAllOverviews(bool $blnShowUnpublished = false): array
+    public function findAllOverviews(): array
     {
         return $this->cache->get(
             $this->getCacheKey(
-                $blnShowUnpublished,
                 $this->filesystemVersionProvider->getFilesystemFingerprint(),
             ),
-            fn ($item) => $this->findUncachedEntry($item, $blnShowUnpublished),
+            fn ($item) => $this->findUncachedEntry($item),
         );
     }
 
-    public function findOverviewByRootPath(string $path, bool $blnShowUnpublished = false): GalleryOverview|null
+    public function findOverviewByRootPath(string $path): GalleryOverview|null
     {
-        foreach ($this->findAllOverviews($blnShowUnpublished) as $overview) {
+        foreach ($this->findAllOverviews() as $overview) {
             if ($overview->root->filesystemDirectory === $path) {
                 return $overview;
             }
@@ -50,9 +47,9 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
         return null;
     }
 
-    public function findFolderByPath(string $path, bool $blnShowUnpublished = false): GalleryFolder|null
+    public function findFolderByPath(string $path): GalleryFolder|null
     {
-        foreach ($this->findAllOverviews($blnShowUnpublished) as $overview) {
+        foreach ($this->findAllOverviews() as $overview) {
             if (isset($overview->folderIndex[$path])) {
                 return $overview->folderIndex[$path];
             }
@@ -64,22 +61,24 @@ final readonly class CachedGalleryFolderProvider implements CachedGalleryFolderP
     /**
      * @return list<GalleryOverview>
      */
-    private function findUncachedEntry(ItemInterface $item, bool $blnShowUnpublished): array
+    private function findUncachedEntry(ItemInterface $item): array
     {
-        $overviews = $this->inner->findAllOverviews($blnShowUnpublished);
+        $overviews = [];
+
+        foreach ($this->rootProvider->getGalleryRoots() as $root) {
+            $overviews[] = $this->repository->findOverview($root);
+        }
 
         $item->tag(GalleryCache::TAG_OVERVIEWS);
 
         return $overviews;
     }
 
-    private function getCacheKey(bool $showUnpublished, string $version): string
+    private function getCacheKey(string $version): string
     {
         return \sprintf(
             '%s.%s',
-            $showUnpublished
-                ? GalleryCache::KEY_ALL_OVERVIEWS
-                : GalleryCache::KEY_PUBLISHED_OVERVIEWS,
+            GalleryCache::KEY_OVERVIEWS,
             $version,
         );
     }

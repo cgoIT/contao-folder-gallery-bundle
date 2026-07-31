@@ -14,7 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Controller\Backend;
 
 use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
-use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryFolderProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
 use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
 use Contao\CoreBundle\DataContainer\ButtonsBuilder;
@@ -41,7 +41,7 @@ final class GalleryBackendController extends AbstractBackendController
         private readonly ButtonsBuilder $buttonsBuilder,
         private readonly UrlGeneratorInterface $router,
         private readonly ContaoCsrfTokenManager $csrfTokenManager,
-        private readonly GalleryFolderProviderInterface $folderProvider,
+        private readonly GalleryProviderInterface $galleryProvider,
         private readonly GalleryMetadataAjaxHandler $ajaxHandler,
         private readonly DC_GalleryMetadata $dataContainer,
     ) {
@@ -103,7 +103,7 @@ final class GalleryBackendController extends AbstractBackendController
 
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
             'id' => $this->dataContainer->id,
-            'overviews' => $this->folderProvider->findAllOverviews(true),
+            'overviews' => $this->galleryProvider->findAllOverviews(),
 
             'table' => GalleryMetadata::DCA_TABLE_NAME,
             'is_upload_form' => false,

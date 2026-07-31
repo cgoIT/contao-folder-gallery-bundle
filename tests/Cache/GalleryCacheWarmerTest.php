@@ -15,7 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Cache;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheWarmer;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
-use Cgoit\ContaoFolderGalleryBundle\Provider\CachedGalleryFolderProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -26,8 +26,8 @@ final class GalleryCacheWarmerTest extends ContaoTestCase
     {
         $contaoFramework = $this->createContaoFrameworkStub();
 
-        $rootProvider = $this->createMock(CachedGalleryFolderProviderInterface::class);
-        $rootProvider
+        $galleryProvider = $this->createMock(GalleryProviderInterface::class);
+        $galleryProvider
             ->expects($this->once())
             ->method('findAllOverviews')
             ->willReturn([new GalleryOverview(
@@ -37,7 +37,7 @@ final class GalleryCacheWarmerTest extends ContaoTestCase
             )])
         ;
 
-        $warmer = new GalleryCacheWarmer($contaoFramework, $rootProvider);
+        $warmer = new GalleryCacheWarmer($contaoFramework, $galleryProvider);
 
         $warmer->warmUp('/tmp');
     }
