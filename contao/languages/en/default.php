@@ -8,6 +8,6 @@
  * @license    LGPL-3.0-or-later
  */
 
-use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
+use Cgoit\ContaoFolderGalleryBundle\Controller\FrontendModule\FolderGalleryModule;
 
 $GLOBALS['TL_LANG']['FMD'][FolderGalleryModule::TYPE] = ['Folder-based Gallery', 'A frontend module to show the folder-based gallery.'];

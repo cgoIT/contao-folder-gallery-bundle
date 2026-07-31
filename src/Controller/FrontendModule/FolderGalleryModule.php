@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-namespace Cgoit\ContaoFolderGalleryBundle\FrontendModule;
+namespace Cgoit\ContaoFolderGalleryBundle\Controller\FrontendModule;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;

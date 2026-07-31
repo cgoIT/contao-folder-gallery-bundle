@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer;
 
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
-use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
+use Cgoit\ContaoFolderGalleryBundle\Controller\FrontendModule\FolderGalleryModule;
 use Contao\BackendUser;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\CoreBundle\Image\ImageSizes;

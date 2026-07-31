@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Provider;
 
-use Cgoit\ContaoFolderGalleryBundle\FrontendModule\FolderGalleryModule;
+use Cgoit\ContaoFolderGalleryBundle\Controller\FrontendModule\FolderGalleryModule;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProvider;
 use Contao\FilesModel;
 use Contao\ModuleModel;
