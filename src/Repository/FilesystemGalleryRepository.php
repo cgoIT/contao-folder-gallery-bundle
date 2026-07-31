@@ -15,6 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Repository;
 use Cgoit\ContaoFolderGalleryBundle\Loader\GalleryImageLoaderInterface;
 use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetadataReader;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
@@ -49,7 +50,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         }
 
         $metadata = $this->metadataLoader->read($rootPath);
-        $folders = $this->sortFoldersByTitle($folders, $metadata);
+        $folders = $this->sortFolders($folders, $metadata);
 
         return new GalleryOverview($root, $folders, $folderIndex);
     }
@@ -78,10 +79,15 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
             }
         }
 
-        $folders = $this->sortFoldersByTitle($folders, $metadata);
+        $folders = $this->sortFolders($folders, $metadata);
 
         // sync filesystem directory to dbafs to ensure dbafs is up to date before reading images
         $this->dbafsManager->sync($directory);
+
+        $images = $this->sortImages(
+            $this->galleryImageLoader->loadImages($directory, $metadata->cover),
+            $metadata,
+        );
 
         $folder = new GalleryFolder(
             slug: $slug,
@@ -90,10 +96,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
             trail: $trail,
             metadata: $metadata,
             folders: $folders,
-            images: $this->galleryImageLoader->loadImages(
-                $directory,
-                $metadata->cover,
-            ),
+            images: $images,
         );
 
         $folderIndex[$folder->getPath()] = $folder;
@@ -125,16 +128,34 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
      *
      * @return list<GalleryFolder>
      */
-    private function sortFoldersByTitle(array $folders, GalleryMetadata $metadata): array
+    private function sortFolders(array $folders, GalleryMetadata $metadata): array
     {
         usort(
             $folders,
             static fn (GalleryFolder $a, GalleryFolder $b): int => match ($metadata->sortOrder) {
-                SortOrder::Asc => strcmp(basename($a->filesystemDirectory), basename($b->filesystemDirectory)),
-                SortOrder::Desc => strcmp(basename($b->filesystemDirectory), basename($a->filesystemDirectory)),
+                SortOrder::Asc => strnatcasecmp(basename($a->filesystemDirectory), basename($b->filesystemDirectory)),
+                SortOrder::Desc => strnatcasecmp(basename($b->filesystemDirectory), basename($a->filesystemDirectory)),
             },
         );
 
         return $folders;
+    }
+
+    /**
+     * @param list<GalleryImage> $images
+     *
+     * @return list<GalleryImage>
+     */
+    private function sortImages(array $images, GalleryMetadata $metadata): array
+    {
+        usort(
+            $images,
+            static fn (GalleryImage $a, GalleryImage $b): int => match ($metadata->sortOrder) {
+                SortOrder::Asc => strnatcasecmp($a->filename, $b->filename),
+                SortOrder::Desc => strnatcasecmp($b->filename, $a->filename),
+            },
+        );
+
+        return $images;
     }
 }

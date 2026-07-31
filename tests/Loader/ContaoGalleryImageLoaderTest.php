@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 #[UsesClass(GalleryImage::class)]
 final class ContaoGalleryImageLoaderTest extends ContaoTestCase
 {
-    public function testLoadsAndSortsImages(): void
+    public function testLoadsImages(): void
     {
         $file1 = $this->createClassWithPropertiesStub(FilesModel::class, [
             'uuid' => StringUtil::uuidToBin('00000000-0000-0000-0000-000000000001'),
@@ -56,11 +56,11 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
 
         $this->assertCount(2, $images);
 
-        $this->assertSame('image-a.jpg', $images[0]->filename);
-        $this->assertTrue($images[0]->isCover);
+        $this->assertSame('image-b.jpg', $images[0]->filename);
+        $this->assertFalse($images[0]->isCover);
 
-        $this->assertSame('image-b.jpg', $images[1]->filename);
-        $this->assertFalse($images[1]->isCover);
+        $this->assertSame('image-a.jpg', $images[1]->filename);
+        $this->assertTrue($images[1]->isCover);
     }
 
     public function testIgnoresUnsupportedFiles(): void

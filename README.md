@@ -266,16 +266,16 @@ overview_mode: gallery
 
 ### Unterstützte Felder
 
-| Feld | Beschreibung                                                                                                 |
-|------|--------------------------------------------------------------------------------------------------------------|
-| `title` | Titel der Galerie oder Galeriegruppe                                                                         |
-| `description` | Beschreibung (HTML erlaubt)                                                                                  |
-| `cover` | Dateiname des Coverbildes innerhalb des aktuellen Ordners                                                    |
-| `hide_cover_in_gallery` | Verwendet das Coverbild ausschließlich als Vorschaubild. Innerhalb der Galerie wird dieses Bild nicht angezeigt.    |
-| `published_from` | Galerie ist erst ab diesem Zeitpunkt sichtbar                                                                |
-| `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar                                                             |
-| `sort_order` | Sortierreihenfolge der Unterordner (`asc` oder `desc`)                                                       |
-| `overview_mode` | Legt fest, wie der Ordner in einer Galerieübersicht dargestellt wird (`gallery`, `group` oder `transparent`) |
+| Feld | Beschreibung                                                                                                     |
+|------|------------------------------------------------------------------------------------------------------------------|
+| `title` | Titel der Galerie oder Galeriegruppe                                                                             |
+| `description` | Beschreibung (HTML erlaubt)                                                                                      |
+| `cover` | Dateiname des Coverbildes innerhalb des aktuellen Ordners                                                        |
+| `hide_cover_in_gallery` | Verwendet das Coverbild ausschließlich als Vorschaubild. Innerhalb der Galerie wird dieses Bild nicht angezeigt. |
+| `published_from` | Galerie ist erst ab diesem Zeitpunkt sichtbar                                                                    |
+| `published_until` | Galerie ist nur bis zu diesem Zeitpunkt sichtbar                                                                 |
+| `sort_order` | Sortierreihenfolge der Unterordner bzw. Bilder in einem Ordner (`asc` oder `desc`)                               |
+| `overview_mode` | Legt fest, wie der Ordner in einer Galerieübersicht dargestellt wird (`gallery`, `group` oder `transparent`)     |
 
 > 💡 **Hinweis**
 >

@@ -57,11 +57,6 @@ final readonly class ContaoGalleryImageLoader implements GalleryImageLoaderInter
             }
         }
 
-        usort(
-            $images,
-            static fn (GalleryImage $a, GalleryImage $b): int => strcmp($a->filename, $b->filename),
-        );
-
         return $images;
     }
 }
