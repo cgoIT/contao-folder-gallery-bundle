@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.4.0...v1.4.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* ensure natural and case-insensitive sorting of directories ([61bb9b9](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/61bb9b980e187ffe64a1dea647a391006970f288))
+* implement natural sorting for images and unify folder sorting logic ([09286be](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/09286be234a65db1816f37f8ecc997514e7fe135))
+
 ## [1.4.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.3.0...v1.4.0) (2026-07-31)
 
 
