@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.5.0...v1.5.1) (2026-08-04)
+
+
+### Bug Fixes
+
+* only show caption container if caption is not empty ([a969a2f](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/a969a2fff511a905700e49f9227c8ad3882bb655))
+
 ## [1.5.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.4.1...v1.5.0) (2026-08-04)
 
 
