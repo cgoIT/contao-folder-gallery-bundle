@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.4.1...v1.5.0) (2026-08-04)
+
+
+### Features
+
+* add option to show captions in photoswipe viewer ([bf7d92d](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/bf7d92d50652edc924f0e6a7379050ef76925ab5))
+
 ## [1.4.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.4.0...v1.4.1) (2026-07-31)
 
 
