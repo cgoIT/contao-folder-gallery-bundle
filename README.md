@@ -161,7 +161,7 @@ In wenigen Minuten zur ersten Galerie:
 
 5. Das Frontend-Modul auf einer Seite einbinden.
 
-Fertig. Das Bundle erzeugt daraus automatisch die [Galerie-Übersicht](#galerie-übersicht) sowie die einzelnen [Galerieansichten](#galerieansicht).
+Fertig. Das Bundle erzeugt daraus automatisch eine [Galerieübersicht](#galerie-übersicht) sowie die einzelnen [Galerieansichten](#galerieansicht).
 
 > 💡 **Tipp**
 >
@@ -201,7 +201,7 @@ auf das Contao Folder Gallery Bundle umgestellt werden, ohne die vorhandene Date
 
 Das Contao Folder Gallery Bundle erzeugt Galerien direkt aus der Ordnerstruktur innerhalb des `files/`-Verzeichnisses.
 
-Jeder Ordner repräsentiert genau eine Galerie. Dieser kann entweder als **Galerie** oder abhängig vom
+Jeder Ordner repräsentiert genau eine Galerie. Er kann entweder als **Galerie** oder abhängig vom
 [`overview_mode`](#overview_mode)
 als Galeriegruppe dargestellt werden.
 
@@ -256,6 +256,7 @@ title: Stadtfest 2026 - Freitag
 description: '<p>Die schönsten Bilder vom Freitagabend.</p>'
 
 cover: IMG_1234.jpg
+hide_cover_in_gallery: false
 
 published_from: '2026-09-04T18:00:00+02:00'
 published_until: '2027-09-30T23:59:59+02:00'
@@ -368,7 +369,8 @@ hide_cover_in_gallery: true
 
 Im Frontend erscheint der Ordner Produkte mit cover.jpg als Vorschaubild.
 
-Beim Öffnen der Galerie wird das Coverbild jedoch nicht angezeigt. Stattdessen sieht der Besucher direkt die Untergalerien Fahrräder, Roller und Zubehör.
+Beim Öffnen der Galerie wird das Coverbild jedoch nicht angezeigt, obwohl es physisch weiterhin Bestandteil des Ordners ist.
+Stattdessen sieht der Besucher direkt die Untergalerien Fahrräder, Roller und Zubehör.
 
 > 💡 **Hinweis**
 >
@@ -394,15 +396,15 @@ Die Galerie wird wie jedes andere Contao-Modul über ein Frontend-Modul eingebun
 
 Das Frontend-Modul definiert die [Galerie-Wurzel](#galerie-struktur) und steuert die Darstellung der Galerie im Frontend über die folgenden Einstellungen:
 
-| Einstellung | Beschreibung |
-|--------------|--------------|
-| **Galerie-Wurzel** | Wurzelordner der Galerie. Alle Unterordner werden automatisch als Galerie-Struktur interpretiert. |
-| **Galeriebildgröße** | Bildgröße der Bilder innerhalb einer Galerie. |
-| **Coverbildgröße** | Bildgröße der Vorschaubilder in der Galerie-Übersicht. |
-| **Meldung bei leeren Galerien** | Zeigt eine frei definierbare Meldung an, wenn eine veröffentlichte Galerie weder sichtbare Untergalerien noch sichtbare Bilder enthält. |
-| **Galerie-Viewer** | Legt fest, ob die Bilder mit der Contao-Lightbox oder mit PhotoSwipe geöffnet werden. |
-| **Übersichts-Template** | Twig-Template für die Darstellung der Galerie-Übersicht. |
-| **Galerie-Template** | Twig-Template für die Darstellung einer einzelnen Galerie. |
+| Einstellung                              | Beschreibung |
+|------------------------------------------|--------------|
+| **Galerie-Wurzel**                       | Wurzelordner der Galerie. Alle Unterordner werden automatisch als Galerie-Struktur interpretiert. |
+| **Galeriebildgröße**                     | Bildgröße der Bilder innerhalb einer Galerie. |
+| **Coverbildgröße**                       | Bildgröße der Vorschaubilder in der Galerie-Übersicht. |
+| **Meldung bei leeren Galerien anzeigen** | Zeigt eine frei definierbare Meldung an, wenn eine veröffentlichte Galerie weder sichtbare Untergalerien noch sichtbare Bilder enthält. |
+| **Galerie-Viewer**                       | Legt fest, ob die Bilder mit der Contao-Lightbox oder mit PhotoSwipe geöffnet werden. |
+| **Übersichts-Template**                  | Twig-Template für die Darstellung der Galerie-Übersicht. |
+| **Galerie-Template**                     | Twig-Template für die Darstellung einer einzelnen Galerie. |
 
 Ein Frontend-Modul definiert gleichzeitig eine **Galerie-Wurzel**. Alle konfigurierten Galerie-Wurzeln werden
 automatisch vom Metadaten-Editor erkannt.
@@ -431,6 +433,27 @@ Aktuell werden zwei Viewer unterstützt.
 >
 > Wird die **Contao-Lightbox** verwendet, muss im Seitenlayout **jQuery** aktiviert sowie das jQuery-Template
 > **`j_colorbox`** eingebunden werden.
+
+#### Bildunterschriften
+
+Wird **PhotoSwipe** als Galerie-Viewer verwendet, unterstützt das Bundle automatisch Bildunterschriften.
+
+Die Bildunterschrift wird automatisch aus den Bildmetadaten ermittelt, die in der Contao-Dateiverwaltung gepflegt werden.
+Dabei gilt folgende Reihenfolge:
+
+1. Existiert innerhalb des Bildes ein `<figcaption>` (Feld "Untertitel" in der Dateiverwaltung von Contao), wird dessen Inhalt verwendet.
+2. Andernfalls wird der Inhalt des `alt`-Attributes des Bildes (Feld "Alternativer Text" in der Dateiverwaltung von Contao) verwendet.
+
+Dadurch können Bildunterschriften bequem über die Dateiattribute (Metadaten) von Contao gepflegt werden, ohne dass zusätzliche
+Felder innerhalb der Galerie erforderlich sind.
+
+Da `figcaption` HTML-Inhalte unterstützt, können Bildunterschriften neben reinem Text beispielsweise auch Links,
+Hervorhebungen oder andere Formatierungen enthalten.
+
+> 💡 **Hinweis**
+>
+> Die Contao-Lightbox unterstützt diese Funktion derzeit nicht. Bildunterschriften stehen ausschließlich bei Verwendung
+> von **PhotoSwipe** zur Verfügung.
 
 ### Metadaten-Editor
 
@@ -507,9 +530,9 @@ direkt in die übergeordnete Ebene übernommen.
 
 Beim Aufruf einer Galerie werden automatisch alle Bilder des entsprechenden Ordners dargestellt.
 
-**Die Bilder werden dabei vollständig über die Bildpipeline von Contao erzeugt (siehe auch [Bildgrößen](#bildgrößen)).** Dadurch stehen sämtliche Funktionen
-von Contao wie responsive Bilder, Bildgrößen und verschiedene Ausgabeformate (z. B. WebP oder AVIF) ohne
-zusätzliche Konfiguration zur Verfügung.
+**Die Bilder werden dabei vollständig über die Bildpipeline von Contao erzeugt (siehe auch [Bildgrößen](#bildgrößen)).**
+Dadurch stehen automatisch sämtliche Funktionen von Contao wie responsive Bilder, Bildgrößen und verschiedene
+Ausgabeformate (z. B. WebP oder AVIF) ohne zusätzliche Konfiguration zur Verfügung.
 
 Enthält eine Galerie weitere Unterordner, werden diese oberhalb der Bilder ebenfalls angezeigt und können direkt
 geöffnet werden. Dadurch lassen sich beliebig tiefe Galerie-Strukturen aufbauen.
@@ -523,9 +546,9 @@ Für diesen Fall kann im Frontend-Modul optional eine Meldung konfiguriert werde
 
 Wird die Option aktiviert, erscheint diese Meldung automatisch, wenn eine Galerie
 
-* veröffentlicht ist,
-* keine sichtbaren Untergalerien besitzt und
-* keine sichtbaren Bilder enthält.
+- veröffentlicht ist,
+- keine sichtbaren Untergalerien besitzt und
+- keine sichtbaren Bilder enthält.
 
 Dadurch können Besucher beispielsweise darüber informiert werden, dass die Bilder in Kürze veröffentlicht werden.
 
@@ -635,6 +658,28 @@ Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert un
 | `--gallery-hover-translate-y` | `0` | Vertikale Verschiebung einer Karte beim Hover-Effekt. |
 | `--gallery-transition-duration` | `0.2s` | Dauer der Hover-Animationen. |
 
+##### PhotoSwipe
+
+Die Darstellung der Bildunterschriften von PhotoSwipe kann vollständig über CSS-Variablen angepasst werden.
+
+| Variable | Standardwert | Beschreibung |
+|-----------|--------------|--------------|
+| `--pswp-caption-width` | `min(90%, 50rem)` | Breite der Bildunterschrift. |
+| `--pswp-caption-max-width` | `calc(100vw - 3rem)` | Maximale Breite der Bildunterschrift. |
+| `--pswp-caption-bottom` | `2.5rem` | Abstand zum unteren Fensterrand. |
+| `--pswp-caption-padding` | `1rem 2rem` | Innenabstand der Bildunterschrift. |
+| `--pswp-caption-background` | `rgba(25,25,25,.55)` | Hintergrundfarbe. |
+| `--pswp-caption-border` | `none` | Rahmen der Bildunterschrift. |
+| `--pswp-caption-radius` | `.75rem` | Abrundung der Bildunterschrift. |
+| `--pswp-caption-backdrop-filter` | `blur(10px)` | Hintergrundunschärfe. |
+| `--pswp-caption-box-shadow` | `0 .5rem 2rem rgba(0,0,0,.35)` | Schatten der Bildunterschrift. |
+| `--pswp-caption-text-color` | `#fff` | Textfarbe. |
+| `--pswp-caption-text-align` | `left` | Textausrichtung. |
+| `--pswp-caption-text-wrap` | `balance` | Optimierter Zeilenumbruch für längere Texte. |
+| `--pswp-caption-line-height` | `1.6` | Zeilenhöhe. |
+| `--pswp-caption-transition-duration` | `.2s` | Dauer der Ein- und Ausblendanimation. |
+| `--pswp-caption-transition-timing-function` | `ease` | Timing-Funktion der Animation. |
+
 #### Bildgrößen
 
 Das Bundle verwendet ausschließlich die in Contao konfigurierten Bildgrößen.
@@ -700,7 +745,7 @@ Der [Metadaten-Editor](#metadaten-editor) ermittelt seine Galerie-Struktur aussc
 Prüfen Sie insbesondere folgende Punkte:
 
 - Existiert die Galerie innerhalb der konfigurierten [Galerie-Wurzel](#frontend-modul)?
-- Liegt der aktuelle Zeitpunkt innerhalb von `published_from` und `published_until`?
+- Befindet sich die Galerie innerhalb eines veröffentlichten Zeitraums (Liegt der aktuelle Zeitpunkt innerhalb von `published_from` und `published_until`)?
 - Ist der Ordner nicht versehentlich auf `overview_mode: transparent` gesetzt?
 
 ### PhotoSwipe bzw. die Lightbox öffnet sich nicht.
@@ -723,8 +768,8 @@ Dies eignet sich insbesondere für Galerien, die hauptsächlich weitere Untergal
 
 ### Meine Galerie ist sichtbar, aber es werden keine Bilder angezeigt.
 
-Wenn im Frontend-Modul die Option Meldung bei leeren Galerien anzeigen aktiviert wurde, erscheint die konfigurierte Meldung automatisch, sobald eine
-veröffentlichte Galerie weder sichtbare Bilder noch sichtbare Untergalerien enthält.
+Wenn im Frontend-Modul die Option Meldung bei leeren Galerien anzeigen aktiviert wurde, erscheint die konfigurierte Meldung
+automatisch, sobald eine veröffentlichte Galerie weder sichtbare Bilder noch sichtbare Untergalerien enthält.
 
 Dies eignet sich insbesondere für Galerien, deren Bilder erst zu einem späteren Zeitpunkt hochgeladen werden.
 
@@ -732,7 +777,17 @@ Dies eignet sich insbesondere für Galerien, deren Bilder erst zu einem spätere
 
 Nein.
 
-Das Bundle arbeitet ausschließlich mit den Dateien innerhalb des `files/`-Verzeichnisses. Die Datenbank enthält lediglich die Konfiguration des [Frontend-Moduls](#frontend-modul).
+Das Bundle arbeitet ausschließlich mit den Dateien innerhalb des `files/`-Verzeichnisses. Die Datenbank enthält lediglich
+die Konfiguration des [Frontend-Moduls](#frontend-modul).
+
+### Wo werden Bildunterschriften gepflegt?
+
+Bei Verwendung von **PhotoSwipe** werden Bildunterschriften automatisch aus den Bildinformationen übernommen.
+
+Existiert ein Untertitel (`figcaption`), wird dieser verwendet. Andernfalls verwendet das Bundle den Alternativtext (alt).
+
+Dadurch können Bildunterschriften direkt über die Dateiattribute in Contao gepflegt werden, ohne dass zusätzliche Felder
+innerhalb der Galerie erforderlich sind.
 
 ### Muss ich die `_metadata.yml` manuell bearbeiten?
 

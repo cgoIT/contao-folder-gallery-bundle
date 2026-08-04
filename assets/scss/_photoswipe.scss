@@ -1,0 +1,54 @@
+.pswp {
+    /* Layout */
+    --pswp-caption-width: min(90%, 50rem);
+    --pswp-caption-max-width: calc(100vw - 3rem);
+    --pswp-caption-bottom: 2.5rem;
+    --pswp-caption-padding: 1rem 2rem;
+
+    /* Appearance */
+    --pswp-caption-background: rgb(25 25 25 / 55%);
+    --pswp-caption-border: none;
+    --pswp-caption-radius: 0.75rem;
+    --pswp-caption-backdrop-filter: blur(10px);
+    --pswp-caption-box-shadow: 0 0.5rem 2rem rgb(0 0 0 / 35%);
+
+    /* Typography */
+    --pswp-caption-text-color: #fff;
+    --pswp-caption-text-align: left;
+    --pswp-caption-text-wrap: balance;
+    --pswp-caption-line-height: 1.6;
+
+    /* Animation */
+    --pswp-caption-transition-duration: 0.2s;
+    --pswp-caption-transition-timing-function: ease;
+
+    &__custom-caption {
+        position: absolute;
+
+        left: 50%;
+        bottom: var(--pswp-caption-bottom);
+        transform: translateX(-50%);
+
+        width: var(--pswp-caption-width);
+        max-width: var(--pswp-caption-max-width);
+
+        padding: var(--pswp-caption-padding);
+
+        color: var(--pswp-caption-text-color);
+
+        text-align: var(--pswp-caption-text-align);
+        text-wrap: var(--pswp-caption-text-wrap);
+        line-height: var(--pswp-caption-line-height);
+
+        background: var(--pswp-caption-background);
+        border: var(--pswp-caption-border);
+        border-radius: var(--pswp-caption-radius);
+        backdrop-filter: var(--pswp-caption-backdrop-filter);
+
+        box-shadow: var(--pswp-caption-box-shadow);
+
+        transition:
+            opacity var(--pswp-caption-transition-duration) var(--pswp-caption-transition-timing-function),
+            transform var(--pswp-caption-transition-duration) var(--pswp-caption-transition-timing-function);
+    }
+}
