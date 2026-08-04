@@ -104,29 +104,36 @@
             // Add a caption to the lightbox if there is a figcaption.
             // If there is no figcaption element use the contents of the
             // alt attribute if any.
-            lightbox.on('uiRegister', function() {
+            lightbox.on('uiRegister', function () {
                 lightbox.pswp.ui.registerElement({
                     name: 'custom-caption',
                     order: 9,
                     isButton: false,
                     appendTo: 'root',
-                    html: 'Caption text',
+                    html: '',
                     onInit: (el, pswp) => {
                         pswp.on('change', () => {
-                            const currSlideElement = pswp.currSlide.data.element;
+                            const slideElement = pswp.currSlide.data.element;
+
                             let captionHTML = '';
-                            if (currSlideElement) {
-                                const figure = currSlideElement.closest('figure');
-                                const caption = figure?.querySelector(':scope > figcaption');
-                                if (caption) {
-                                    // get caption from figcaption element
-                                    captionHTML = caption.innerHTML;
+
+                            if (slideElement) {
+                                const figure = slideElement.closest('figure');
+                                const figcaption = figure?.querySelector(':scope > figcaption');
+
+                                if (figcaption && figcaption.textContent.trim() !== '') {
+                                    captionHTML = figcaption.innerHTML;
                                 } else {
-                                    // get caption from alt attribute
-                                    captionHTML = currSlideElement.querySelector('img').getAttribute('alt');
+                                    const alt = slideElement.querySelector('img')?.getAttribute('alt')?.trim();
+
+                                    if (alt) {
+                                        captionHTML = alt;
+                                    }
                                 }
                             }
-                            el.innerHTML = captionHTML || '';
+
+                            el.innerHTML = captionHTML;
+                            el.hidden = captionHTML === '';
                         });
                     }
                 });
