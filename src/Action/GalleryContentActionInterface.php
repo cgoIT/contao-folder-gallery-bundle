@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Action;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Contao\PageModel;
 
 interface GalleryContentActionInterface
 {
-    public function createAction(GalleryFolder $folder): GalleryContentAction|null;
+    public function createAction(GalleryOverview $overview, GalleryFolder $folder, PageModel $page): GalleryContentAction|null;
 }

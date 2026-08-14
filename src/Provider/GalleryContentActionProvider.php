@@ -15,6 +15,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\Provider;
 use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentAction;
 use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentActionInterface;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Contao\PageModel;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final readonly class GalleryContentActionProvider
@@ -31,12 +33,12 @@ final readonly class GalleryContentActionProvider
     /**
      * @return list<GalleryContentAction>
      */
-    public function getActions(GalleryFolder $folder): array
+    public function getActions(GalleryOverview $overview, GalleryFolder $folder, PageModel $page): array
     {
         $result = [];
 
         foreach ($this->actions as $actionProvider) {
-            $action = $actionProvider->createAction($folder);
+            $action = $actionProvider->createAction($overview, $folder, $page);
 
             if (null !== $action) {
                 $result[] = $action;

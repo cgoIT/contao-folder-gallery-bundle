@@ -16,7 +16,10 @@ use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentAction;
 use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentActionInterface;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryContentActionProvider;
+use Contao\PageModel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -28,12 +31,31 @@ final class GalleryContentActionProviderTest extends TestCase
 {
     public function testReturnsProvidedActions(): void
     {
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('getFrontendUrl')
+            ->willReturn('/gallery')
+        ;
+
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
         $folder = new GalleryFolder(
             slug: 'gallery',
             title: 'Gallery',
             filesystemDirectory: '/files/gallery',
             trail: ['gallery'],
             metadata: new GalleryMetadata(),
+        );
+
+        $overview = new GalleryOverview(
+            new GalleryRoot('Root', 1, '/gallery'),
+            [$folder],
+            ['folder' => $folder],
         );
 
         $action = new GalleryContentAction(
@@ -44,13 +66,13 @@ final class GalleryContentActionProviderTest extends TestCase
         $actionProvider = $this->createMock(GalleryContentActionInterface::class);
         $actionProvider
             ->method('createAction')
-            ->with($folder)
+            ->with($overview, $folder, $page)
             ->willReturn($action)
         ;
 
         $provider = new GalleryContentActionProvider([$actionProvider]);
 
-        $result = $provider->getActions($folder);
+        $result = $provider->getActions($overview, $folder, $page);
 
         $this->assertCount(1, $result);
         $this->assertSame($action, $result[0]);
@@ -58,6 +80,19 @@ final class GalleryContentActionProviderTest extends TestCase
 
     public function testIgnoresNullActions(): void
     {
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('getFrontendUrl')
+            ->willReturn('/gallery')
+        ;
+
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
         $folder = new GalleryFolder(
             slug: 'gallery',
             title: 'Gallery',
@@ -66,28 +101,53 @@ final class GalleryContentActionProviderTest extends TestCase
             metadata: new GalleryMetadata(),
         );
 
+        $overview = new GalleryOverview(
+            new GalleryRoot('Root', 1, '/gallery'),
+            [$folder],
+            ['folder' => $folder],
+        );
+
         $actionProvider = $this->createMock(GalleryContentActionInterface::class);
         $actionProvider
             ->method('createAction')
-            ->with($folder)
+            ->with($overview, $folder, $page)
             ->willReturn(null)
         ;
 
         $provider = new GalleryContentActionProvider([$actionProvider]);
 
-        $result = $provider->getActions($folder);
+        $result = $provider->getActions($overview, $folder, $page);
 
         $this->assertSame([], $result);
     }
 
     public function testCombinesActionsFromMultipleImplementations(): void
     {
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('getFrontendUrl')
+            ->willReturn('/gallery')
+        ;
+
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
         $folder = new GalleryFolder(
             slug: 'gallery',
             title: 'Gallery',
             filesystemDirectory: '/files/gallery',
             trail: ['gallery'],
             metadata: new GalleryMetadata(),
+        );
+
+        $overview = new GalleryOverview(
+            new GalleryRoot('Root', 1, '/gallery'),
+            [$folder],
+            ['folder' => $folder],
         );
 
         $firstAction = new GalleryContentAction(
@@ -103,14 +163,14 @@ final class GalleryContentActionProviderTest extends TestCase
         $firstProvider = $this->createMock(GalleryContentActionInterface::class);
         $firstProvider
             ->method('createAction')
-            ->with($folder)
+            ->with($overview, $folder, $page)
             ->willReturn($firstAction)
         ;
 
         $secondProvider = $this->createMock(GalleryContentActionInterface::class);
         $secondProvider
             ->method('createAction')
-            ->with($folder)
+            ->with($overview, $folder, $page)
             ->willReturn($secondAction)
         ;
 
@@ -119,7 +179,7 @@ final class GalleryContentActionProviderTest extends TestCase
             $secondProvider,
         ]);
 
-        $result = $provider->getActions($folder);
+        $result = $provider->getActions($overview, $folder, $page);
 
         $this->assertCount(2, $result);
         $this->assertSame($firstAction, $result[0]);

@@ -141,7 +141,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $actionImplementation = $this->createMock(GalleryContentActionInterface::class);
         $actionImplementation
             ->method('createAction')
-            ->with($folder)
+            ->with($overview, $folder, $page)
             ->willReturn($action)
         ;
 

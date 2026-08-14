@@ -33,7 +33,7 @@ final readonly class GalleryContentViewModelFactory
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
         $images = $this->getImages($folder);
 
-        $actions = $this->actionProvider->getActions($folder);
+        $actions = $this->actionProvider->getActions($overview, $folder, $page);
 
         return new GalleryContentViewModel(
             folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
