@@ -16,6 +16,7 @@
 - [Metadaten (`_metadata.yml`)](#metadaten-_metadatayml)
 - [Backend-Konfiguration](#backend-konfiguration)
 - [Frontend](#frontend)
+- [Erweiterbarkeit](#erweiterbarkeit)
 - [Sitemap](#sitemap)
 - [FAQ](#faq)
 - [Mitwirken](#mitwirken)
@@ -559,7 +560,8 @@ Dadurch können Besucher beispielsweise darüber informiert werden, dass die Bil
 
 ### Anpassung der Darstellung
 
-Das Bundle orientiert sich bewusst an den bestehenden Mechanismen von Contao und lässt sich an vielen Stellen erweitern.
+Das Bundle orientiert sich bewusst an den bestehenden Mechanismen von Contao und lässt sich über Templates und CSS an
+das eigene Theme anpassen.
 
 Unter anderem lassen sich
 
@@ -568,6 +570,8 @@ Unter anderem lassen sich
 - Bildgrößen aus Contao nutzen,
 - der Galerie-Viewer wählen,
 - die Darstellung vollständig an das eigene Theme anpassen.
+
+Für funktionale Erweiterungen stellt das Bundle zusätzlich eigene [Extension Points](#erweiterbarkeit) bereit.
 
 Da sämtliche Bilder über die Contao-Bildpipeline erzeugt werden, profitieren auch individuelle Anpassungen automatisch
 von den Bildformaten und Optimierungen des Contao-Kerns.
@@ -693,6 +697,106 @@ ausgewählt werden.
 
 Dadurch stehen sämtliche Funktionen der Contao-Bildpipeline wie responsive Bilder, verschiedene Ausgabeformate und
 Bildzuschnitte automatisch zur Verfügung.
+
+## Erweiterbarkeit
+
+Das Bundle stellt Extension Points bereit, über die andere Contao-Erweiterungen zusätzliche Funktionen integrieren können.
+
+### Aktionen innerhalb einer Galerie
+
+Innerhalb einer geöffneten Galerie können zusätzliche Aktionen angezeigt werden. Das Bundle stellt
+dafür das Interface `GalleryContentActionInterface` bereit.
+
+Eine Erweiterung kann dieses Interface implementieren und über Dependency Injection als Service
+registrieren. Der `GalleryContentActionProvider` sammelt automatisch alle registrierten
+Implementierungen ein und stellt die erzeugten Aktionen im `GalleryContentViewModel` zur Verfügung.
+
+Die Action wird durch das unveränderliche `GalleryContentAction`-DTO beschrieben:
+
+| Eigenschaft | Typ | Beschreibung |
+|---|---|---|
+| `label` | `string` | Beschriftung der Action |
+| `url` | `string` | Ziel-URL der Action |
+| `title` | `string\|null` | Optionales `title`-Attribut |
+| `icon` | `string\|null` | Optionaler semantischer Icon-Name. Wird im Template als CSS-Klasse `icon-*` ausgegeben. |
+| `target` | `string\|null` | Optionales `target`-Attribut |
+| `rel` | `string\|null` | Optionales `rel`-Attribut |
+
+Eine Implementierung von `GalleryContentActionInterface` kann abhängig von der aktuellen Galerie
+entscheiden, ob eine Action angeboten werden soll. Sie gibt dazu entweder eine
+`GalleryContentAction` oder `null` zurück.
+
+Beispielsweise kann eine Erweiterung eine Download-Funktion für eine Galerie bereitstellen:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Gallery;
+
+use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentAction;
+use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentActionInterface;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+
+final class DownloadGalleryAction implements GalleryContentActionInterface
+{
+    public function createAction(GalleryFolder $folder): GalleryContentAction|null
+    {
+        return new GalleryContentAction(
+            label: 'Alle Bilder herunterladen',
+            url: '/gallery/download/'.$folder->slug,
+            icon: 'download',
+        );
+    }
+}
+```
+
+Mit dieser Action wird im Standard-Twig-Template ein Link mit dem Icon `icon-download` angezeigt.
+
+Die Implementierung wird anschließend als Symfony-Service registriert:
+
+```yaml
+services:
+    App\Gallery\DownloadGalleryAction:
+        autowire: true
+        autoconfigure: true
+```
+
+> 💡 **Hinweis**
+>
+> Die Action beschreibt ausschließlich die Daten des Links. Die konkrete Darstellung wird weiterhin
+> durch das Twig-Template des Bundles bestimmt. Dadurch können Erweiterungen zusätzliche Funktionen
+> bereitstellen, ohne die Darstellung der Galerie selbst übernehmen zu müssen.
+
+Jede Implementierung von `GalleryContentActionInterface` kann pro Galerie entweder genau eine Action
+oder `null` zurückgeben. Dadurch kann eine Erweiterung eine Action abhängig von der aktuellen Galerie
+bedingungsabhängig bereitstellen.
+
+### Beispiel: Download einer Galerie als ZIP
+
+Ein typischer Anwendungsfall für diesen Extension Point ist das Herunterladen aller Bilder einer Galerie
+als ZIP-Datei.
+
+Die ZIP-Erweiterung kann die Action bereitstellen und die URL auf einen eigenen Controller bzw. eine
+eigene Route verweisen:
+
+```text
+Galerie
+├── Beschreibung
+├── Untergalerien
+│
+├── [ Alle Bilder herunterladen ]
+│
+└── Bilder
+```
+
+Die Erstellung des ZIP-Archivs und dessen Auslieferung bleiben vollständig Aufgabe der jeweiligen
+Erweiterung. Das Folder Gallery Bundle muss dafür weder ZIP-Dateien erzeugen noch einen bestimmten
+Download-Mechanismus kennen.
+
+Dadurch können auch andere galeriebezogene Funktionen über denselben Extension Point ergänzt werden,
+ohne dass diese Bestandteil des Folder Gallery Bundles selbst werden müssen.
 
 ## Sitemap
 

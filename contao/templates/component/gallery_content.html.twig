@@ -2,9 +2,9 @@
 {% use '@Contao/component/_figure.html.twig' %}
 
 <div class="gallery-content">
-    {% if content.breadcrumbs %}
-        <div class="gallery-content__navigation gallery-content__navigation--top">
-            {% if content.breadcrumbs %}
+    {% block breadcrumbs %}
+        {% if content.breadcrumbs %}
+            <div class="gallery-content__navigation gallery-content__navigation--top">
                 <nav class="gallery-content__breadcrumbs" aria-label="{{ 'folder_gallery.breadcrumbs'|trans }}">
                     <ol>
                         {% for breadcrumb in content.breadcrumbs %}
@@ -22,55 +22,85 @@
                         {% endfor %}
                     </ol>
                 </nav>
-            {% endif %}
-        </div>
-    {% endif %}
+            </div>
+        {% endif %}
+    {% endblock %}
 
-    {% if content.folder.title %}
-        <h1>{{ content.folder.title }}</h1>
-    {% endif %}
+    {% block title %}
+        {% if content.folder.title %}
+            <h1>{{ content.folder.title }}</h1>
+        {% endif %}
+    {% endblock %}
 
-    {% if content.folder.description %}
-        <div class="gallery-content__description">
-            {{ content.folder.description|raw }}
-        </div>
-    {% endif %}
+    {% block description %}
+        {% if content.folder.description %}
+            <div class="gallery-content__description">
+                {{ content.folder.description|raw }}
+            </div>
+        {% endif %}
+    {% endblock %}
 
-    {% if content.folder.children %}
-        <div class="gallery-content__subfolders">
-            {% for folder in content.folder.children %}
-                {{ include(folderTemplate, {
-                    folderHeadingLevel: 2,
-                    folder,
-                    folderTemplate,
-                }) }}
-            {% endfor %}
-        </div>
-    {% endif %}
+    {% block subfolders %}
+        {% if content.folder.children %}
+            <div class="gallery-content__subfolders">
+                {% for folder in content.folder.children %}
+                    {{ include(folderTemplate, {
+                        folderHeadingLevel: 2,
+                        folder,
+                        folderTemplate,
+                    }) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endblock %}
 
-    {% if content.images %}
-        <div class="gallery-content__images" data-photoswipe="pswp">
-            {% for image in content.images %}
-                <div class="gallery-content__image">
-                    {% with {figure: image} %}
-                        {{ block('figure_component') }}
-                    {% endwith %}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+    {% block actions %}
+        {% if content.actions %}
+            <div class="gallery-content__actions">
+                {% for action in content.actions %}
+                    <a
+                        href="{{ action.url }}"
+                        {% if action.target %}target="{{ action.target }}"{% endif %}
+                        {% if action.rel %}rel="{{ action.rel }}"{% endif %}
+                        {% if action.title %}title="{{ action.title }}"{% endif %}
+                    >
+                        {% if action.icon %}
+                            <span class="gallery-content__action-icon icon-{{ action.icon }}" aria-hidden="true"></span>
+                        {% endif %}
+                        <span class="gallery-content__action-label">{{ action.label }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endblock %}
 
-    {% if content.showEmptyMessage %}
-        {{ content.emptyMessage|insert_tag|raw }}
-    {% endif %}
+    {% block images %}
+        {% if content.images %}
+            <div class="gallery-content__images" data-photoswipe="pswp">
+                {% for image in content.images %}
+                    <div class="gallery-content__image">
+                        {% with {figure: image} %}
+                            {{ block('figure_component') }}
+                        {% endwith %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endblock %}
 
-    {% if content.backUrl %}
-        <div class="gallery-content__navigation gallery-content__navigation--bottom">
-            {% if content.backUrl %}
+    {% block empty_message %}
+        {% if content.showEmptyMessage %}
+            {{ content.emptyMessage|insert_tag|raw }}
+        {% endif %}
+    {% endblock %}
+
+    {% block back_navigation %}
+        {% if content.backUrl %}
+            <div class="gallery-content__navigation gallery-content__navigation--bottom">
                 <a class="gallery-content__back" href="{{ content.backUrl }}">
                     ← {{ 'folder_gallery.back'|trans }}
                 </a>
-            {% endif %}
-        </div>
-    {% endif %}
+            </div>
+        {% endif %}
+    {% endblock %}
 </div>

@@ -25,8 +25,8 @@ use Contao\StringUtil;
 final readonly class GalleryEntryPointProvider implements GalleryEntryPointProviderInterface
 {
     public function __construct(
-        private readonly ContaoFramework $framework,
-        private readonly GalleryRootProviderInterface $galleryRootProvider,
+        private ContaoFramework $framework,
+        private GalleryRootProviderInterface $galleryRootProvider,
     ) {
     }
 
