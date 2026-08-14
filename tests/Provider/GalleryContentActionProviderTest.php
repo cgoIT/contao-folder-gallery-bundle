@@ -59,6 +59,7 @@ final class GalleryContentActionProviderTest extends TestCase
         );
 
         $action = new GalleryContentAction(
+            type: 'download',
             label: 'Download',
             url: '/gallery/download',
         );
@@ -151,11 +152,13 @@ final class GalleryContentActionProviderTest extends TestCase
         );
 
         $firstAction = new GalleryContentAction(
+            type: 'download',
             label: 'Download',
             url: '/gallery/download',
         );
 
         $secondAction = new GalleryContentAction(
+            type: 'download',
             label: 'Share',
             url: '/gallery/share',
         );

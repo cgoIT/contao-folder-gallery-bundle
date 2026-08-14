@@ -134,6 +134,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
         $action = new GalleryContentAction(
+            type: 'download',
             label: 'Download',
             url: '/gallery/download',
         );

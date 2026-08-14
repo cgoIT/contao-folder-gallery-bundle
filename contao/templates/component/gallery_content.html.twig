@@ -58,17 +58,19 @@
         {% if content.actions %}
             <div class="gallery-content__actions">
                 {% for action in content.actions %}
-                    <a
-                        href="{{ action.url }}"
-                        {% if action.target %}target="{{ action.target }}"{% endif %}
-                        {% if action.rel %}rel="{{ action.rel }}"{% endif %}
-                        {% if action.title %}title="{{ action.title }}"{% endif %}
-                    >
-                        {% if action.icon %}
-                            <span class="gallery-content__action-icon icon-{{ action.icon }}" aria-hidden="true"></span>
-                        {% endif %}
-                        <span class="gallery-content__action-label">{{ action.label }}</span>
-                    </a>
+                    {% block action %}
+                        <a
+                            href="{{ action.url }}"
+                            class="gallery-content__action gallery-content__action--{{ action.type }}"
+                            {% if action.target %}target="{{ action.target }}"{% endif %}
+                            {% if action.rel %}rel="{{ action.rel }}"{% endif %}
+                            {% if action.title %}title="{{ action.title }}"{% endif %}
+                        >
+                            {% block action_label %}
+                                <span class="gallery-content__action-label">{{ action.label }}</span>
+                            {% endblock %}
+                        </a>
+                    {% endblock %}
                 {% endfor %}
             </div>
         {% endif %}

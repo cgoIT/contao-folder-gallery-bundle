@@ -713,18 +713,44 @@ Implementierungen ein und stellt die erzeugten Aktionen im `GalleryContentViewMo
 
 Die Action wird durch das unveränderliche `GalleryContentAction`-DTO beschrieben:
 
-| Eigenschaft | Typ | Beschreibung |
-|---|---|---|
-| `label` | `string` | Beschriftung der Action |
-| `url` | `string` | Ziel-URL der Action |
-| `title` | `string\|null` | Optionales `title`-Attribut |
-| `icon` | `string\|null` | Optionaler semantischer Icon-Name. Wird im Template als CSS-Klasse `icon-*` ausgegeben. |
-| `target` | `string\|null` | Optionales `target`-Attribut |
-| `rel` | `string\|null` | Optionales `rel`-Attribut |
+| Eigenschaft | Typ | Beschreibung                                                                                                            |
+|-------------|---|-------------------------------------------------------------------------------------------------------------------------|
+| `type` | `string` | Identifiziert die Action. Der Wert wird als zusätzliche CSS-Klasse `gallery-content__action--{{ type }}` am Link ausgegeben und kann zur individuellen Gestaltung verwendet werden. |
+| `label`     | `string` | Beschriftung der Action                                                                                                 |
+| `url`       | `string` | Ziel-URL der Action                                                                                                     |
+| `title`     | `string\|null` | Optionales `title`-Attribut                                                                                             |
+| `target`    | `string\|null` | Optionales `target`-Attribut                                                                                            |
+| `rel`       | `string\|null` | Optionales `rel`-Attribut                                                                                               |
+
+> 💡 **Hinweis**
+>
+> Der `type` dient ausschließlich zur Identifikation und individuellen Gestaltung der Action. Das Bundle
+> stellt selbst keine Icons für Actions bereit.
+>
+> Dadurch können beispielsweise über CSS-Pseudo-Elemente eigene Icons ergänzt werden:
+>
+> ```css
+> .gallery-content__action--download::before {
+>     content: '↓';
+>     margin-right: .4em;
+> }
+> ```
+>
+> Welche Darstellung eine Action erhält, bleibt vollständig dem jeweiligen Theme überlassen.
 
 Eine Implementierung von `GalleryContentActionInterface` kann abhängig von der aktuellen Galerie
 entscheiden, ob eine Action angeboten werden soll. Sie gibt dazu entweder eine
 `GalleryContentAction` oder `null` zurück.
+
+> 💡 **Hinweis**
+>
+> Die Action beschreibt ausschließlich die Daten des Links.
+>
+> Die Actions werden innerhalb eines eigenen Action-Bereichs der Galerieansicht ausgegeben. Das Standard-Template
+> stellt dabei bewusst nur den Link und seine grundlegenden HTML-Attribute bereit. Eine optische Hervorhebung,
+> beispielsweise durch Icons, Farben oder Buttons, ist nicht Bestandteil der Action-API.
+>
+> Über den `type` kann eine Action im eigenen Theme gezielt angesprochen werden.
 
 Beispielsweise kann eine Erweiterung eine Download-Funktion für eine Galerie bereitstellen:
 
@@ -735,24 +761,29 @@ declare(strict_types=1);
 
 namespace App\Gallery;
 
+use Contao\PageModel;
 use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentAction;
 use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentActionInterface;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 
 final class DownloadGalleryAction implements GalleryContentActionInterface
 {
-    public function createAction(GalleryFolder $folder): GalleryContentAction|null
-    {
+    public function createAction(
+        GalleryOverview $overview,
+        GalleryFolder $folder,
+        PageModel $page,
+    ): GalleryContentAction|null {
         return new GalleryContentAction(
+            type: 'download',
             label: 'Alle Bilder herunterladen',
-            url: '/gallery/download/'.$folder->slug,
-            icon: 'download',
+            url: '/gallery/download/'.$folder->getPath(),
         );
     }
 }
 ```
 
-Mit dieser Action wird im Standard-Twig-Template ein Link mit dem Icon `icon-download` angezeigt.
+Mit dieser Action wird im Standard-Twig-Template ein Link mit der CSS-Klasse `gallery-content__action--download` angezeigt.
 
 Die Implementierung wird anschließend als Symfony-Service registriert:
 
@@ -762,12 +793,6 @@ services:
         autowire: true
         autoconfigure: true
 ```
-
-> 💡 **Hinweis**
->
-> Die Action beschreibt ausschließlich die Daten des Links. Die konkrete Darstellung wird weiterhin
-> durch das Twig-Template des Bundles bestimmt. Dadurch können Erweiterungen zusätzliche Funktionen
-> bereitstellen, ohne die Darstellung der Galerie selbst übernehmen zu müssen.
 
 Jede Implementierung von `GalleryContentActionInterface` kann pro Galerie entweder genau eine Action
 oder `null` zurückgeben. Dadurch kann eine Erweiterung eine Action abhängig von der aktuellen Galerie

@@ -15,10 +15,10 @@ namespace Cgoit\ContaoFolderGalleryBundle\Action;
 final readonly class GalleryContentAction
 {
     public function __construct(
+        public string $type,
         public string $label,
         public string $url,
         public string|null $title = null,
-        public string|null $icon = null,
         public string|null $target = null,
         public string|null $rel = null,
     ) {
