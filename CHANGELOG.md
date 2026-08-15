@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.5.1...v1.6.0) (2026-08-15)
+
+
+### Features
+
+* add `findFolderByModuleIdAndPath` method to `GalleryProvider` and `GalleryProviderInterface` ([fdf9283](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/fdf9283db001a6b502d67ee01a82156eed701b94))
+* add support for gallery actions via `GalleryContentActionInterf… ([cdc048c](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/cdc048c0d5c19f666e2b9ea7a27248e24219614d))
+* add support for gallery actions via `GalleryContentActionInterface` and extend templates for action rendering ([f3e6492](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/f3e6492bb518e0cd44058b2923b0ff3734e5088a))
+
+
+### Bug Fixes
+
+* introduce `type` property for `GalleryContentAction`, enhance template structure, and update styles for gallery actions ([5426e9b](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/5426e9b79df1f3a73dba303e00223f173753458f))
+* update `GalleryContentActionInterface` and related classes to support `GalleryOverview` and `PageModel` ([2f52162](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/2f521623faf132d8473c90deea89e89be4f1efb5))
+
 ## [1.5.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.5.0...v1.5.1) (2026-08-04)
 
 
