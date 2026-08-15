@@ -8,6 +8,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryContentActionProvider;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\Image\PictureConfiguration;
@@ -19,6 +20,7 @@ final readonly class GalleryContentViewModelFactory
         private GalleryFigureFactoryInterface $figureFactory,
         private GalleryFolderViewModelFactory $folderViewModelFactory,
         private GalleryBreadcrumbFactory $breadcrumbFactory,
+        private GalleryContentActionProvider $actionProvider,
     ) {
     }
 
@@ -31,6 +33,8 @@ final readonly class GalleryContentViewModelFactory
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
         $images = $this->getImages($folder);
 
+        $actions = $this->actionProvider->getActions($overview, $folder, $page);
+
         return new GalleryContentViewModel(
             folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
             images: array_map(
@@ -42,6 +46,7 @@ final readonly class GalleryContentViewModelFactory
                 ),
                 $images,
             ),
+            actions: $actions,
             showEmptyMessage: $showEmptyGalleryMessage && $this->isEmpty($images, $folder->folders),
             emptyMessage: $showEmptyGalleryMessage ? $emptyGalleryMessage : null,
             breadcrumbs: $navigation['breadcrumbs'],

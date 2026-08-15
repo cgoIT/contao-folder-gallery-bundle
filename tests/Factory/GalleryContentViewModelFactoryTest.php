@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 
+use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentAction;
+use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentActionInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryBreadcrumbFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
@@ -22,6 +24,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryContentActionProvider;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
@@ -35,6 +38,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use Psr\Container\ContainerInterface;
 
 #[CoversClass(GalleryContentViewModelFactory::class)]
+#[UsesClass(GalleryContentActionProvider::class)]
 #[UsesClass(GalleryContentViewModel::class)]
 #[UsesClass(GalleryOverview::class)]
 #[UsesClass(GalleryFolder::class)]
@@ -129,7 +133,22 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
-        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory);
+        $action = new GalleryContentAction(
+            type: 'download',
+            label: 'Download',
+            url: '/gallery/download',
+        );
+
+        $actionImplementation = $this->createMock(GalleryContentActionInterface::class);
+        $actionImplementation
+            ->method('createAction')
+            ->with($overview, $folder, $page)
+            ->willReturn($action)
+        ;
+
+        $actionsProvider = new GalleryContentActionProvider([$actionImplementation]);
+
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider);
 
         $result = $factory->create(
             $overview,
@@ -151,6 +170,8 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $this->assertSame($figureA, $result->images[0]);
         $this->assertSame($figureB, $result->images[1]);
         $this->assertCount(2, $result->breadcrumbs);
+        $this->assertCount(1, $result->actions);
+        $this->assertSame($action, $result->actions[0]);
     }
 
     public function testExcludesCoverImageFromGalleryContentIfConfigured(): void
@@ -239,7 +260,9 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
-        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory);
+        $actionsProvider = new GalleryContentActionProvider([]);
+
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider);
 
         $result = $factory->create(
             $overview,
@@ -308,10 +331,13 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
+        $actionsProvider = new GalleryContentActionProvider([]);
+
         $factory = new GalleryContentViewModelFactory(
             $figureFactory,
             $folderViewModelFactory,
             $galleryBreadcrumbFactory,
+            $actionsProvider,
         );
 
         $result = $factory->create(
@@ -385,6 +411,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $figureFactory,
             new GalleryFolderViewModelFactory($figureFactory, $urlGenerator),
             new GalleryBreadcrumbFactory($urlGenerator),
+            new GalleryContentActionProvider([]),
         );
 
         $result = $factory->create(

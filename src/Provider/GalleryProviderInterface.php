@@ -25,4 +25,6 @@ interface GalleryProviderInterface
     public function findOverviewByRootPath(string $path): GalleryOverview|null;
 
     public function findFolderByPath(string $path): GalleryFolder|null;
+
+    public function findFolderByModuleIdAndPath(int $moduleId, string $path): GalleryFolder|null;
 }

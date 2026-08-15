@@ -58,6 +58,28 @@ final readonly class GalleryProvider implements GalleryProviderInterface
         return null;
     }
 
+    public function findFolderByModuleIdAndPath(int $moduleId, string $path): GalleryFolder|null
+    {
+        $overview = $this->findOverviewByModuleId($moduleId);
+
+        if (null === $overview) {
+            return null;
+        }
+
+        return $overview->folderIndex[$path] ?? null;
+    }
+
+    private function findOverviewByModuleId(int $moduleId): GalleryOverview|null
+    {
+        foreach ($this->findAllOverviews() as $overview) {
+            if ($overview->getModuleId() === $moduleId) {
+                return $overview;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @return list<GalleryOverview>
      */

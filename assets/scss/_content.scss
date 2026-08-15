@@ -70,6 +70,26 @@
         margin-bottom: var(--gallery-section-spacing);
     }
 
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: var(--gallery-section-spacing);
+    }
+
+    &__action {
+        display: inline-flex;
+        align-items: center;
+        color: inherit;
+        text-decoration: none;
+        transition: opacity var(--gallery-transition-duration) ease;
+
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+
     &__images {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(var(--gallery-content-column-width), 1fr));
