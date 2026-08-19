@@ -15,7 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryOverviewViewModel;
-use Contao\Image\PictureConfiguration;
+use Contao\ModuleModel;
 use Contao\PageModel;
 
 final readonly class GalleryOverviewViewModelFactory
@@ -24,19 +24,17 @@ final readonly class GalleryOverviewViewModelFactory
     {
     }
 
-    /**
-     * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
-     */
-    public function create(GalleryOverview $overview, PageModel $page, PictureConfiguration|array|int|string|null $coverImageSize): GalleryOverviewViewModel
+    public function create(GalleryOverview $overview, PageModel $page, ModuleModel $module): GalleryOverviewViewModel
     {
         $folders = $this->getVisibleFolders($overview->folders);
         $folders = array_map(
-            fn (GalleryFolder $folder) => $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
+            fn (GalleryFolder $folder) => $this->folderViewModelFactory->create($folder, $page, $module->coverImageSize),
             $folders,
         );
 
         return new GalleryOverviewViewModel(
             folders: $folders,
+            introText: $module->galleryOverviewMessage,
         );
     }
 

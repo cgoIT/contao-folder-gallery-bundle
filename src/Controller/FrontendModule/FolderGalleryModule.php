@@ -82,7 +82,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
     private function renderOverview(FragmentTemplate $template, ModuleModel $model, PageModel $page, FilesModel $rootDir): Response
     {
         $overview = $this->folderProvider->findOverviewByRootPath($rootDir->path);
-        $overviewViewModel = $this->overviewFactory->create($overview, $page, $model->galleryCoverImageSize);
+        $overviewViewModel = $this->overviewFactory->create($overview, $page, $model);
         $templateName = $model->galleryFolderTpl ?: 'component/gallery_folder';
 
         $template->set('overview', $overviewViewModel);

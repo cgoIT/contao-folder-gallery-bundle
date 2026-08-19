@@ -9,6 +9,12 @@
             folderTemplate,
         }) }}
     {% else %}
+        {% if overview.introText is not empty %}
+            <div class="module-gallery-overview__intro">
+                {{ overview.introText|sanitize_html('contao')|csp_inline_styles|encode_email|insert_tag_raw }}
+            </div>
+        {% endif %}
+
         {% for folder in overview.folders %}
             {% if folder.isGallery %}
                 <div class="module-gallery-overview__folders">

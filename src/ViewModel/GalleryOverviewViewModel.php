@@ -17,7 +17,9 @@ final readonly class GalleryOverviewViewModel
     /**
      * @param list<GalleryFolderViewModel> $folders
      */
-    public function __construct(public array $folders)
-    {
+    public function __construct(
+        public array $folders,
+        public string|null $introText,
+    ) {
     }
 }

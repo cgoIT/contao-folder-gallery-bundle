@@ -22,6 +22,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
+use Contao\ModuleModel;
 use Contao\PageModel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -81,11 +82,25 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $pageModel = $this->createStub(PageModel::class);
 
+        $moduleModel = $this->createStub(ModuleModel::class);
+        $moduleModel
+            ->method('__get')
+            ->willReturnCallback(
+                static fn (string $property): mixed => match ($property) {
+                    'coverImageSize' => 'gallery_cover',
+                    'introText' => '<p>This is an intro text</p>',
+                    default => null,
+                },
+            )
+        ;
+
         $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
         $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory);
 
-        $viewModel = $factory->create($overview, $pageModel, 'gallery_cover');
+        $viewModel = $factory->create($overview, $pageModel, $moduleModel);
+
+        $this->assertSame('<p>This is an intro text</p>', $viewModel->introText);
 
         $this->assertCount(1, $viewModel->folders);
 
@@ -144,11 +159,23 @@ final class GalleryOverviewFactoryTest extends TestCase
 
         $pageModel = $this->createStub(PageModel::class);
 
+        $moduleModel = $this->createStub(ModuleModel::class);
+        $moduleModel
+            ->method('__get')
+            ->willReturnCallback(
+                static fn (string $property): mixed => match ($property) {
+                    'coverImageSize' => 'gallery_cover',
+                    'introText' => '',
+                    default => null,
+                },
+            )
+        ;
+
         $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
 
         $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory);
 
-        $viewModel = $factory->create($overview, $pageModel, 'gallery_cover');
+        $viewModel = $factory->create($overview, $pageModel, $moduleModel);
 
         $dayViewModel = $viewModel->folders[0]->children[0];
 

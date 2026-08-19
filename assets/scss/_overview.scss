@@ -1,4 +1,8 @@
 .module-gallery-overview {
+    &__intro {
+        margin-bottom: var(--gallery-section-spacing);
+    }
+
     &__group {
         grid-column: 1 / -1;
         margin-bottom: var(--gallery-section-spacing);

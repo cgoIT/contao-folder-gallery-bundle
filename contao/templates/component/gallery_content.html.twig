@@ -92,7 +92,7 @@
 
     {% block empty_message %}
         {% if content.showEmptyMessage %}
-            {{ content.emptyMessage|insert_tag|raw }}
+            {{ content.emptyMessage|sanitize_html('contao')|csp_inline_styles|encode_email|insert_tag_raw }}
         {% endif %}
     {% endblock %}
 

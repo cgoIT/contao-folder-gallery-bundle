@@ -23,7 +23,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
-    .'{config_legend},galleryRoot,galleryCoverImageSize,galleryImageSize,showEmptyGalleryMessage;'
+    .'{config_legend},galleryRoot,galleryCoverImageSize,galleryImageSize,galleryOverviewMessage,showEmptyGalleryMessage;'
     .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl;'
     .'{viewer_legend:collapsed},galleryViewer;'
     .'{protected_legend:collapsed},protected;'
@@ -55,6 +55,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryImageSize'] =
     'reference' => &$GLOBALS['TL_LANG']['MSC'],
     'eval' => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
     'sql' => ['type' => 'string', 'length' => 255, 'default' => '', 'platformOptions' => ['collation' => 'ascii_bin']],
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryOverviewMessage'] = [
+    'exclude' => true,
+    'inputType' => 'textarea',
+    'eval' => ['rte' => 'tinyMCE', 'helpwizard' => true, 'tl_class' => 'clr'],
+    'explanation' => 'insertTags',
+    'sql' => 'text NULL',
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['showEmptyGalleryMessage'] = [
