@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.7.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.6.0...v1.7.0) (2026-08-20)
+
+
+### Features
+
+* add option to configure an intro text on the gallery overview ([8b500be](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/8b500be3d4aaea2777f0bb8e9cd5accf48f96241))
+
+
+### Bug Fixes
+
+* fix unit test ([7fa9b66](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/7fa9b66637956c1aedd3f6f97f397dddf3ab240d))
+* mark backend and frontend CSS files as static assets ([cb43afb](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/cb43afb968ed6e4949c0471704d5a902dc52b25b))
+
 ## [1.6.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.5.1...v1.6.0) (2026-08-15)
 
 
