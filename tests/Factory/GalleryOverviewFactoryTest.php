@@ -88,7 +88,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             ->willReturnCallback(
                 static fn (string $property): mixed => match ($property) {
                     'coverImageSize' => 'gallery_cover',
-                    'introText' => '<p>This is an intro text</p>',
+                    'galleryOverviewMessage' => '<p>This is an intro text</p>',
                     default => null,
                 },
             )
