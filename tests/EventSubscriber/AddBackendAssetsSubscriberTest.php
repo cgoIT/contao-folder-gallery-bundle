@@ -60,7 +60,7 @@ final class AddBackendAssetsSubscriberTest extends ContaoTestCase
         );
 
         $this->assertSame(
-            ['bundles/cgoitfoldergallery/backend.css'],
+            ['bundles/cgoitfoldergallery/backend.css|static'],
             $GLOBALS['TL_CSS'],
         );
     }

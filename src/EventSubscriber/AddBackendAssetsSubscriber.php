@@ -33,7 +33,7 @@ final readonly class AddBackendAssetsSubscriber implements EventSubscriberInterf
         $request = $e->getRequest();
 
         if ($this->scopeMatcher->isBackendRequest($request)) {
-            $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/backend.css';
+            $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/backend.css|static';
         }
     }
 }

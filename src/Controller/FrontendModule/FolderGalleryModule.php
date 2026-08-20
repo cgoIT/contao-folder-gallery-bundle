@@ -49,7 +49,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
     protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
     {
-        $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/folder-gallery.css';
+        $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/folder-gallery.css|static';
 
         $rootDir = FilesModel::findById($model->galleryRoot);
         if (null === $rootDir) {
