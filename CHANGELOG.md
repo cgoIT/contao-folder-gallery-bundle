@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.0...v1.7.1) (2026-08-22)
+
+
+### Bug Fixes
+
+* update method to use `galleryCoverImageSize` instead of `coverImageSize` ([dac7ae1](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/dac7ae1226714a06ca0238acbc5fdf8797eb6035))
+
 ## [1.7.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.6.0...v1.7.0) (2026-08-20)
 
 
