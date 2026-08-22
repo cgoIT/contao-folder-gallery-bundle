@@ -15,7 +15,7 @@
   ],
   "license": "LGPL-3.0-or-later",
   "type": "contao-bundle",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "authors": [
     {
       "name": "Carsten Götzinger",
