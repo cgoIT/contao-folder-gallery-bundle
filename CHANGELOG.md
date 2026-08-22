@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.2](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.1...v1.7.2) (2026-08-22)
+
+
+### Bug Fixes
+
+* add support for alt text in cover images with translation integr… ([de4e992](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/de4e9926e838b50c6cb21bb78dfd78d0d8805e11))
+* add support for alt text in cover images with translation integration and refactor module data handling ([76e669d](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/76e669d46f7a9e0402d884cfeeb71b35e5fe8082))
+
 ## [1.7.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.0...v1.7.1) (2026-08-22)
 
 
