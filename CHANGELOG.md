@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.3](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.2...v1.7.3) (2026-08-22)
+
+
+### Bug Fixes
+
+* adjust gallery group heading level to match folder level ([e5587ff](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/e5587ff4ed776f4ef26f7677ee66e7f92d6cf082))
+* gallery groups and folders should start with heading level 2 because most of the time there is already a h1 on the page ([acd8b3d](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/acd8b3dd089b1942112ace5d435736f800215c49))
+
 ## [1.7.2](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.1...v1.7.2) (2026-08-22)
 
 
