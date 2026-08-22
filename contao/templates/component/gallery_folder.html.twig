@@ -2,7 +2,7 @@
 {% use '@Contao/component/_figure.html.twig' %}
 
 {% if folder.isGroup %}
-<section class="module-gallery-overview__group level-{{ folder.level }}">
+<section class="module-gallery-overview__group level-{{ folder.level + 1 }}">
     {% block group_title %}
         <h{{ folderHeadingLevel }}
             class="module-gallery-overview__group-title"
@@ -48,7 +48,7 @@
         {% block folder_content %}
             <div class="module-gallery-overview__content">
                 {% block folder_title %}
-                    <h{{ folderHeadingLevel }}
+                    <h{{ min(folderHeadingLevel, 6) }}
                         class="module-gallery-overview__folder-title"
                     >
                         {%
