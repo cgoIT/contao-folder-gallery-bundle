@@ -35,7 +35,10 @@
         {% block folder_image %}
             {% if folder.coverFigure %}
                 <div class="module-gallery-overview__image">
-                    {% with {figure: folder.coverFigure} %}
+                    {% with {
+                        figure: folder.coverFigure,
+                        link_attributes: {alt: 'folder_gallery.cover_image_alt'|trans([folder.title])},
+                    } %}
                         {{ block('figure_component') }}
                     {% endwith %}
                 </div>
@@ -48,7 +51,12 @@
                     <h{{ folderHeadingLevel }}
                         class="module-gallery-overview__folder-title"
                     >
-                        <a href="{{ folder.url }}">
+                        {%
+                            set link_attributes = attrs()
+                                .set('alt', 'folder_gallery.cover_image_alt'|trans([folder.title]))
+                                .set('href', folder.url)
+                        %}
+                        <a{{ link_attributes }}>
                             {{ folder.title }}
                         </a>
                     </h{{ folderHeadingLevel }}>

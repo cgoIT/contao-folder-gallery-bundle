@@ -28,7 +28,7 @@ final readonly class GalleryOverviewViewModelFactory
     {
         $folders = $this->getVisibleFolders($overview->folders);
         $folders = array_map(
-            fn (GalleryFolder $folder) => $this->folderViewModelFactory->create($folder, $page, $module->galleryCoverImageSize),
+            fn (GalleryFolder $folder) => $this->folderViewModelFactory->create($folder, $page, $module),
             $folders,
         );
 

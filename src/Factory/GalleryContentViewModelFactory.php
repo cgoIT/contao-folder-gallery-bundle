@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of cgoit\contao-folder-gallery-bundle for Contao Open Source CMS.
+ *
+ * @copyright  Copyright (c) cgoIT
+ * @author     cgoIT <https://cgo-it.de>
+ * @license    LGPL-3.0-or-later
+ */
+
 namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
@@ -11,7 +19,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryContentActionProvider;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryContentViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
-use Contao\Image\PictureConfiguration;
+use Contao\ModuleModel;
 use Contao\PageModel;
 
 final readonly class GalleryContentViewModelFactory
@@ -24,31 +32,32 @@ final readonly class GalleryContentViewModelFactory
     ) {
     }
 
-    /**
-     * @param array<mixed>|PictureConfiguration|int|string|null $imageSize
-     * @param array<mixed>|PictureConfiguration|int|string|null $coverImageSize
-     */
-    public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, PictureConfiguration|array|int|string|null $imageSize, PictureConfiguration|array|int|string|null $coverImageSize, bool $showEmptyGalleryMessage, string|null $emptyGalleryMessage, GalleryViewer $galleryViewer = GalleryViewer::None): GalleryContentViewModel
+    public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, ModuleModel $model): GalleryContentViewModel
     {
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
         $images = $this->getImages($folder);
 
         $actions = $this->actionProvider->getActions($overview, $folder, $page);
 
+        $galleryViewer = GalleryViewer::None;
+        if (null !== $model->galleryViewer) {
+            $galleryViewer = GalleryViewer::tryFrom($model->galleryViewer) ?: GalleryViewer::Lightbox;
+        }
+
         return new GalleryContentViewModel(
-            folder: $this->folderViewModelFactory->create($folder, $page, $coverImageSize),
+            folder: $this->folderViewModelFactory->create($folder, $page, $model),
             images: array_map(
                 fn (GalleryImage $image): Figure => $this->figureFactory->create(
                     $image,
-                    $imageSize,
+                    $model->galleryImageSize,
                     $galleryViewer,
                     'lb-'.$page->id.'-'.$folder->slug,
                 ),
                 $images,
             ),
             actions: $actions,
-            showEmptyMessage: $showEmptyGalleryMessage && $this->isEmpty($images, $folder->folders),
-            emptyMessage: $showEmptyGalleryMessage ? $emptyGalleryMessage : null,
+            showEmptyMessage: $model->showEmptyGalleryMessage && $this->isEmpty($images, $folder->folders),
+            emptyMessage: $model->showEmptyGalleryMessage ? $model->emptyGalleryMessage : null,
             breadcrumbs: $navigation['breadcrumbs'],
             backUrl: $navigation['backUrl'],
         );

@@ -19,10 +19,12 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\CoreBundle\Image\Studio\Figure;
+use Contao\ModuleModel;
 use Contao\PageModel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[CoversClass(GalleryFolderViewModelFactory::class)]
 #[UsesClass(GalleryFolder::class)]
@@ -43,6 +45,12 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             ->expects($this->exactly(2))
             ->method('generate')
             ->willReturn('/parent/child')
+        ;
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
         ;
 
         $pageModel = $this->createStub(PageModel::class);
@@ -81,9 +89,17 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
             ],
         );
 
-        $factory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryCoverImageSize', null],
+            ])
+        ;
 
-        $viewModel = $factory->create($parent, $pageModel, null);
+        $factory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
+
+        $viewModel = $factory->create($parent, $pageModel, $model);
 
         $this->assertSame('Parent', $viewModel->title);
         $this->assertSame('parent', $viewModel->slug);

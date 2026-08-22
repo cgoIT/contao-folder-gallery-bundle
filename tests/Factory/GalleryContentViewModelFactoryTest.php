@@ -31,11 +31,13 @@ use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\CoreBundle\Image\Studio\ImageResult;
 use Contao\Image\PictureConfiguration;
+use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[CoversClass(GalleryContentViewModelFactory::class)]
 #[UsesClass(GalleryContentActionProvider::class)]
@@ -121,6 +123,12 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             )
         ;
 
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
         $page = $this->createStub(PageModel::class);
         $page
             ->method('__get')
@@ -129,7 +137,18 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             ])
         ;
 
-        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryImageSize', 'image-size'],
+                ['galleryCoverImageSize', 'cover-size'],
+                ['showEmptyGalleryMessage', true],
+                ['emptyGalleryMessage', 'This is the empty message'],
+            ])
+        ;
+
+        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
@@ -154,10 +173,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $overview,
             $folder,
             $page,
-            'image-size',
-            'cover-size',
-            true,
-            'This is the empty message',
+            $model,
         );
 
         $this->assertFalse($result->showEmptyMessage);
@@ -248,6 +264,12 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             )
         ;
 
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
         $page = $this->createStub(PageModel::class);
         $page
             ->method('__get')
@@ -256,7 +278,18 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             ])
         ;
 
-        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryImageSize', 'image-size'],
+                ['galleryCoverImageSize', 'cover-size'],
+                ['showEmptyGalleryMessage', true],
+                ['emptyGalleryMessage', 'This is the empty message'],
+            ])
+        ;
+
+        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
@@ -268,10 +301,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $overview,
             $folder,
             $page,
-            'image-size',
-            'cover-size',
-            true,
-            'This is the empty message',
+            $model,
         );
 
         $this->assertFalse($result->showEmptyMessage);
@@ -319,6 +349,12 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             )
         ;
 
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
         $page = $this->createStub(PageModel::class);
         $page
             ->method('__get')
@@ -327,7 +363,18 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             ])
         ;
 
-        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryImageSize', 'image-size'],
+                ['galleryCoverImageSize', 'cover-size'],
+                ['showEmptyGalleryMessage', true],
+                ['emptyGalleryMessage', '<p>Bilder folgen in Kürze.</p>'],
+            ])
+        ;
+
+        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
         $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
 
@@ -344,10 +391,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $overview,
             $folder,
             $page,
-            'image-size',
-            'cover-size',
-            true,
-            '<p>Bilder folgen in Kürze.</p>',
+            $model,
         );
 
         $this->assertTrue($result->showEmptyMessage);
@@ -399,6 +443,12 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             ->willReturn('/gallery')
         ;
 
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
         $page = $this->createStub(PageModel::class);
         $page
             ->method('__get')
@@ -407,9 +457,20 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             ])
         ;
 
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryImageSize', 'image-size'],
+                ['galleryCoverImageSize', 'cover-size'],
+                ['showEmptyGalleryMessage', true],
+                ['emptyGalleryMessage', '<p>Bilder folgen in Kürze.</p>'],
+            ])
+        ;
+
         $factory = new GalleryContentViewModelFactory(
             $figureFactory,
-            new GalleryFolderViewModelFactory($figureFactory, $urlGenerator),
+            new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator),
             new GalleryBreadcrumbFactory($urlGenerator),
             new GalleryContentActionProvider([]),
         );
@@ -418,10 +479,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $overview,
             $folder,
             $page,
-            'image-size',
-            'cover-size',
-            true,
-            '<p>Bilder folgen in Kürze.</p>',
+            $model,
         );
 
         $this->assertCount(0, $result->images);

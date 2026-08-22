@@ -19,5 +19,5 @@ interface GalleryFigureFactoryInterface
     /**
      * @param PictureConfiguration|array<mixed>|int|string|null $size
      */
-    public function createCoverImage(GalleryImage $image, PictureConfiguration|array|int|string|null $size, string $folderUrl): Figure|null;
+    public function createCoverImage(GalleryImage $image, PictureConfiguration|array|int|string|null $size, string $folderUrl, string $alt): Figure|null;
 }
