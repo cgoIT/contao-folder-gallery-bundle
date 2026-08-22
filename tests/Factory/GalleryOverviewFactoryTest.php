@@ -27,6 +27,7 @@ use Contao\PageModel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[CoversClass(GalleryOverviewViewModelFactory::class)]
 #[UsesClass(GalleryFolder::class)]
@@ -80,6 +81,12 @@ final class GalleryOverviewFactoryTest extends TestCase
             ->willReturn('/parent/child')
         ;
 
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
         $pageModel = $this->createStub(PageModel::class);
 
         $moduleModel = $this->createStub(ModuleModel::class);
@@ -94,7 +101,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             )
         ;
 
-        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
         $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory);
 
@@ -157,6 +164,12 @@ final class GalleryOverviewFactoryTest extends TestCase
             ->willReturn('/parent/child')
         ;
 
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
         $pageModel = $this->createStub(PageModel::class);
 
         $moduleModel = $this->createStub(ModuleModel::class);
@@ -171,7 +184,7 @@ final class GalleryOverviewFactoryTest extends TestCase
             )
         ;
 
-        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator);
+        $galleryFolderFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
         $factory = new GalleryOverviewViewModelFactory($galleryFolderFactory);
 

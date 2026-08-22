@@ -6,6 +6,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
+use Contao\CoreBundle\File\Metadata;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\CoreBundle\Image\Studio\FigureBuilder;
@@ -65,12 +66,19 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
         return $builder->buildIfResourceExists();
     }
 
-    public function createCoverImage(GalleryImage $image, PictureConfiguration|array|int|string|null $size, string $folderUrl): Figure|null
+    public function createCoverImage(GalleryImage $image, PictureConfiguration|array|int|string|null $size, string $folderUrl, string|null $alt): Figure|null
     {
+        $metadata = null;
+
+        if (null !== $alt) {
+            $metadata = new Metadata([Metadata::VALUE_ALT => $alt]);
+        }
+
         return $this->studio
             ->createFigureBuilder()
             ->fromUuid($image->uuid)
             ->setSize($size)
+            ->setMetadata($metadata)
             ->setLinkAttribute('href', $folderUrl)
             ->buildIfResourceExists()
         ;
