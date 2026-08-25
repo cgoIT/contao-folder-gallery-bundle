@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\EventSubscriber;
 
 use Contao\CoreBundle\Routing\ScopeMatcher;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final readonly class AddBackendAssetsSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private ScopeMatcher $scopeMatcher)
-    {
+    public function __construct(
+        private ScopeMatcher $scopeMatcher,
+        private Packages $packages,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -33,7 +36,7 @@ final readonly class AddBackendAssetsSubscriber implements EventSubscriberInterf
         $request = $e->getRequest();
 
         if ($this->scopeMatcher->isBackendRequest($request)) {
-            $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/backend.css|static';
+            $GLOBALS['TL_CSS'][] = $this->packages->getUrl('backend-css.css', 'cgoit_folder_gallery');
         }
     }
 }

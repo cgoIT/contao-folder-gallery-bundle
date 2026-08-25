@@ -425,10 +425,10 @@ Aktuell werden zwei Viewer unterstützt.
 | **Contao Lightbox** | Verwendet die klassische Lightbox von Contao. |
 | **PhotoSwipe** | Verwendet PhotoSwipe als modernen Galerie-Viewer mit Touch- und Zoom-Unterstützung. |
 
-> 💡 **Wichtig**
+> 💡 **Hinweis**
 >
-> Wird **PhotoSwipe** verwendet, muss im Seitenlayout zusätzlich das JavaScript-Template **`js_photoswipe`**
-> aktiviert werden.
+> Wird **PhotoSwipe** verwendet, werden die benötigten JavaScript- und CSS-Dateien automatisch geladen. Eine
+> zusätzliche Auswahl eines JavaScript-Templates im Seitenlayout ist nicht erforderlich.
 
 > 💡 **Wichtig**
 >
@@ -684,6 +684,53 @@ Die Darstellung der Bildunterschriften von PhotoSwipe kann vollständig über CS
 | `--pswp-caption-transition-duration` | `.2s` | Dauer der Ein- und Ausblendanimation. |
 | `--pswp-caption-transition-timing-function` | `ease` | Timing-Funktion der Animation. |
 
+#### PhotoSwipe anpassen
+
+Die PhotoSwipe-Initialisierung des Bundles kann über zwei JavaScript-Events erweitert bzw. angepasst werden.
+Dadurch ist es nicht erforderlich, die interne PhotoSwipe-Initialisierung zu überschreiben.
+
+##### PhotoSwipe-Optionen
+
+Vor dem Erzeugen der `PhotoSwipeLightbox`-Instanz wird das Event
+`folder-gallery:photoswipe:options` ausgelöst. Die aktuellen Optionen stehen in `event.detail` zur Verfügung
+und können dort verändert werden.
+
+Beispielsweise kann der Selector für die Galerieelemente angepasst werden:
+
+```js
+document.addEventListener('folder-gallery:photoswipe:options', (event) => {
+    event.detail.children = 'div.gallery_item > a';
+});
+```
+
+Die Änderungen gelten nur für die jeweilige PhotoSwipe-Instanz.
+
+Einige Optionen werden anschließend von Folder Gallery selbst gesetzt, insbesondere `gallery` und `pswpModule`.
+Diese Werte können daher über diesen Extension Point nicht überschrieben werden.
+
+##### PhotoSwipe-Instanz erweitern
+
+Nachdem die `PhotoSwipeLightbox`-Instanz erzeugt wurde, wird das Event
+`folder-gallery:photoswipe:afterInit` ausgelöst. Die Instanz und das zugehörige Galerie-Element stehen in
+`event.detail` zur Verfügung.
+
+Damit können beispielsweise eigene Filter oder weitere PhotoSwipe-Events registriert werden:
+
+```js
+document.addEventListener('folder-gallery:photoswipe:afterInit', (event) => {
+    const { lightbox } = event.detail;
+
+    lightbox.addFilter('itemData', (itemData) => {
+        // Eigene Anpassungen
+        return itemData;
+    });
+});
+```
+
+Die beiden Events sind als öffentliche Extension Points vorgesehen. Die interne Implementierung von Folder Gallery
+kann dadurch erweitert werden, ohne die mitgelieferte PhotoSwipe-Initialisierung oder ein Template überschreiben zu
+müssen.
+
 #### Bildgrößen
 
 Das Bundle verwendet ausschließlich die in Contao konfigurierten Bildgrößen.
@@ -879,9 +926,10 @@ Prüfen Sie insbesondere folgende Punkte:
 
 ### PhotoSwipe bzw. die Lightbox öffnet sich nicht.
 
-Prüfen Sie die [Konfiguration des Seitenlayouts](#galerie-viewer).
+Prüfen Sie zunächst die [Konfiguration des Seitenlayouts](#galerie-viewer).
 
-- Für **PhotoSwipe** muss das JavaScript-Template `js_photoswipe` aktiviert sein.
+- Für **PhotoSwipe** werden die benötigten Assets automatisch geladen, sobald PhotoSwipe als Galerie-Viewer
+  verwendet wird. Ein zusätzliches JavaScript-Template ist nicht erforderlich.
 - Für die **Contao-Lightbox** müssen **jQuery** sowie das Template `j_colorbox` aktiviert sein.
 
 ### Kann ich ein eigenes Coverbild verwenden, das in der Galerie selbst nicht angezeigt wird?

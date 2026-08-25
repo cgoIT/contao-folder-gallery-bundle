@@ -1,8 +1,19 @@
 {
-  "devDependencies": {
-    "sass": "^1.101.0"
-  },
+  "name": "@cgoit/contao-folder-gallery-bundle",
+  "description": "Automatically build Contao image galleries from folders using YAML metadata and the native image pipeline.",
+  "author": "cgo IT <info@cgo-it.de>",
+  "license": "MIT",
   "scripts": {
-    "build-css": "sass assets/scss:public --style=compressed"
-  }
+    "dev-server": "encore dev-server --https",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress"
+  },
+  "dependencies": {
+    "photoswipe": "^5.4.4"
+  },
+  "devDependencies": {
+    "@terminal42/contao-build-tools": "./vendor/terminal42/contao-build-tools/webpack"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

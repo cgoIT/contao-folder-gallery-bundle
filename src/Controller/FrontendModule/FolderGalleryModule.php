@@ -14,6 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Controller\FrontendModule;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
@@ -25,6 +26,7 @@ use Contao\FilesModel;
 use Contao\Input;
 use Contao\ModuleModel;
 use Contao\PageModel;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,6 +45,7 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         private readonly GalleryContentViewModelFactory $contentFactory,
         private readonly PageFinder $pageFinder,
         private readonly ContaoFramework $framework,
+        private readonly Packages $packages,
     ) {
     }
 
@@ -70,6 +73,8 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
             ->getAdapter(Input::class)
             ->setUnusedRouteParameters([])
         ;
+
+        $GLOBALS['TL_CSS']['folder-gallery'] = $this->packages->getUrl('folder-gallery-css.css', 'cgoit_folder_gallery');
 
         if ('' === $path) {
             return $this->renderOverview($template, $model, $page, $rootDir);
@@ -119,6 +124,15 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
             'folderTemplate',
             "@Contao/$folderTemplateName.html.twig",
         );
+
+        $viewer = !empty($model->galleryViewer)
+        ? GalleryViewer::tryFrom($model->galleryViewer) ?? GalleryViewer::Lightbox
+        : null;
+
+        if (GalleryViewer::Photoswipe === $viewer) {
+            $GLOBALS['TL_CSS']['folder-gallery_photoswipe'] = $this->packages->getUrl('folder-gallery-js.css', 'cgoit_folder_gallery');
+            $GLOBALS['TL_JAVASCRIPT']['folder-gallery_photoswipe'] = $this->packages->getUrl('folder-gallery-js.js', 'cgoit_folder_gallery');
+        }
 
         return $template->getResponse();
     }

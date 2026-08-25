@@ -16,6 +16,7 @@ use Cgoit\ContaoFolderGalleryBundle\EventSubscriber\AddBackendAssetsSubscriber;
 use Contao\CoreBundle\Routing\ScopeMatcher;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -53,14 +54,22 @@ final class AddBackendAssetsSubscriberTest extends ContaoTestCase
             ->willReturn(true)
         ;
 
-        $subscriber = new AddBackendAssetsSubscriber($scopeMatcher);
+        $packages = $this->createMock(Packages::class);
+        $packages
+            ->expects($this->once())
+            ->method('getUrl')
+            ->with('backend-css.css', 'cgoit_folder_gallery')
+            ->willReturn('bundles/cgoitfoldergallery/backend-css.css')
+        ;
+
+        $subscriber = new AddBackendAssetsSubscriber($scopeMatcher, $packages);
 
         $subscriber->onKernelRequest(
             $this->createRequestEvent($request),
         );
 
         $this->assertSame(
-            ['bundles/cgoitfoldergallery/backend.css|static'],
+            ['bundles/cgoitfoldergallery/backend-css.css'],
             $GLOBALS['TL_CSS'],
         );
     }
@@ -77,7 +86,15 @@ final class AddBackendAssetsSubscriberTest extends ContaoTestCase
             ->willReturn(false)
         ;
 
-        $subscriber = new AddBackendAssetsSubscriber($scopeMatcher);
+        $packages = $this->createMock(Packages::class);
+        $packages
+            ->expects($this->never())
+            ->method('getUrl')
+            ->with('backend-css.css', 'cgoit_folder_gallery')
+            ->willReturn('bundles/cgoitfoldergallery/backend-css.css')
+        ;
+
+        $subscriber = new AddBackendAssetsSubscriber($scopeMatcher, $packages);
 
         $subscriber->onKernelRequest(
             $this->createRequestEvent($request),

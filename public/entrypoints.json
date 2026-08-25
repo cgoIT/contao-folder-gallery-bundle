@@ -1,0 +1,22 @@
+{
+  "entrypoints": {
+    "folder-gallery-js": {
+      "css": [
+        "/bundles/cgoitfoldergallery/folder-gallery-js.ef138048.css"
+      ],
+      "js": [
+        "/bundles/cgoitfoldergallery/folder-gallery-js.61815812.js"
+      ]
+    },
+    "folder-gallery-css": {
+      "css": [
+        "/bundles/cgoitfoldergallery/folder-gallery-css.b8821f62.css"
+      ]
+    },
+    "backend-css": {
+      "css": [
+        "/bundles/cgoitfoldergallery/backend-css.6b7e6eb2.css"
+      ]
+    }
+  }
+}

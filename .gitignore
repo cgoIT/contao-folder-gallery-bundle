@@ -5,6 +5,7 @@
 # NPM
 node_modules/
 package-lock.json
+yarn.lock
 
 # PhpUnit
 /.phpunit.result.cache
