@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.0...v1.8.1) (2026-08-25)
+
+
+### Bug Fixes
+
+* remove obsolte template file ([828539b](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/828539b1f4dcde206a7d91679cda28a16ad5f84a))
+
 ## [1.8.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.3...v1.8.0) (2026-08-25)
 
 
