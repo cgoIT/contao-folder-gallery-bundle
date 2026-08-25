@@ -1,5 +1,5 @@
-import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import PhotoSwipe from 'photoswipe';
+import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/style.css';
 
 const defaultOptions = {
@@ -9,7 +9,7 @@ const defaultOptions = {
 document.addEventListener('DOMContentLoaded', () => {
     const e = document.querySelectorAll('[data-photoswipe]');
 
-    for (let i = 0; i < e.length; i++) {
+    for (let i = 0; i < e.length; i += 1) {
         const optionsEvent = new CustomEvent('folder-gallery:photoswipe:options', {
             detail: {
                 ...defaultOptions,
@@ -31,12 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     lightbox,
                     gallery: e[i],
                 },
-            })
+            }),
         );
 
         // Parse data-pswp-webp-src attribute
-        lightbox.addFilter('itemData', (itemData, index) => {
-            console.log('original itemDataFilter');
+        lightbox.addFilter('itemData', (itemData) => {
             const webpSrc = itemData.element.dataset.pswpWebpSrc;
             if (webpSrc) {
                 itemData.webpSrc = webpSrc;
@@ -49,12 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // use <picture> instead of <img>
-        lightbox.on('contentLoad', (e) => {
-            const { content, isLazy } = e;
+        lightbox.on('contentLoad', (contentLoadEvent) => {
+            const { content } = contentLoadEvent;
 
             if (content.data.webpSrc || content.data.avifSrc) {
                 // prevent to stop the default behavior
-                e.preventDefault();
+                contentLoadEvent.preventDefault();
 
                 content.pictureElement = document.createElement('picture');
 
@@ -101,10 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // by default PhotoSwipe appends <img>,
         // but we want to append <picture>
-        lightbox.on('contentAppend', (e) => {
-            const { content } = e;
+        lightbox.on('contentAppend', (contentAppendEvent) => {
+            const { content } = contentAppendEvent;
             if (content.pictureElement && !content.pictureElement.parentNode) {
-                e.preventDefault();
+                contentAppendEvent.preventDefault();
                 content.slide.container.appendChild(content.pictureElement);
             }
         });
@@ -112,10 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // for next/prev navigation with <picture>
         // by default PhotoSwipe removes <img>,
         // but we want to remove <picture>
-        lightbox.on('contentRemove', (e) => {
-            const { content } = e;
+        lightbox.on('contentRemove', (contentRemoveEvent) => {
+            const { content } = contentRemoveEvent;
             if (content.pictureElement && content.pictureElement.parentNode) {
-                e.preventDefault();
+                contentRemoveEvent.preventDefault();
                 content.pictureElement.remove();
             }
         });
@@ -123,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add a caption to the lightbox if there is a figcaption.
         // If there is no figcaption element use the contents of the
         // alt attribute if any.
-        lightbox.on('uiRegister', function () {
+        lightbox.on('uiRegister', () => {
             lightbox.pswp.ui.registerElement({
                 name: 'custom-caption',
                 order: 9,
@@ -154,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         el.innerHTML = captionHTML;
                         el.hidden = captionHTML === '';
                     });
-                }
+                },
             });
         });
 

@@ -95,6 +95,8 @@
       "@yamllint",
       "@stylelint",
       "@depcheck",
+      "@eslint",
+      "@biome",
       "@phpunit"
     ]
   }
