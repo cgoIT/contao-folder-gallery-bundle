@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.3...v1.8.0) (2026-08-25)
+
+
+### Features
+
+* use encore to generate optimized JS and CSS files during the build process, automatically include photoswipe assets if photoswipe is used as the gallery viewer ([1a39547](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/1a3954705584df6b42b79123f0144fce770292c6))
+
+
+### Bug Fixes
+
+* fix eslint errors ([74ce15b](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/74ce15ba372a008a6fd741355604f2f3479f63f6))
+
 ## [1.7.3](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.7.2...v1.7.3) (2026-08-22)
 
 
