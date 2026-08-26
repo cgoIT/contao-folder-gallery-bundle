@@ -15,12 +15,14 @@ namespace Cgoit\ContaoFolderGalleryBundle\EventListener;
 use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Contao\CoreBundle\Filesystem\Dbafs\DbafsChangeEvent;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 #[AsEventListener]
 final readonly class GalleryCacheInvalidateListener
 {
     public function __construct(
+        private ContaoFramework $framework,
         private GalleryCacheInvalidator $invalidator,
         private GalleryPathMatcher $pathMatcher,
     ) {
@@ -28,6 +30,8 @@ final readonly class GalleryCacheInvalidateListener
 
     public function __invoke(DbafsChangeEvent $event): void
     {
+        $this->framework->initialize();
+
         if (!$this->pathMatcher->affectsGallery($event->getChangeSet())) {
             return;
         }
