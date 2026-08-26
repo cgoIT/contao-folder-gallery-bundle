@@ -18,11 +18,11 @@ use Cgoit\ContaoFolderGalleryBundle\EventListener\GalleryCacheInvalidateListener
 use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Tests\TestCase;
 use Contao\CoreBundle\Filesystem\Dbafs\ChangeSet\ChangeSet;
 use Contao\CoreBundle\Filesystem\Dbafs\DbafsChangeEvent;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
-use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[CoversClass(GalleryCacheInvalidateListener::class)]
@@ -52,9 +52,11 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
             ])
         ;
 
+        $framework = $this->createContaoFrameworkStub();
+
         $matcher = new GalleryPathMatcher($rootProvider);
 
-        $listener = new GalleryCacheInvalidateListener($invalidator, $matcher);
+        $listener = new GalleryCacheInvalidateListener($framework, $invalidator, $matcher);
         $listener(
             new DbafsChangeEvent(
                 new ChangeSet([['hash' => '', 'path' => 'files/gallery', 'type' => ChangeSet::TYPE_DIRECTORY]], [], []),
@@ -84,9 +86,11 @@ final class GalleryCacheInvalidateListenerTest extends TestCase
             ])
         ;
 
+        $framework = $this->createContaoFrameworkStub();
+
         $matcher = new GalleryPathMatcher($rootProvider);
 
-        $listener = new GalleryCacheInvalidateListener($invalidator, $matcher);
+        $listener = new GalleryCacheInvalidateListener($framework, $invalidator, $matcher);
         $listener(new DbafsChangeEvent(ChangeSet::createEmpty()));
     }
 }
