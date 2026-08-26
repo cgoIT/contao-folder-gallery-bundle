@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.2](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.1...v1.8.2) (2026-08-26)
+
+
+### Bug Fixes
+
+* ensure that the framework is initialized in GalleryCacheInvalidateListener. ([3666c54](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/3666c5423f73bf3d403c9db8c83673f5f7aa281e))
+* fix unit test ([2575af6](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/2575af6e3a84350c91ef2200028c3b9b473999c2))
+
 ## [1.8.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.0...v1.8.1) (2026-08-25)
 
 
