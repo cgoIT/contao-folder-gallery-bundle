@@ -46,9 +46,7 @@ final readonly class GalleryMetadataAjaxHandler
             $file = FilesModel::findByPath($varValue);
 
             if (Dbafs::shouldBeSynchronized($varValue)) {
-                if (null === $file) {
-                    $file = Dbafs::addResource($varValue);
-                }
+                $file ??= Dbafs::addResource($varValue);
             }
         }
 

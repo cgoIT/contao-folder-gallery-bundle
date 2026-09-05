@@ -148,9 +148,7 @@ final class GalleryFilesystemFingerprintProviderTest extends TestCase
                 static function (string $key, callable $callback) use ($item): string {
                     static $value = null;
 
-                    if (null === $value) {
-                        $value = $callback($item);
-                    }
+                    $value ??= $callback($item);
 
                     return $value;
                 },
