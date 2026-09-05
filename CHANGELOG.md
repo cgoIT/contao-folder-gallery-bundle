@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.3](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.2...v1.8.3) (2026-09-05)
+
+
+### Bug Fixes
+
+* fix linting errors ([7139be2](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/7139be25476f3fd1f91e91c2c523f0a4b0273600))
+* update javascript ([cdaef69](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/cdaef69db8989ff29d9bb7040259b7bc0c65b73c))
+
 ## [1.8.2](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.1...v1.8.2) (2026-08-26)
 
 
