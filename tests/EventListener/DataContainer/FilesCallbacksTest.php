@@ -106,7 +106,7 @@ final class FilesCallbacksTest extends TestCase
     /**
      * @param list<GalleryRoot> $galleryRoots
      */
-    private function createFilesCallbacks(array $galleryRoots = [], GalleryCacheInvalidator|null $galleryCacheInvalidator = null,): FilesCallbacks
+    private function createFilesCallbacks(array $galleryRoots = [], GalleryCacheInvalidator|null $galleryCacheInvalidator = null): FilesCallbacks
     {
         $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
         $rootProvider
