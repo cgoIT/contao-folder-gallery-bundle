@@ -39,8 +39,7 @@ final readonly class FilesCallbacks
         }
 
         return PaletteManipulator::create()
-            ->addLegend('folderGallery_legend', null, PaletteManipulator::POSITION_APPEND)
-            ->addField('hideInGallery', 'folderGallery_legend', PaletteManipulator::POSITION_APPEND)
+            ->addField('hideInGallery', 'importantPartHeight', PaletteManipulator::POSITION_AFTER)
             ->applyToString($palette)
         ;
     }

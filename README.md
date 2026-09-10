@@ -486,8 +486,7 @@ Backend-Editor und eine manuelle Bearbeitung der Dateien jederzeit beliebig mite
 
 Einzelne Bilder können unabhängig von den Metadaten des jeweiligen Ordners aus der Galerie ausgeblendet werden.
 
-Dazu steht in der Contao-Dateiverwaltung für jedes Bild in der Legende **Folder Gallery Einstellungen** die Option
-**In Galerie verbergen** zur Verfügung.
+Dazu steht in der Contao-Dateiverwaltung für jedes Bild die Option **In Ordner-Galerie verbergen** zur Verfügung.
 
 Wird die Option aktiviert, erscheint das Bild weder in der Galerie-Übersicht noch in einer Galerieansicht. Die Datei
 selbst bleibt dabei unverändert im Dateisystem erhalten, sie wird lediglich bei der Darstellung der Galerie übersprungen.
@@ -984,8 +983,8 @@ Dies eignet sich insbesondere für Galerien, deren Bilder erst zu einem spätere
 
 ### Ein einzelnes Bild wird nicht in der Galerie angezeigt.
 
-Prüfen Sie in der Contao-Dateiverwaltung, ob für das betreffende Bild in der Legende **Folder Gallery Einstellungen**
-die Option **In Galerie verbergen** aktiviert ist.
+Prüfen Sie in der Contao-Dateiverwaltung, ob für das betreffende Bild die Option **In Ordner-Galerie verbergen**
+aktiviert ist.
 
 Ist diese Option aktiviert, wird das Bild bewusst weder in der Galerie-Übersicht noch in einer Galerieansicht
 dargestellt (siehe [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden)).

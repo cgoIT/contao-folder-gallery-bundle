@@ -8,5 +8,4 @@
  * @license    LGPL-3.0-or-later
  */
 
-$GLOBALS['TL_LANG']['tl_files']['folderGallery_legend'] = 'Folder Gallery settings';
-$GLOBALS['TL_LANG']['tl_files']['hideInGallery'] = ['Hide in gallery', 'Enable this option to hide this image in the gallery view. It will then neither be shown in the frontend nor be included in the gallery ZIP download (provided that the "contao-folder-gallery-download-extension-bundle" extension is installed).'];
+$GLOBALS['TL_LANG']['tl_files']['hideInGallery'] = ['Hide in Folder Gallery', 'Enable this option to hide this image in the folder gallery. It will then neither be shown in the frontend nor be included in the gallery ZIP download (provided that the "contao-folder-gallery-download-extension-bundle" extension is installed).'];
