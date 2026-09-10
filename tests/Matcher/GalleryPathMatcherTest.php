@@ -25,6 +25,23 @@ use PHPUnit\Framework\TestCase;
 #[AllowMockObjectsWithoutExpectations]
 final class GalleryPathMatcherTest extends TestCase
 {
+    public function testMatchesPathInsideGalleryRoot(): void
+    {
+        $provider = $this->createStub(GalleryRootProviderInterface::class);
+        $provider
+            ->method('getGalleryRoots')
+            ->willReturn([
+                new GalleryRoot('module', 1, 'files/gallery'),
+            ])
+        ;
+
+        $matcher = new GalleryPathMatcher($provider);
+
+        $this->assertTrue($matcher->matchesPath('files/gallery/2025/image.jpg'));
+        $this->assertTrue($matcher->matchesPath('files/gallery'));
+        $this->assertFalse($matcher->matchesPath('files/downloads/manual.pdf'));
+    }
+
     #[DataProvider('affectedGalleryProvider')]
     public function testDetectsAffectedGallery(ChangeSet $changeSet): void
     {

@@ -12,7 +12,11 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener\DataContainer;
 
+use Cgoit\ContaoFolderGalleryBundle\Cache\GalleryCacheInvalidator;
 use Cgoit\ContaoFolderGalleryBundle\EventListener\DataContainer\FilesCallbacks;
+use Cgoit\ContaoFolderGalleryBundle\Matcher\GalleryPathMatcher;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
+use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryRootProviderInterface;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\DataContainer;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -21,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversClass(FilesCallbacks::class)]
 #[UsesClass(PaletteManipulator::class)]
+#[UsesClass(GalleryPathMatcher::class)]
+#[UsesClass(GalleryRoot::class)]
 final class FilesCallbacksTest extends TestCase
 {
     public function testAddsFieldForImageFiles(): void
@@ -31,7 +37,7 @@ final class FilesCallbacksTest extends TestCase
             ->willReturn('files/gallery/image.jpg')
         ;
 
-        $callbacks = new FilesCallbacks(['jpg', 'png']);
+        $callbacks = $this->createFilesCallbacks();
 
         $palette = $callbacks->addHideInGalleryField('name,importantPartX,importantPartHeight', $dc);
 
@@ -46,10 +52,72 @@ final class FilesCallbacksTest extends TestCase
             ->willReturn('files/gallery/document.pdf')
         ;
 
-        $callbacks = new FilesCallbacks(['jpg', 'png']);
+        $callbacks = $this->createFilesCallbacks();
 
         $palette = 'name,importantPartX,importantPartHeight';
 
         $this->assertSame($palette, $callbacks->addHideInGalleryField($palette, $dc));
+    }
+
+    public function testInvalidatesGalleryCacheForFileInsideGalleryRoot(): void
+    {
+        $dc = $this->createStub(DataContainer::class);
+        $dc
+            ->method('__get')
+            ->willReturn('files/gallery/image.jpg')
+        ;
+
+        $galleryCacheInvalidator = $this->createMock(GalleryCacheInvalidator::class);
+        $galleryCacheInvalidator
+            ->expects($this->once())
+            ->method('invalidate')
+        ;
+
+        $callbacks = $this->createFilesCallbacks(
+            galleryRoots: [new GalleryRoot('module', 1, 'files/gallery')],
+            galleryCacheInvalidator: $galleryCacheInvalidator,
+        );
+
+        $callbacks->invalidateGalleryCacheOnSave($dc);
+    }
+
+    public function testDoesNotInvalidateGalleryCacheForFileOutsideGalleryRoot(): void
+    {
+        $dc = $this->createStub(DataContainer::class);
+        $dc
+            ->method('__get')
+            ->willReturn('files/downloads/document.pdf')
+        ;
+
+        $galleryCacheInvalidator = $this->createMock(GalleryCacheInvalidator::class);
+        $galleryCacheInvalidator
+            ->expects($this->never())
+            ->method('invalidate')
+        ;
+
+        $callbacks = $this->createFilesCallbacks(
+            galleryRoots: [new GalleryRoot('module', 1, 'files/gallery')],
+            galleryCacheInvalidator: $galleryCacheInvalidator,
+        );
+
+        $callbacks->invalidateGalleryCacheOnSave($dc);
+    }
+
+    /**
+     * @param list<GalleryRoot> $galleryRoots
+     */
+    private function createFilesCallbacks(array $galleryRoots = [], GalleryCacheInvalidator|null $galleryCacheInvalidator = null,): FilesCallbacks
+    {
+        $rootProvider = $this->createStub(GalleryRootProviderInterface::class);
+        $rootProvider
+            ->method('getGalleryRoots')
+            ->willReturn($galleryRoots)
+        ;
+
+        return new FilesCallbacks(
+            ['jpg', 'png'],
+            new GalleryPathMatcher($rootProvider),
+            $galleryCacheInvalidator ?? $this->createStub(GalleryCacheInvalidator::class),
+        );
     }
 }
