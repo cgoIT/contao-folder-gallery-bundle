@@ -56,6 +56,10 @@ final readonly class ContaoGalleryImageLoader implements GalleryImageLoaderInter
                     continue;
                 }
 
+                if ($file->hideInGallery) {
+                    continue;
+                }
+
                 $images[] = new GalleryImage(
                     uuid: StringUtil::binToUuid($file->uuid),
                     path: $file->path,

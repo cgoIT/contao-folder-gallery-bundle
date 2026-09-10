@@ -89,6 +89,35 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
         $this->assertSame('image.jpg', $images[0]->filename);
     }
 
+    public function testIgnoresFilesHiddenFromGallery(): void
+    {
+        $visible = $this->createClassWithPropertiesStub(FilesModel::class, [
+            'uuid' => StringUtil::uuidToBin('00000000-0000-0000-0000-000000000001'),
+            'path' => '/gallery/image.jpg',
+            'name' => 'image.jpg',
+            'extension' => 'jpg',
+            'hideInGallery' => false,
+        ]);
+
+        $hidden = $this->createClassWithPropertiesStub(FilesModel::class, [
+            'uuid' => StringUtil::uuidToBin('00000000-0000-0000-0000-000000000002'),
+            'path' => '/gallery/secret.jpg',
+            'name' => 'secret.jpg',
+            'extension' => 'jpg',
+            'hideInGallery' => true,
+        ]);
+
+        $adapter = $this->createConfiguredAdapterStub(['findMultipleFilesByFolder' => [$visible, $hidden]]);
+        $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
+
+        $loader = new ContaoGalleryImageLoader($framework);
+
+        $images = $loader->loadImages('/gallery', null);
+
+        $this->assertCount(1, $images);
+        $this->assertSame('image.jpg', $images[0]->filename);
+    }
+
     public function testIgnoresMetadataAndDotFiles(): void
     {
         $dot = $this->createClassWithPropertiesStub(FilesModel::class, ['name' => '.', 'extension' => '']);
