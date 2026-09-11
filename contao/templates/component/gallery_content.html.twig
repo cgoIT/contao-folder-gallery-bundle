@@ -40,20 +40,6 @@
         {% endif %}
     {% endblock %}
 
-    {% block subfolders %}
-        {% if content.folder.children %}
-            <div class="gallery-content__subfolders">
-                {% for folder in content.folder.children %}
-                    {{ include(folderTemplate, {
-                        folderHeadingLevel: 2,
-                        folder,
-                        folderTemplate,
-                    }) }}
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endblock %}
-
     {% block actions %}
         {% if content.actions %}
             <div class="gallery-content__actions">
@@ -71,6 +57,20 @@
                             {% endblock %}
                         </a>
                     {% endblock %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    {% block subfolders %}
+        {% if content.folder.children %}
+            <div class="gallery-content__subfolders">
+                {% for folder in content.folder.children %}
+                    {{ include(folderTemplate, {
+                        folderHeadingLevel: 2,
+                        folder,
+                        folderTemplate,
+                    }) }}
                 {% endfor %}
             </div>
         {% endif %}
