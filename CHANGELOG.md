@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.3...v1.9.0) (2026-09-14)
+
+
+### Features
+
+* add option to hide images in gallery via flag in tl_files ([6a90e63](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/6a90e63775d3fe2dabef1cc8d6d79bf7c3295006))
+
 ## [1.8.3](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.2...v1.8.3) (2026-09-05)
 
 
