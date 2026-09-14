@@ -22,6 +22,11 @@ final readonly class GalleryPathMatcher
     {
     }
 
+    public function matchesPath(string $path): bool
+    {
+        return $this->matchesRoot($path, $this->rootProvider->getGalleryRoots());
+    }
+
     public function affectsGallery(ChangeSet $changeSet): bool
     {
         $roots = $this->rootProvider->getGalleryRoots();

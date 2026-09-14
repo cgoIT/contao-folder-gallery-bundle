@@ -131,12 +131,14 @@ erfolgen:
 bin/console contao:migrate
 ```
 
-Dadurch werden die zusätzlichen Felder für das Frontend-Modul angelegt.
+Dadurch werden die zusätzlichen Felder für das Frontend-Modul sowie das Feld zum Ausblenden einzelner Bilder in der
+Dateiverwaltung angelegt.
 
 > ⚠️ **Wichtig**
 >
-> Das Bundle legt keine eigenen Datenbanktabellen für Galerien an. Die Datenbankmigration erweitert ausschließlich
-> das Frontend-Modul (`tl_module`).
+> Das Bundle legt keine eigenen Datenbanktabellen für Galerien an. Die Datenbankmigration erweitert lediglich das
+> Frontend-Modul (`tl_module`) sowie die Dateiverwaltung (`tl_files`) um ein einzelnes Sichtbarkeits-Feld (siehe
+> [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden)).
 
 ---
 
@@ -182,6 +184,14 @@ sie im Frontend dar.
 
 Das Bundle speichert weder Galerien noch Metadaten oder Zuordnungen in eigenen Datenbanktabellen. Alle Informationen bleiben
 direkt im Dateisystem.
+
+> 💡 **Ausnahme**
+>
+> Ob ein einzelnes Bild in der Galerie ausgeblendet werden soll, wird direkt am jeweiligen Bild in der
+> Contao-Dateiverwaltung (`tl_files`) gepflegt (siehe [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden)).
+> Diese Information lässt sich nicht sinnvoll in der ordnerbezogenen [`_metadata.yml`](#metadaten-_metadatayml) abbilden,
+> da sie sich auf ein einzelnes Bild und nicht auf den gesamten Ordner bezieht. Es wird dafür aber keine eigene
+> Datenbanktabelle angelegt, sondern lediglich ein zusätzliches Feld der ohnehin vorhandenen Dateiverwaltung genutzt.
 
 ### Bestehende Workflows weiterverwenden
 
@@ -471,6 +481,27 @@ Backend-Editor und eine manuelle Bearbeitung der Dateien jederzeit beliebig mite
 >
 > Aus Gründen der Datenkonsistenz kann als Coverbild ausschließlich eine Datei aus dem jeweiligen Galerieordner
 > verwendet werden.
+
+### Einzelne Bilder aus der Galerie ausblenden
+
+Einzelne Bilder können unabhängig von den Metadaten des jeweiligen Ordners aus der Galerie ausgeblendet werden.
+
+Dazu steht in der Contao-Dateiverwaltung für jedes Bild die Option **In Ordner-Galerie verbergen** zur Verfügung.
+
+Wird die Option aktiviert, erscheint das Bild weder in der Galerie-Übersicht noch in einer Galerieansicht. Die Datei
+selbst bleibt dabei unverändert im Dateisystem erhalten, sie wird lediglich bei der Darstellung der Galerie übersprungen.
+
+> 💡 **Hinweis**
+>
+> Im Gegensatz zu den übrigen Galerie-Informationen wird diese Einstellung nicht in der
+> [`_metadata.yml`](#metadaten-_metadatayml), sondern direkt am jeweiligen Bild in der Contao-Dateiverwaltung
+> (`tl_files`) gespeichert. Dadurch lässt sich die Sichtbarkeit eines Bildes unabhängig vom jeweiligen Ordner pflegen.
+
+> ℹ️ **Hinweis**
+>
+> Wird zusätzlich die Erweiterung
+> [`contao-folder-gallery-download-extension-bundle`](https://github.com/cgoIT/contao-folder-gallery-download-extension-bundle)
+> verwendet, ist ein verborgenes Bild automatisch auch nicht im ZIP-Download der Galerie enthalten.
 
 ## Frontend
 
@@ -950,12 +981,24 @@ automatisch, sobald eine veröffentlichte Galerie weder sichtbare Bilder noch si
 
 Dies eignet sich insbesondere für Galerien, deren Bilder erst zu einem späteren Zeitpunkt hochgeladen werden.
 
+### Ein einzelnes Bild wird nicht in der Galerie angezeigt.
+
+Prüfen Sie in der Contao-Dateiverwaltung, ob für das betreffende Bild die Option **In Ordner-Galerie verbergen**
+aktiviert ist.
+
+Ist diese Option aktiviert, wird das Bild bewusst weder in der Galerie-Übersicht noch in einer Galerieansicht
+dargestellt (siehe [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden)).
+
+Soll das Bild wieder angezeigt werden, deaktivieren Sie die Option und speichern Sie die Datei erneut.
+
 ### Werden die Bilder in einer Datenbank gespeichert?
 
 Nein.
 
-Das Bundle arbeitet ausschließlich mit den Dateien innerhalb des `files/`-Verzeichnisses. Die Datenbank enthält lediglich
-die Konfiguration des [Frontend-Moduls](#frontend-modul).
+Das Bundle arbeitet ausschließlich mit den Dateien innerhalb des `files/`-Verzeichnisses. In der Datenbank wird
+lediglich die Konfiguration des [Frontend-Moduls](#frontend-modul) sowie – pro Bild optional – die Sichtbarkeit in
+der Galerie (siehe [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden))
+gespeichert.
 
 ### Wo werden Bildunterschriften gepflegt?
 

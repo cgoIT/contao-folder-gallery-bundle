@@ -56,6 +56,9 @@
     "terminal42/contao-build-tools": "dev-main",
     "phpunit/phpunit": "^12.5 || ^13.2"
   },
+  "suggest": {
+    "cgoit/contao-folder-gallery-download-extension-bundle": "to provide links to download galleries as ZIP files"
+  },
   "conflict": {
     "contao/manager-plugin": "<2.0 || >= 3.0"
   },
