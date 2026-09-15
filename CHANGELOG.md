@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.9.0...v1.10.0) (2026-09-15)
+
+
+### Features
+
+* add ImageGallery JSON-LD schema for gallery pages ([120b46a](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/120b46ac4a19c4058c0b7f1156a7b7f08afea58b))
+* extend BreadcrumbList JSON-LD with the gallery's folder trail ([9265ed0](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/9265ed0000895cc70d61ddea0374155bcb13b2c6))
+
+
+### Bug Fixes
+
+* count images correctly when the hidden cover is not part of the gallery ([481877b](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/481877b38374a02c01de21ba769124ee800592e9))
+
 ## [1.9.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.8.3...v1.9.0) (2026-09-14)
 
 
