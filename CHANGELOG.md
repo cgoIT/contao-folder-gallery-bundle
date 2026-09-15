@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.10.0...v1.10.1) (2026-09-15)
+
+
+### Bug Fixes
+
+* use h2 for gallery title header since on most pages there is already a h1 ([e2c87c1](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/e2c87c11d3acded262d1a758fd8c1c317ed0a48f))
+
 ## [1.10.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.9.0...v1.10.0) (2026-09-15)
 
 
