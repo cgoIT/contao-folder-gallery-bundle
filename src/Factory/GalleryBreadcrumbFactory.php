@@ -16,12 +16,15 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryOverview;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryBreadcrumbViewModel;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\PageModel;
 
 final readonly class GalleryBreadcrumbFactory
 {
-    public function __construct(private GalleryUrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private GalleryUrlGeneratorInterface $urlGenerator,
+        private ContaoFramework $framework,
+    ) {
     }
 
     /**
@@ -78,5 +81,44 @@ final readonly class GalleryBreadcrumbFactory
             'breadcrumbs' => $breadcrumbs,
             'backUrl' => $this->urlGenerator->generate($page, $parentGallery),
         ];
+    }
+
+    /**
+     * Resolves the real Contao page trail above the gallery page itself (root
+     * first), for callers that need to combine it with the folder-level
+     * breadcrumbs above - e.g. to build a complete BreadcrumbList JSON-LD,
+     * since the page tree has no notion of the virtual gallery folders.
+     *
+     * @return list<GalleryBreadcrumbViewModel>
+     */
+    public function createPageAncestors(PageModel $page): array
+    {
+        $trail = $page->trail;
+        $ancestorIds = \is_array($trail) ? \array_slice($trail, 0, -1) : [];
+
+        if ([] === $ancestorIds) {
+            return [];
+        }
+
+        $pages = $this->framework->getAdapter(PageModel::class)->findMultipleByIds($ancestorIds);
+
+        if (null === $pages) {
+            return [];
+        }
+
+        $ancestors = [];
+
+        foreach ($pages as $ancestorPage) {
+            if ($ancestorPage->hide) {
+                continue;
+            }
+
+            $ancestors[] = new GalleryBreadcrumbViewModel(
+                title: $ancestorPage->title,
+                url: $this->urlGenerator->generate($ancestorPage),
+            );
+        }
+
+        return $ancestors;
     }
 }

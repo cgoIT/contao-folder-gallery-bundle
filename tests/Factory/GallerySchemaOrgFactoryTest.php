@@ -14,6 +14,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Tests\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GallerySchemaOrgFactory;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
+use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryBreadcrumbViewModel;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Asset\ContaoContext;
 use Contao\CoreBundle\File\Metadata;
@@ -24,9 +25,11 @@ use Contao\CoreBundle\String\HtmlDecoder;
 use Contao\Image\PictureInterface;
 use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use Psr\Container\ContainerInterface;
 
 #[CoversClass(GallerySchemaOrgFactory::class)]
+#[UsesClass(GalleryBreadcrumbViewModel::class)]
 final class GallerySchemaOrgFactoryTest extends ContaoTestCase
 {
     public function testBuildsImageGalleryWithIdOnlyImageReferences(): void
@@ -116,6 +119,55 @@ final class GallerySchemaOrgFactoryTest extends ContaoTestCase
 
         $this->assertArrayNotHasKey('description', $result);
         $this->assertArrayNotHasKey('associatedMedia', $result);
+    }
+
+    public function testBuildsBreadcrumbListWithLinkedAndCurrentItems(): void
+    {
+        $htmlDecoder = $this->createStub(HtmlDecoder::class);
+        $htmlDecoder
+            ->method('inputEncodedToPlainText')
+            ->willReturnArgument(0)
+        ;
+
+        $factory = new GallerySchemaOrgFactory($htmlDecoder);
+
+        $result = $factory->createBreadcrumbList([
+            new GalleryBreadcrumbViewModel(title: 'Start', url: '/'),
+            new GalleryBreadcrumbViewModel(title: 'Galerie', url: '/galerie'),
+            new GalleryBreadcrumbViewModel(title: 'Freitag', url: null),
+        ]);
+
+        $this->assertSame('BreadcrumbList', $result['@type']);
+        $this->assertSame(
+            [
+                [
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'item' => ['@id' => '/', 'name' => 'Start'],
+                ],
+                [
+                    '@type' => 'ListItem',
+                    'position' => 2,
+                    'item' => ['@id' => '/galerie', 'name' => 'Galerie'],
+                ],
+                [
+                    '@type' => 'ListItem',
+                    'position' => 3,
+                    'name' => 'Freitag',
+                ],
+            ],
+            $result['itemListElement'],
+        );
+    }
+
+    public function testBuildsEmptyBreadcrumbListForNoBreadcrumbs(): void
+    {
+        $factory = new GallerySchemaOrgFactory($this->createStub(HtmlDecoder::class));
+
+        $result = $factory->createBreadcrumbList([]);
+
+        $this->assertSame('BreadcrumbList', $result['@type']);
+        $this->assertSame([], $result['itemListElement']);
     }
 
     /**

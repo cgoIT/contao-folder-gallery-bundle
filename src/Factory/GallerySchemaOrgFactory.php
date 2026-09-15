@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
+use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryBreadcrumbViewModel;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\CoreBundle\String\HtmlDecoder;
@@ -55,6 +56,38 @@ final readonly class GallerySchemaOrgFactory implements GallerySchemaOrgFactoryI
         }
 
         return $jsonLd;
+    }
+
+    /**
+     * Builds a "BreadcrumbList" that combines the real Contao page trail with
+     * the gallery's own virtual folder trail, superseding the incomplete one
+     * Contao's own breadcrumb module would otherwise add for this page (it
+     * only knows about the page tree, not the folders underneath it).
+     *
+     * @param list<GalleryBreadcrumbViewModel> $breadcrumbs
+     *
+     * @return array<string, mixed>
+     */
+    public function createBreadcrumbList(array $breadcrumbs): array
+    {
+        $itemListElement = [];
+
+        foreach ($breadcrumbs as $position => $breadcrumb) {
+            $name = $this->htmlDecoder->inputEncodedToPlainText($breadcrumb->title);
+
+            $itemListElement[] = [
+                '@type' => 'ListItem',
+                'position' => $position + 1,
+                ...$breadcrumb->isCurrent()
+                    ? ['name' => $name]
+                    : ['item' => ['@id' => $breadcrumb->url, 'name' => $name]],
+            ];
+        }
+
+        return [
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $itemListElement,
+        ];
     }
 
     /**

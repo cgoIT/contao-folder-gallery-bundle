@@ -4,6 +4,13 @@
 <div class="gallery-content">
     {% block breadcrumbs %}
         {% if content.breadcrumbs %}
+            {# Replaces the page-tree-only BreadcrumbList the core breadcrumb module would add: #}
+            {# it can't see the virtual folder levels below this page, so ours (page ancestors + #}
+            {# folder trail) supersedes it in the JSON-LD graph's default slot for this type. #}
+            {% block gallery_breadcrumb_schema_org %}
+                {% do add_schema_org(content.getBreadcrumbSchemaOrgData()) %}
+            {% endblock %}
+
             <div class="gallery-content__navigation gallery-content__navigation--top">
                 <nav class="gallery-content__breadcrumbs" aria-label="{{ 'folder_gallery.breadcrumbs'|trans }}">
                     <ol>

@@ -20,11 +20,11 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryRoot;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Routing\GalleryUrlGeneratorInterface;
 use Contao\PageModel;
+use Contao\TestCase\ContaoTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(GalleryBreadcrumbFactory::class)]
-final class GalleryBreadcrumbFactoryTest extends TestCase
+final class GalleryBreadcrumbFactoryTest extends ContaoTestCase
 {
     public function testCreatesBreadcrumbsAndBackUrl(): void
     {
@@ -69,7 +69,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
             ])
         ;
 
-        $factory = new GalleryBreadcrumbFactory($urlGenerator);
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $result = $factory->create($overview, $bands, $page);
 
@@ -140,7 +140,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
             ])
         ;
 
-        $factory = new GalleryBreadcrumbFactory($urlGenerator);
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $result = $factory->create($overview, $bands, $page);
 
@@ -201,7 +201,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
             ->willReturn('gallery-2026')
         ;
 
-        $factory = new GalleryBreadcrumbFactory($urlGenerator);
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $result = $factory->create($overview, $friday, $page);
 
@@ -264,7 +264,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
             ])
         ;
 
-        $factory = new GalleryBreadcrumbFactory($urlGenerator);
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $result = $factory->create($overview, $band, $page);
 
@@ -332,7 +332,7 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
             ->willReturn('gallery-2026-music')
         ;
 
-        $factory = new GalleryBreadcrumbFactory($urlGenerator);
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $result = $factory->create($overview, $band, $page);
 
@@ -351,6 +351,137 @@ final class GalleryBreadcrumbFactoryTest extends TestCase
         $this->assertNull($result['breadcrumbs'][3]->url);
 
         $this->assertSame('/gallery/2026', $result['backUrl']);
+    }
+
+    public function testResolvesPageAncestorsRootFirstExcludingCurrentPage(): void
+    {
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['trail', [1, 2, 3]],
+            ])
+        ;
+
+        $home = $this->createStub(PageModel::class);
+        $home
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Start'],
+                ['hide', false],
+            ])
+        ;
+
+        $gallery = $this->createStub(PageModel::class);
+        $gallery
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Galerie'],
+                ['hide', false],
+            ])
+        ;
+
+        $pageAdapter = $this->createAdapterMock(['findMultipleByIds']);
+        $pageAdapter
+            ->expects($this->once())
+            ->method('findMultipleByIds')
+            ->with([1, 2])
+            ->willReturn([$home, $gallery])
+        ;
+
+        $framework = $this->createContaoFrameworkStub([PageModel::class => $pageAdapter]);
+
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->willReturnMap([
+                [$home, null, '/'],
+                [$gallery, null, '/galerie'],
+            ])
+        ;
+
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $framework);
+
+        $result = $factory->createPageAncestors($page);
+
+        $this->assertCount(2, $result);
+
+        $this->assertSame('Start', $result[0]->title);
+        $this->assertSame('/', $result[0]->url);
+
+        $this->assertSame('Galerie', $result[1]->title);
+        $this->assertSame('/galerie', $result[1]->url);
+    }
+
+    public function testSkipsHiddenPageAncestors(): void
+    {
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['trail', [1, 2, 3]],
+            ])
+        ;
+
+        $home = $this->createStub(PageModel::class);
+        $home
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Start'],
+                ['hide', true],
+            ])
+        ;
+
+        $gallery = $this->createStub(PageModel::class);
+        $gallery
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Galerie'],
+                ['hide', false],
+            ])
+        ;
+
+        $pageAdapter = $this->createAdapterStub(['findMultipleByIds']);
+        $pageAdapter
+            ->method('findMultipleByIds')
+            ->willReturn([$home, $gallery])
+        ;
+
+        $framework = $this->createContaoFrameworkStub([PageModel::class => $pageAdapter]);
+
+        $urlGenerator = $this->createStub(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->method('generate')
+            ->willReturn('/galerie')
+        ;
+
+        $factory = new GalleryBreadcrumbFactory($urlGenerator, $framework);
+
+        $result = $factory->createPageAncestors($page);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('Galerie', $result[0]->title);
+    }
+
+    public function testReturnsNoPageAncestorsForARootPage(): void
+    {
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['trail', [1]],
+            ])
+        ;
+
+        $framework = $this->createContaoFrameworkStub();
+
+        $factory = new GalleryBreadcrumbFactory(
+            $this->createStub(GalleryUrlGeneratorInterface::class),
+            $framework,
+        );
+
+        $this->assertSame([], $factory->createPageAncestors($page));
     }
 
     /**

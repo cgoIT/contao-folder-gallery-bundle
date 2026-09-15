@@ -151,7 +151,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
-        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $action = new GalleryContentAction(
             type: 'download',
@@ -170,6 +170,8 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $schemaOrgData = ['@type' => 'ImageGallery'];
         $schemaOrgCalls = 0;
+        $breadcrumbSchemaOrgData = ['@type' => 'BreadcrumbList'];
+        $breadcrumbSchemaOrgCalls = 0;
         $schemaOrgFactory = $this->createMock(GallerySchemaOrgFactoryInterface::class);
         $schemaOrgFactory
             ->expects($this->once())
@@ -180,6 +182,17 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
                     ++$schemaOrgCalls;
 
                     return $schemaOrgData;
+                },
+            )
+        ;
+        $schemaOrgFactory
+            ->expects($this->once())
+            ->method('createBreadcrumbList')
+            ->willReturnCallback(
+                static function () use (&$breadcrumbSchemaOrgCalls, $breadcrumbSchemaOrgData): array {
+                    ++$breadcrumbSchemaOrgCalls;
+
+                    return $breadcrumbSchemaOrgData;
                 },
             )
         ;
@@ -195,6 +208,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         // Building the view model must not resolve the schema.org data eagerly.
         $this->assertSame(0, $schemaOrgCalls);
+        $this->assertSame(0, $breadcrumbSchemaOrgCalls);
 
         $this->assertFalse($result->showEmptyMessage);
         $this->assertSame('This is the empty message', $result->emptyMessage);
@@ -213,6 +227,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         // template, not eagerly while assembling the view model (see the mock's
         // "once" expectation above, which would fail on an earlier, eager call).
         $this->assertSame($schemaOrgData, $result->getSchemaOrgData());
+        $this->assertSame($breadcrumbSchemaOrgData, $result->getBreadcrumbSchemaOrgData());
     }
 
     public function testExcludesCoverImageFromGalleryContentIfConfigured(): void
@@ -316,7 +331,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
-        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $actionsProvider = new GalleryContentActionProvider([]);
 
@@ -403,7 +418,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
 
-        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator);
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
 
         $actionsProvider = new GalleryContentActionProvider([]);
 
@@ -501,7 +516,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $factory = new GalleryContentViewModelFactory(
             $figureFactory,
             new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator),
-            new GalleryBreadcrumbFactory($urlGenerator),
+            new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub()),
             new GalleryContentActionProvider([]),
             $this->createStub(GallerySchemaOrgFactoryInterface::class),
         );

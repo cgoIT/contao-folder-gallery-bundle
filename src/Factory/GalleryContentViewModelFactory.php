@@ -66,6 +66,10 @@ final readonly class GalleryContentViewModelFactory
             breadcrumbs: $navigation['breadcrumbs'],
             backUrl: $navigation['backUrl'],
             schemaOrgData: fn (): array => $this->schemaOrgFactory->create($folderViewModel, $figures),
+            breadcrumbSchemaOrgData: fn (): array => $this->schemaOrgFactory->createBreadcrumbList([
+                ...$this->breadcrumbFactory->createPageAncestors($page),
+                ...$navigation['breadcrumbs'],
+            ]),
         );
     }
 

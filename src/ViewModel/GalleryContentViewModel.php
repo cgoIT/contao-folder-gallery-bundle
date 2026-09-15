@@ -21,10 +21,17 @@ final readonly class GalleryContentViewModel
      * @param list<Figure>                           $images
      * @param list<GalleryContentAction>             $actions
      * @param list<GalleryBreadcrumbViewModel>       $breadcrumbs
-     * @param (\Closure():array<string, mixed>)|null $schemaOrgData Built lazily, like
-     *                                                              Figure::$metadata, so it
-     *                                                              is only resolved if the
-     *                                                              template actually renders it
+     * @param (\Closure():array<string, mixed>)|null $schemaOrgData           Built lazily, like
+     *                                                                        Figure::$metadata, so
+     *                                                                        it is only resolved
+     *                                                                        if the template
+     *                                                                        actually renders it
+     * @param (\Closure():array<string, mixed>)|null $breadcrumbSchemaOrgData Same laziness as
+     *                                                                        $schemaOrgData - also
+     *                                                                        avoids resolving the
+     *                                                                        page ancestor trail
+     *                                                                        (an extra query)
+     *                                                                        unless requested
      */
     public function __construct(
         public GalleryFolderViewModel $folder,
@@ -35,6 +42,7 @@ final readonly class GalleryContentViewModel
         public array $breadcrumbs,
         public string|null $backUrl,
         private \Closure|null $schemaOrgData = null,
+        private \Closure|null $breadcrumbSchemaOrgData = null,
     ) {
     }
 
@@ -44,5 +52,13 @@ final readonly class GalleryContentViewModel
     public function getSchemaOrgData(): array
     {
         return null === $this->schemaOrgData ? [] : ($this->schemaOrgData)();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getBreadcrumbSchemaOrgData(): array
+    {
+        return null === $this->breadcrumbSchemaOrgData ? [] : ($this->breadcrumbSchemaOrgData)();
     }
 }

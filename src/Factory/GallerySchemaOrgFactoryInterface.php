@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
+use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryBreadcrumbViewModel;
 use Cgoit\ContaoFolderGalleryBundle\ViewModel\GalleryFolderViewModel;
 use Contao\CoreBundle\Image\Studio\Figure;
 
@@ -23,4 +24,11 @@ interface GallerySchemaOrgFactoryInterface
      * @return array<string, mixed>
      */
     public function create(GalleryFolderViewModel $folder, array $images): array;
+
+    /**
+     * @param list<GalleryBreadcrumbViewModel> $breadcrumbs
+     *
+     * @return array<string, mixed>
+     */
+    public function createBreadcrumbList(array $breadcrumbs): array;
 }
