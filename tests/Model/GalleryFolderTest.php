@@ -290,4 +290,55 @@ final class GalleryFolderTest extends TestCase
 
         $this->assertFalse($folder->isGroupInOverview());
     }
+
+    public function testReturnsAllImagesAsGalleryImagesIfCoverIsNotHidden(): void
+    {
+        $image1 = new GalleryImage(uuid: '1', path: '/image1.jpg', filename: 'image1.jpg', isCover: false);
+        $image2 = new GalleryImage(uuid: '2', path: '/image2.jpg', filename: 'image2.jpg', isCover: true);
+
+        $folder = new GalleryFolder(
+            slug: 'folder',
+            title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
+            trail: ['folder'],
+            metadata: new GalleryMetadata(),
+            images: [$image1, $image2],
+        );
+
+        $this->assertSame([$image1, $image2], $folder->getGalleryImages());
+    }
+
+    public function testExcludesHiddenCoverFromGalleryImages(): void
+    {
+        $image1 = new GalleryImage(uuid: '1', path: '/image1.jpg', filename: 'image1.jpg', isCover: true);
+        $image2 = new GalleryImage(uuid: '2', path: '/image2.jpg', filename: 'image2.jpg', isCover: false);
+
+        $folder = new GalleryFolder(
+            slug: 'folder',
+            title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
+            trail: ['folder'],
+            metadata: new GalleryMetadata(hideCoverInGallery: true),
+            images: [$image1, $image2],
+        );
+
+        $this->assertSame([$image2], $folder->getGalleryImages());
+    }
+
+    public function testKeepsAllGalleryImagesIfHiddenCoverDoesNotExist(): void
+    {
+        $image1 = new GalleryImage(uuid: '1', path: '/image1.jpg', filename: 'image1.jpg', isCover: false);
+        $image2 = new GalleryImage(uuid: '2', path: '/image2.jpg', filename: 'image2.jpg', isCover: false);
+
+        $folder = new GalleryFolder(
+            slug: 'folder',
+            title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
+            trail: ['folder'],
+            metadata: new GalleryMetadata(hideCoverInGallery: true),
+            images: [$image1, $image2],
+        );
+
+        $this->assertSame([$image1, $image2], $folder->getGalleryImages());
+    }
 }

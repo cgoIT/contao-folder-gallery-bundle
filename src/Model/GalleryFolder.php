@@ -70,6 +70,23 @@ final readonly class GalleryFolder
         return \count($this->images);
     }
 
+    /**
+     * Returns the images shown inside the gallery itself, i.e. without the cover image
+     * if it is configured to be used only as preview image in the overview.
+     *
+     * @return list<GalleryImage>
+     */
+    public function getGalleryImages(): array
+    {
+        if (!$this->metadata->hideCoverInGallery) {
+            return $this->images;
+        }
+
+        return array_values(
+            array_filter($this->images, static fn (GalleryImage $image): bool => !$image->isCover),
+        );
+    }
+
     public function getDescription(): string|null
     {
         return $this->metadata->description;

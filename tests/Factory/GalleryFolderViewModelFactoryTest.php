@@ -115,4 +115,78 @@ final class GalleryFolderViewModelFactoryTest extends TestCase
         $this->assertSame('Child description', $childViewModel->description);
         $this->assertNotInstanceOf(Figure::class, $childViewModel->coverFigure);
     }
+
+    public function testDoesNotCountHiddenCoverImage(): void
+    {
+        $folder = $this->createFolder(
+            new GalleryMetadata(hideCoverInGallery: true),
+            coverFilename: 'image2.jpg',
+        );
+
+        $viewModel = $this->createFactory()->create($folder, $this->createStub(PageModel::class), $this->createModuleModelStub());
+
+        $this->assertSame(2, $viewModel->imageCount);
+    }
+
+    public function testCountsAllImagesIfHiddenCoverDoesNotExist(): void
+    {
+        $folder = $this->createFolder(
+            new GalleryMetadata(hideCoverInGallery: true),
+            coverFilename: null,
+        );
+
+        $viewModel = $this->createFactory()->create($folder, $this->createStub(PageModel::class), $this->createModuleModelStub());
+
+        $this->assertSame(3, $viewModel->imageCount);
+    }
+
+    private function createFactory(): GalleryFolderViewModelFactory
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
+        return new GalleryFolderViewModelFactory(
+            $this->createStub(GalleryFigureFactoryInterface::class),
+            $this->createStub(GalleryUrlGeneratorInterface::class),
+            $translator,
+        );
+    }
+
+    private function createModuleModelStub(): ModuleModel
+    {
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryCoverImageSize', null],
+            ])
+        ;
+
+        return $model;
+    }
+
+    private function createFolder(GalleryMetadata $metadata, string|null $coverFilename): GalleryFolder
+    {
+        $images = array_map(
+            static fn (string $filename): GalleryImage => new GalleryImage(
+                uuid: $filename,
+                path: '/files/gallery/folder/'.$filename,
+                filename: $filename,
+                isCover: $filename === $coverFilename,
+            ),
+            ['image1.jpg', 'image2.jpg', 'image3.jpg'],
+        );
+
+        return new GalleryFolder(
+            slug: 'folder',
+            title: 'Folder',
+            filesystemDirectory: '/files/gallery/folder',
+            trail: ['folder'],
+            metadata: $metadata,
+            images: $images,
+        );
+    }
 }

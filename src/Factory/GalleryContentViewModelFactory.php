@@ -36,7 +36,7 @@ final readonly class GalleryContentViewModelFactory
     public function create(GalleryOverview $overview, GalleryFolder $folder, PageModel $page, ModuleModel $model): GalleryContentViewModel
     {
         $navigation = $this->breadcrumbFactory->create($overview, $folder, $page);
-        $images = $this->getImages($folder);
+        $images = $folder->getGalleryImages();
 
         $actions = $this->actionProvider->getActions($overview, $folder, $page);
 
@@ -71,18 +71,6 @@ final readonly class GalleryContentViewModelFactory
                 ...$navigation['breadcrumbs'],
             ]),
         );
-    }
-
-    /**
-     * @return list<GalleryImage>
-     */
-    private function getImages(GalleryFolder $folder): array
-    {
-        if (!$folder->metadata->hideCoverInGallery) {
-            return $folder->images;
-        }
-
-        return array_filter($folder->images, static fn (GalleryImage $image) => !$image->isCover);
     }
 
     /**
