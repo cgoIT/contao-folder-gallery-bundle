@@ -29,6 +29,7 @@ final readonly class GalleryContentViewModelFactory
         private GalleryFolderViewModelFactory $folderViewModelFactory,
         private GalleryBreadcrumbFactory $breadcrumbFactory,
         private GalleryContentActionProvider $actionProvider,
+        private GallerySchemaOrgFactoryInterface $schemaOrgFactory,
     ) {
     }
 
@@ -44,22 +45,27 @@ final readonly class GalleryContentViewModelFactory
             $galleryViewer = GalleryViewer::tryFrom($model->galleryViewer) ?: GalleryViewer::Lightbox;
         }
 
-        return new GalleryContentViewModel(
-            folder: $this->folderViewModelFactory->create($folder, $page, $model),
-            images: array_map(
-                fn (GalleryImage $image): Figure => $this->figureFactory->create(
-                    $image,
-                    $model->galleryImageSize,
-                    $galleryViewer,
-                    'lb-'.$page->id.'-'.$folder->slug,
-                ),
-                $images,
+        $folderViewModel = $this->folderViewModelFactory->create($folder, $page, $model);
+
+        $figures = array_map(
+            fn (GalleryImage $image): Figure => $this->figureFactory->create(
+                $image,
+                $model->galleryImageSize,
+                $galleryViewer,
+                'lb-'.$page->id.'-'.$folder->slug,
             ),
+            $images,
+        );
+
+        return new GalleryContentViewModel(
+            folder: $folderViewModel,
+            images: $figures,
             actions: $actions,
             showEmptyMessage: $model->showEmptyGalleryMessage && $this->isEmpty($images, $folder->folders),
             emptyMessage: $model->showEmptyGalleryMessage ? $model->emptyGalleryMessage : null,
             breadcrumbs: $navigation['breadcrumbs'],
             backUrl: $navigation['backUrl'],
+            schemaOrgData: fn (): array => $this->schemaOrgFactory->create($folderViewModel, $figures),
         );
     }
 

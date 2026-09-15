@@ -18,6 +18,7 @@ use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryBreadcrumbFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFigureFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryFolderViewModelFactory;
+use Cgoit\ContaoFolderGalleryBundle\Factory\GallerySchemaOrgFactoryInterface;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
@@ -167,7 +168,23 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $actionsProvider = new GalleryContentActionProvider([$actionImplementation]);
 
-        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider);
+        $schemaOrgData = ['@type' => 'ImageGallery'];
+        $schemaOrgCalls = 0;
+        $schemaOrgFactory = $this->createMock(GallerySchemaOrgFactoryInterface::class);
+        $schemaOrgFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with($this->isInstanceOf(GalleryFolderViewModel::class), [$figureA, $figureB])
+            ->willReturnCallback(
+                static function () use (&$schemaOrgCalls, $schemaOrgData): array {
+                    ++$schemaOrgCalls;
+
+                    return $schemaOrgData;
+                },
+            )
+        ;
+
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider, $schemaOrgFactory);
 
         $result = $factory->create(
             $overview,
@@ -175,6 +192,9 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             $page,
             $model,
         );
+
+        // Building the view model must not resolve the schema.org data eagerly.
+        $this->assertSame(0, $schemaOrgCalls);
 
         $this->assertFalse($result->showEmptyMessage);
         $this->assertSame('This is the empty message', $result->emptyMessage);
@@ -188,6 +208,11 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $this->assertCount(2, $result->breadcrumbs);
         $this->assertCount(1, $result->actions);
         $this->assertSame($action, $result->actions[0]);
+
+        // The schema.org data must only be built when actually requested by the
+        // template, not eagerly while assembling the view model (see the mock's
+        // "once" expectation above, which would fail on an earlier, eager call).
+        $this->assertSame($schemaOrgData, $result->getSchemaOrgData());
     }
 
     public function testExcludesCoverImageFromGalleryContentIfConfigured(): void
@@ -295,7 +320,9 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $actionsProvider = new GalleryContentActionProvider([]);
 
-        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider);
+        $schemaOrgFactory = $this->createStub(GallerySchemaOrgFactoryInterface::class);
+
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider, $schemaOrgFactory);
 
         $result = $factory->create(
             $overview,
@@ -380,11 +407,14 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
 
         $actionsProvider = new GalleryContentActionProvider([]);
 
+        $schemaOrgFactory = $this->createStub(GallerySchemaOrgFactoryInterface::class);
+
         $factory = new GalleryContentViewModelFactory(
             $figureFactory,
             $folderViewModelFactory,
             $galleryBreadcrumbFactory,
             $actionsProvider,
+            $schemaOrgFactory,
         );
 
         $result = $factory->create(
@@ -473,6 +503,7 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
             new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator),
             new GalleryBreadcrumbFactory($urlGenerator),
             new GalleryContentActionProvider([]),
+            $this->createStub(GallerySchemaOrgFactoryInterface::class),
         );
 
         $result = $factory->create(

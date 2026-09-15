@@ -78,6 +78,10 @@
 
     {% block images %}
         {% if content.images %}
+            {% block gallery_schema_org %}
+                {% do add_schema_org(content.getSchemaOrgData()) %}
+            {% endblock %}
+
             <div class="gallery-content__images" data-photoswipe="pswp">
                 {% for image in content.images %}
                     <div class="gallery-content__image">
