@@ -19,6 +19,7 @@
 - [Erweiterbarkeit](#erweiterbarkeit)
 - [Sitemap](#sitemap)
 - [FAQ](#faq)
+- [Diese Erweiterung im Einsatz](#diese-erweiterung-im-einsatz)
 - [Mitwirken](#mitwirken)
 - [Lizenz](#lizenz)
 
@@ -1032,6 +1033,22 @@ Konfigurationsfelder im [Frontend-Modul](#frontend-modul).
 
 Die eigentlichen Bilder und Ordner bleiben unverändert erhalten und können anschließend problemlos mit der
 Contao-Standardgalerie oder einer anderen Galerie-Erweiterung weiterverwendet werden.
+
+## Diese Erweiterung im Einsatz
+
+Manchmal sagt ein Blick auf eine fertige Seite mehr als jede Beschreibung. Die folgenden Websites setzen das
+**Contao Folder Gallery Bundle** produktiv ein:
+
+- [foto.weitzeldesign.com](https://foto.weitzeldesign.com/) – Bereich *Portfolio*
+- [gickelskerb.de](https://gickelskerb.de/) – Bereich *Galerie*
+
+Ein herzliches Dankeschön an die Betreiber dieser Seiten dafür, dass wir sie hier nennen dürfen!
+
+Du nutzt die Erweiterung ebenfalls und hättest nichts dagegen, hier aufgeführt zu werden? Dann freuen wir uns
+sehr über eine kurze Rückmeldung – am einfachsten über ein
+[Issue](https://github.com/cgoIT/contao-folder-gallery-bundle/issues) oder eine
+[Diskussion](https://github.com/cgoIT/contao-folder-gallery-bundle/discussions) auf GitHub. Jedes weitere Beispiel
+hilft anderen dabei, sich ein Bild von den Möglichkeiten der Erweiterung zu machen.
 
 ## Mitwirken
 
