@@ -944,13 +944,13 @@ Dadurch können Suchmaschinen sämtliche Galerien ohne weitere Konfiguration fin
 
 ### Im Metadaten-Editor werden keine Galerien angezeigt.
 
-Prüfen Sie, ob mindestens ein [Frontend-Modul](#frontend-modul) vom Typ **Folder Gallery** konfiguriert wurde und eine Galerie-Wurzel ausgewählt ist.
+Prüfe, ob mindestens ein [Frontend-Modul](#frontend-modul) vom Typ **Folder Gallery** konfiguriert wurde und eine Galerie-Wurzel ausgewählt ist.
 
 Der [Metadaten-Editor](#metadaten-editor) ermittelt seine Galerie-Struktur ausschließlich aus den konfigurierten Frontend-Modulen.
 
 ### Meine Galerie wird im Frontend nicht angezeigt.
 
-Prüfen Sie insbesondere folgende Punkte:
+Prüfe insbesondere folgende Punkte:
 
 - Existiert die Galerie innerhalb der konfigurierten [Galerie-Wurzel](#frontend-modul)?
 - Befindet sich die Galerie innerhalb eines veröffentlichten Zeitraums (Liegt der aktuelle Zeitpunkt innerhalb von `published_from` und `published_until`)?
@@ -958,7 +958,7 @@ Prüfen Sie insbesondere folgende Punkte:
 
 ### PhotoSwipe bzw. die Lightbox öffnet sich nicht.
 
-Prüfen Sie zunächst die [Konfiguration des Seitenlayouts](#galerie-viewer).
+Prüfe zunächst die [Konfiguration des Seitenlayouts](#galerie-viewer).
 
 - Für **PhotoSwipe** werden die benötigten Assets automatisch geladen, sobald PhotoSwipe als Galerie-Viewer
   verwendet wird. Ein zusätzliches JavaScript-Template ist nicht erforderlich.
@@ -984,13 +984,13 @@ Dies eignet sich insbesondere für Galerien, deren Bilder erst zu einem spätere
 
 ### Ein einzelnes Bild wird nicht in der Galerie angezeigt.
 
-Prüfen Sie in der Contao-Dateiverwaltung, ob für das betreffende Bild die Option **In Ordner-Galerie verbergen**
+Prüfe in der Contao-Dateiverwaltung, ob für das betreffende Bild die Option **In Ordner-Galerie verbergen**
 aktiviert ist.
 
 Ist diese Option aktiviert, wird das Bild bewusst weder in der Galerie-Übersicht noch in einer Galerieansicht
 dargestellt (siehe [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden)).
 
-Soll das Bild wieder angezeigt werden, deaktivieren Sie die Option und speichern Sie die Datei erneut.
+Soll das Bild wieder angezeigt werden, deaktiviere die Option und speichere die Datei erneut.
 
 ### Werden die Bilder in einer Datenbank gespeichert?
 
@@ -1054,10 +1054,10 @@ hilft anderen dabei, sich ein Bild von den Möglichkeiten der Erweiterung zu mac
 
 Fehlerberichte, Verbesserungsvorschläge und Pull Requests über GitHub sind jederzeit willkommen.
 
-Falls Sie Fragen oder Ideen zur Erweiterung haben, freuen wir uns über ein Issue oder eine Diskussion auf GitHub.
+Falls du Fragen oder Ideen zur Erweiterung hast, freuen wir uns über ein Issue oder eine Diskussion auf GitHub.
 
 ## Lizenz
 
 Dieses Bundle steht unter der **LGPL-3.0-or-later**.
 
-Weitere Informationen finden Sie in der Datei `LICENSE`.
+Weitere Informationen findest du in der Datei `LICENSE`.
