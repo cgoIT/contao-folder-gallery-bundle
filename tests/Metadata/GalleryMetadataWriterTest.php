@@ -45,6 +45,14 @@ final class GalleryMetadataWriterTest extends TestCase
         parent::tearDown();
     }
 
+    public function testResolvesRelativeDirectoryAgainstProjectDir(): void
+    {
+        $writer = new GalleryMetadataWriter(new Filesystem(), \dirname($this->tempDirectory));
+        $writer->write(basename($this->tempDirectory), new GalleryMetadata(title: 'Relative'));
+
+        $this->assertFileExists($this->tempDirectory.'/'.GalleryMetadata::METADATA_FILE_NAME);
+    }
+
     public function testWritesMetadata(): void
     {
         $metadata = new GalleryMetadata(

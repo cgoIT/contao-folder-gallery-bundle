@@ -158,6 +158,7 @@ final class GalleryFilesystemFingerprintProviderTest extends TestCase
         $provider = new GalleryFilesystemFingerprintProvider(
             $this->createRootProvider(),
             $cache,
+            sys_get_temp_dir(),
         );
 
         $fingerprint1 = $provider->getFilesystemFingerprint();
@@ -166,7 +167,29 @@ final class GalleryFilesystemFingerprintProviderTest extends TestCase
         $this->assertSame($fingerprint1, $fingerprint2);
     }
 
-    private function createProvider(): GalleryFilesystemFingerprintProvider
+    public function testResolvesRelativeRootAgainstProjectDir(): void
+    {
+        $provider = $this->createProvider(basename($this->directory));
+
+        $fingerprint1 = $provider->getFilesystemFingerprint();
+
+        sleep(1);
+        $this->filesystem->touch($this->directory.'/image1.jpg');
+        clearstatcache();
+
+        $this->assertNotSame(hash('sha256', ''), $fingerprint1);
+        $this->assertNotSame($fingerprint1, $provider->getFilesystemFingerprint());
+    }
+
+    public function testIgnoresMissingRootDirectory(): void
+    {
+        $this->assertSame(
+            hash('sha256', ''),
+            $this->createProvider('does-not-exist')->getFilesystemFingerprint(),
+        );
+    }
+
+    private function createProvider(string|null $rootDirectory = null): GalleryFilesystemFingerprintProvider
     {
         $item = $this->createStub(ItemInterface::class);
 
@@ -179,12 +202,13 @@ final class GalleryFilesystemFingerprintProviderTest extends TestCase
         ;
 
         return new GalleryFilesystemFingerprintProvider(
-            $this->createRootProvider(),
+            $this->createRootProvider($rootDirectory),
             $cache,
+            sys_get_temp_dir(),
         );
     }
 
-    private function createRootProvider(): GalleryRootProviderInterface
+    private function createRootProvider(string|null $rootDirectory = null): GalleryRootProviderInterface
     {
         $provider = $this->createStub(GalleryRootProviderInterface::class);
         $provider
@@ -193,7 +217,7 @@ final class GalleryFilesystemFingerprintProviderTest extends TestCase
                 new GalleryRoot(
                     moduleName: 'Gallery',
                     moduleId: 1,
-                    filesystemDirectory: $this->directory,
+                    filesystemDirectory: $rootDirectory ?? $this->directory,
                 ),
             ])
         ;

@@ -14,17 +14,24 @@ namespace Cgoit\ContaoFolderGalleryBundle\Metadata;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Yaml\Yaml;
 
 final readonly class GalleryMetadataWriter
 {
-    public function __construct(private Filesystem $filesystem)
-    {
+    public function __construct(
+        private Filesystem $filesystem,
+        private string $projectDir = '',
+    ) {
     }
 
     public function write(string $directory, GalleryMetadata $metadata): void
     {
         $filename = rtrim($directory, '/').'/'.GalleryMetadata::METADATA_FILE_NAME;
+
+        if ('' !== $this->projectDir) {
+            $filename = Path::makeAbsolute($filename, $this->projectDir);
+        }
 
         $data = [
             'title' => $metadata->title,

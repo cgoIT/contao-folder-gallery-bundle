@@ -39,6 +39,14 @@ final class GalleryMetadataReaderTest extends TestCase
         $this->assertSame(OverviewMode::Gallery, $metadata->overviewMode);
     }
 
+    public function testResolvesRelativeDirectoryAgainstProjectDir(): void
+    {
+        $reader = new GalleryMetadataReader(null, $this->getFixturesDir());
+        $metadata = $reader->read('metadata/valid');
+
+        $this->assertSame('Friday', $metadata->title);
+    }
+
     public function testReadsMetadataWithInvalidDates(): void
     {
         $reader = new GalleryMetadataReader();

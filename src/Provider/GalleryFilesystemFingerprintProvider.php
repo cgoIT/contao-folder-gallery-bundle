@@ -33,6 +33,7 @@ final readonly class GalleryFilesystemFingerprintProvider implements GalleryFile
     public function __construct(
         private GalleryRootProviderInterface $rootProvider,
         private TagAwareCacheInterface $cache,
+        private string $projectDir = '',
     ) {
     }
 
@@ -62,9 +63,19 @@ final readonly class GalleryFilesystemFingerprintProvider implements GalleryFile
 
     private function getFingerprint(\HashContext $context, string $galleryRootDirectory): void
     {
+        // Gallery roots are stored relative to the project dir (e.g. "files/gallery"), but
+        // the working directory of a web request is the public dir.
+        $absoluteDirectory = '' !== $this->projectDir
+            ? Path::makeAbsolute($galleryRootDirectory, $this->projectDir)
+            : $galleryRootDirectory;
+
+        if (!is_dir($absoluteDirectory)) {
+            return;
+        }
+
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
-                $galleryRootDirectory,
+                $absoluteDirectory,
                 \FilesystemIterator::SKIP_DOTS,
             ),
         );
@@ -89,7 +100,7 @@ final readonly class GalleryFilesystemFingerprintProvider implements GalleryFile
                 \sprintf(
                     '%s|%s|%d',
                     $galleryRootDirectory,
-                    Path::makeRelative($file->getPathname(), $galleryRootDirectory),
+                    Path::makeRelative($file->getPathname(), $absoluteDirectory),
                     $file->getMTime(),
                 ),
             );

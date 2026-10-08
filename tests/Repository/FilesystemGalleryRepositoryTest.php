@@ -105,6 +105,37 @@ final class FilesystemGalleryRepositoryTest extends TestCase
         $this->assertFriday2025($friday2025);
     }
 
+    public function testFindOverviewWithRootRelativeToProjectDir(): void
+    {
+        $repository = new FilesystemGalleryRepository(
+            new GalleryMetadataReader(null, $this->getFixturesDir()),
+            $this->createStub(GalleryImageLoaderInterface::class),
+            $this->createSlug(),
+            $this->createStub(DbafsManager::class),
+            $this->getFixturesDir(),
+        );
+
+        $overview = $repository->findOverview(new GalleryRoot('module', 1, 'gallery'));
+
+        $this->assertCount(2, $overview->folders);
+        $this->assertSame('Year 2026', $overview->folders[0]->title);
+        $this->assertStringStartsWith('gallery/', $overview->folders[0]->filesystemDirectory);
+        $this->assertInstanceOf(\Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder::class, $overview->findFolderByPath('year-2025/friday-year-2025'));
+    }
+
+    private function createSlug(): Slug
+    {
+        $slug = $this->createStub(Slug::class);
+        $slug
+            ->method('generate')
+            ->willReturnCallback(
+                static fn (string $input): string => StringUtil::generateAlias($input),
+            )
+        ;
+
+        return $slug;
+    }
+
     private function assertFriday2025(GalleryFolder $folder): void
     {
         $this->assertSame('Friday Year 2025', $folder->title);
