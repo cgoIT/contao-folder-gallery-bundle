@@ -31,6 +31,7 @@
     "php": "^8.3",
     "contao/core-bundle": "^5.7",
     "contao/image": "^1.2",
+    "doctrine/dbal": "^3.7 || ^4.3",
     "knplabs/knp-menu": "^3.8",
     "psr/container": "^2.0",
     "psr/log": "^3.0",
