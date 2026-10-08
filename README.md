@@ -141,6 +141,20 @@ Dateiverwaltung angelegt.
 > Frontend-Modul (`tl_module`) sowie die Dateiverwaltung (`tl_files`) um ein einzelnes Sichtbarkeits-Feld (siehe
 > [Einzelne Bilder aus der Galerie ausblenden](#einzelne-bilder-aus-der-galerie-ausblenden)).
 
+### Update von Version 1.10.1 oder älter
+
+Bis einschließlich Version 1.10.1 hat der [Metadaten-Editor](#metadaten-editor) die `_metadata.yml` von
+**geschützten** Galerie-Ordnern versehentlich unterhalb von `public/files/` statt im eigentlichen Ordner unter
+`files/` gespeichert. Öffentliche Ordner waren davon nicht betroffen.
+
+Beim nächsten Aufruf von `contao:migrate` werden solche Dateien automatisch in den richtigen Galerie-Ordner
+verschoben, und die nur dafür angelegten Verzeichnisse unter `public/files/` werden entfernt.
+
+Existiert im Galerie-Ordner bereits eine abweichende `_metadata.yml`, bleibt diese unverändert. Die verschobene
+Datei wird dann als `_metadata.orphaned.yml` daneben abgelegt und die Migration nennt die betroffenen Ordner. Die
+Inhalte können anschließend von Hand zusammengeführt werden; danach kann die `_metadata.orphaned.yml` gelöscht
+werden.
+
 ---
 
 ## Schnellstart (5 Minuten bis zur ersten Galerie)
@@ -244,6 +258,22 @@ Ob ein Ordner als Galerie oder als Galeriegruppe dargestellt wird, wird in seine
 >
 > Die tatsächlichen Bilddateien bleiben vollständig im Contao-Dateisystem (`files/`). Es werden keine Bilder
 > kopiert oder in einer Datenbank gespeichert.
+
+### Öffentliche und geschützte Ordner
+
+Die Galerie-Wurzel kann sowohl ein öffentlicher als auch ein geschützter Ordner sein.
+
+Bei geschützten Ordnern sind die Originalbilder nicht direkt über das Web erreichbar. Die Vorschau- und Galeriebilder
+erzeugt Contao über die Bildpipeline unter `assets/images/`, sie werden daher wie gewohnt angezeigt. Damit auch die
+Großansicht im [Galerie-Viewer](#galerie-viewer) funktioniert, muss im Seitenlayout eine **Lightbox-Bildgröße**
+festgelegt sein. Ohne diese Einstellung verlinkt der Viewer auf das Originalbild.
+
+> ⚠️ **Wichtig**
+>
+> Auch Bilder aus geschützten Ordnern werden durch die Galerie öffentlich angezeigt sowie in die
+> [Sitemap](#sitemap) und die strukturierten Daten aufgenommen. Ein geschützter Ordner eignet sich also nicht, um
+> Bilder vor Besuchern zu verbergen. Dafür gibt es den [Veröffentlichungszeitraum](#unterstützte-felder) und die
+> Option [In Ordner-Galerie verbergen](#einzelne-bilder-aus-der-galerie-ausblenden).
 
 ## Metadaten (`_metadata.yml`)
 
@@ -1016,6 +1046,13 @@ Nein.
 
 Die Metadaten können sowohl direkt in der [`_metadata.yml`](#metadaten-_metadatayml) als auch über den integrierten [Metadaten-Editor](#metadaten-editor) gepflegt
 werden. Beide Arbeitsweisen können beliebig kombiniert werden.
+
+### In einem Galerie-Ordner liegt eine `_metadata.orphaned.yml`.
+
+Diese Datei entsteht beim [Update von Version 1.10.1 oder älter](#update-von-version-1101-oder-älter), wenn für einen
+geschützten Galerie-Ordner zwei unterschiedliche `_metadata.yml` existierten. Wirksam ist die `_metadata.yml`, die
+`_metadata.orphaned.yml` enthält die zuletzt über den Metadaten-Editor gespeicherten Werte. Übernimm die gewünschten
+Angaben in die `_metadata.yml` und lösche danach die `_metadata.orphaned.yml`.
 
 ### Werden Galerien automatisch in die Sitemap aufgenommen?
 
