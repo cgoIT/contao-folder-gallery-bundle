@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.11.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.10.1...v1.11.0) (2026-10-08)
+
+
+### Features
+
+* add lightbox image size to the folder gallery module ([e9531b2](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/e9531b2695e7051d8968f7a630cdc68910c08ec7))
+
+
+### Bug Fixes
+
+* load the photoswipe stylesheet in modern layouts ([0fe5f17](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/0fe5f17cd31619b421755db053fcca83cc0dafe8))
+* move metadata files misplaced in the public directory ([2a3f82f](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/2a3f82f1635ffdcabc4f9416fc17aa3c3f5fdcfe))
+* only set data-photoswipe when photoswipe is the viewer ([2ede1fb](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/2ede1fb7457ef9595faf82ab09959223d2fc0fa4))
+* pass the dimensions of the delivered image to photoswipe ([67c7889](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/67c7889750c2b740074f9ad24ae6057bc6f46dfd))
+* require doctrine/dbal used by the metadata migration ([8a48cad](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/8a48cadcfa73032ff2e272d59fcc90770d121699))
+* resolve gallery paths relative to the project directory ([cac41c9](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/cac41c97784a0bebba7d8757cbdf6f55763c14f5))
+* resolve gallery paths relative to the project directory ([47f7b4f](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/47f7b4f20be6e013f2981d292fda716e2ef11b34))
+
 ## [1.10.1](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.10.0...v1.10.1) (2026-09-15)
 
 
