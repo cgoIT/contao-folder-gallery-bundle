@@ -53,6 +53,7 @@ final readonly class GalleryContentViewModelFactory
                 $model->galleryImageSize,
                 $galleryViewer,
                 'lb-'.$page->id.'-'.$folder->slug,
+                $model->galleryLightboxSize,
             ),
             $images,
         );

@@ -14,19 +14,15 @@ namespace Cgoit\ContaoFolderGalleryBundle\Factory;
 
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryImage;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
+use Cgoit\ContaoFolderGalleryBundle\Provider\LightboxSizeProvider;
 use Contao\CoreBundle\File\Metadata;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Image\Studio\Figure;
 use Contao\CoreBundle\Image\Studio\FigureBuilder;
 use Contao\CoreBundle\Image\Studio\ImageResult;
 use Contao\CoreBundle\Image\Studio\Studio;
-use Contao\CoreBundle\Routing\PageFinder;
 use Contao\Image\ImageInterface;
 use Contao\Image\PictureConfiguration;
 use Contao\Image\PictureInterface;
-use Contao\LayoutModel;
-use Contao\PageModel;
-use Contao\StringUtil;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Filesystem\Path;
 
@@ -38,8 +34,7 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
      */
     public function __construct(
         private Studio $studio,
-        private PageFinder $pageFinder,
-        private ContaoFramework $framework,
+        private LightboxSizeProvider $lightboxSizeProvider,
         private array $validImageExtensions,
         private string $projectDir,
         private string $webDir,
@@ -51,8 +46,10 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
      *
      * @codeCoverageIgnore
      */
-    public function create(GalleryImage $image, PictureConfiguration|array|int|string|null $size, GalleryViewer $galleryViewer = GalleryViewer::None, string|null $lightboxGroupIdentifier = null): Figure|null
+    public function create(GalleryImage $image, PictureConfiguration|array|int|string|null $size, GalleryViewer $galleryViewer = GalleryViewer::None, string|null $lightboxGroupIdentifier = null, string|null $lightboxSize = null): Figure|null
     {
+        $lightboxSizeConfiguration = $this->lightboxSizeProvider->getLightboxSize($lightboxSize);
+
         $builder = $this->studio
             ->createFigureBuilder()
             ->fromUuid($image->uuid)
@@ -63,10 +60,12 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
             GalleryViewer::Lightbox => $this->configureLightbox(
                 $builder,
                 $lightboxGroupIdentifier ?? '',
+                $lightboxSizeConfiguration,
             ),
             GalleryViewer::Photoswipe => $this->configurePhotoswipe(
                 $builder,
                 $image,
+                $lightboxSizeConfiguration,
             ),
             GalleryViewer::None => $builder,
         };
@@ -92,18 +91,27 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
         ;
     }
 
-    private function configureLightbox(FigureBuilder $builder, string|null $lightboxGroupIdentifier): FigureBuilder
+    /**
+     * @param array<mixed>|null $lightboxSize
+     */
+    private function configureLightbox(FigureBuilder $builder, string|null $lightboxGroupIdentifier, array|null $lightboxSize): FigureBuilder
     {
         if (null !== $lightboxGroupIdentifier) {
             $builder->setLightboxGroupIdentifier($lightboxGroupIdentifier);
         }
 
-        return $builder->enableLightbox();
+        return $builder
+            ->setLightboxSize($lightboxSize)
+            ->enableLightbox()
+        ;
     }
 
-    private function configurePhotoswipe(FigureBuilder $builder, GalleryImage $image): FigureBuilder
+    /**
+     * @param array<mixed>|null $lightboxSize
+     */
+    private function configurePhotoswipe(FigureBuilder $builder, GalleryImage $image, array|null $lightboxSize): FigureBuilder
     {
-        $photoswipeImage = $this->getPhotoswipeImage($image);
+        $photoswipeImage = $this->getPhotoswipeImage($image, $lightboxSize);
 
         $picture = $photoswipeImage?->getPicture();
 
@@ -124,7 +132,10 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
         return $builder->setLinkAttributes($linkAttributes);
     }
 
-    private function getPhotoswipeImage(GalleryImage $galleryImage): ImageResult|null
+    /**
+     * @param array<mixed>|null $lightboxSize
+     */
+    private function getPhotoswipeImage(GalleryImage $galleryImage, array|null $lightboxSize): ImageResult|null
     {
         [$filePathOrImage, $url] = $this->resolveImage($galleryImage->path);
 
@@ -135,29 +146,9 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
         return $this->studio
             ->createImage(
                 $filePathOrImage,
-                $this->getDefaultLightboxSizeConfiguration(),
+                $lightboxSize,
             )
         ;
-    }
-
-    /**
-     * @return array<mixed>|null
-     */
-    private function getDefaultLightboxSizeConfiguration(): array|null
-    {
-        $page = $this->pageFinder->getCurrentPage();
-
-        if (!$page instanceof PageModel || null === $page->layout) {
-            return null;
-        }
-
-        $layoutModel = $this->framework->getAdapter(LayoutModel::class)->findById($page->layout);
-
-        if (!$layoutModel || empty($layoutModel->lightboxSize)) {
-            return null;
-        }
-
-        return StringUtil::deserialize($layoutModel->lightboxSize, true);
     }
 
     /**

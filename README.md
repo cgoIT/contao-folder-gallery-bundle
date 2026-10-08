@@ -265,8 +265,9 @@ Die Galerie-Wurzel kann sowohl ein öffentlicher als auch ein geschützter Ordne
 
 Bei geschützten Ordnern sind die Originalbilder nicht direkt über das Web erreichbar. Die Vorschau- und Galeriebilder
 erzeugt Contao über die Bildpipeline unter `assets/images/`, sie werden daher wie gewohnt angezeigt. Damit auch die
-Großansicht im [Galerie-Viewer](#galerie-viewer) funktioniert, muss im Seitenlayout eine **Lightbox-Bildgröße**
-festgelegt sein. Ohne diese Einstellung verlinkt der Viewer auf das Originalbild.
+Großansicht im [Galerie-Viewer](#galerie-viewer) funktioniert, muss eine [Lightbox-Bildgröße](#lightbox-bildgröße)
+im Frontend-Modul oder im Seitenlayout festgelegt sein. Ohne diese Einstellung verlinkt der Viewer auf das
+Originalbild.
 
 > ⚠️ **Wichtig**
 >
@@ -445,6 +446,7 @@ Das Frontend-Modul definiert die [Galerie-Wurzel](#galerie-struktur) und steuert
 | **Coverbildgröße**                       | Bildgröße der Vorschaubilder in der Galerie-Übersicht. |
 | **Meldung bei leeren Galerien anzeigen** | Zeigt eine frei definierbare Meldung an, wenn eine veröffentlichte Galerie weder sichtbare Untergalerien noch sichtbare Bilder enthält. |
 | **Galerie-Viewer**                       | Legt fest, ob die Bilder mit der Contao-Lightbox oder mit PhotoSwipe geöffnet werden. |
+| **Lightbox-Bildgröße**                   | Bildgröße der Großansicht im Galerie-Viewer. Ohne Angabe wird die Lightbox-Bildgröße des Seitenlayouts verwendet (siehe [Lightbox-Bildgröße](#lightbox-bildgröße)). |
 | **Übersichts-Template**                  | Twig-Template für die Darstellung der Galerie-Übersicht. |
 | **Galerie-Template**                     | Twig-Template für die Darstellung einer einzelnen Galerie. |
 
@@ -475,6 +477,26 @@ Aktuell werden zwei Viewer unterstützt.
 >
 > Wird die **Contao-Lightbox** verwendet, muss im Seitenlayout **jQuery** aktiviert sowie das jQuery-Template
 > **`j_colorbox`** eingebunden werden.
+
+#### Lightbox-Bildgröße
+
+Für die Großansicht sollte immer eine **Lightbox-Bildgröße** festgelegt sein, entweder im Frontend-Modul oder zentral
+im Seitenlayout. Die Angabe im Modul hat Vorrang.
+
+Ist keine Lightbox-Bildgröße festgelegt, verlinkt die Großansicht auf das unveränderte Originalbild unter `files/`.
+Das bedeutet:
+
+- Bei [geschützten Ordnern](#öffentliche-und-geschützte-ordner) ist das Originalbild nicht erreichbar, die
+  Großansicht bleibt leer.
+- Bei öffentlichen Ordnern werden die Originaldateien ausgeliefert, oft mehrere MB groß und mit allen EXIF-Daten
+  (z. B. Kameramodell, Aufnahmezeit oder GPS-Koordinaten).
+- Kann das JavaScript des Viewers nicht geladen werden, öffnet ein Klick auf ein Bild ebenfalls das Originalbild.
+
+Mit einer Lightbox-Bildgröße erzeugt Contao die Großansicht über die Bildpipeline unter `assets/images/`. Auch ohne
+JavaScript wird dann nur diese verkleinerte Version geöffnet.
+
+Ist im Frontend-Modul keine Lightbox-Bildgröße festgelegt, weist das Backend beim Speichern darauf hin, dass sie dann
+in allen Seitenlayouts gesetzt sein muss, auf denen das Modul verwendet wird.
 
 #### Bildunterschriften
 
@@ -993,6 +1015,8 @@ Prüfe zunächst die [Konfiguration des Seitenlayouts](#galerie-viewer).
 - Für **PhotoSwipe** werden die benötigten Assets automatisch geladen, sobald PhotoSwipe als Galerie-Viewer
   verwendet wird. Ein zusätzliches JavaScript-Template ist nicht erforderlich.
 - Für die **Contao-Lightbox** müssen **jQuery** sowie das Template `j_colorbox` aktiviert sein.
+- Bleibt die Großansicht leer, obwohl sich der Viewer öffnet, fehlt bei einem geschützten Galerie-Ordner meist die
+  [Lightbox-Bildgröße](#lightbox-bildgröße).
 
 ### Kann ich ein eigenes Coverbild verwenden, das in der Galerie selbst nicht angezeigt wird?
 
