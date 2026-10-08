@@ -120,7 +120,7 @@ final class FilesystemGalleryRepositoryTest extends TestCase
         $this->assertCount(2, $overview->folders);
         $this->assertSame('Year 2026', $overview->folders[0]->title);
         $this->assertStringStartsWith('gallery/', $overview->folders[0]->filesystemDirectory);
-        $this->assertInstanceOf(\Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder::class, $overview->findFolderByPath('year-2025/friday-year-2025'));
+        $this->assertInstanceOf(GalleryFolder::class, $overview->findFolderByPath('year-2025/friday-year-2025'));
     }
 
     private function createSlug(): Slug
