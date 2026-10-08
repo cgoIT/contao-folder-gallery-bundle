@@ -115,12 +115,16 @@ final readonly class GalleryFigureFactory implements GalleryFigureFactoryInterfa
 
         $picture = $photoswipeImage?->getPicture();
 
+        // Use the dimensions of the delivered (resized) image, otherwise PhotoSwipe
+        // zooms beyond its actual resolution
+        $img = $photoswipeImage?->getImg() ?? [];
+
         $linkAttributes = [
             'href' => $photoswipeImage?->getImageSrc(),
             'target' => '_blank',
             'class' => 'pswp-link',
-            'data-pswp-height' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getHeight(),
-            'data-pswp-width' => (string) $photoswipeImage?->getOriginalDimensions()->getSize()->getWidth(),
+            'data-pswp-height' => (string) ($img['height'] ?? ''),
+            'data-pswp-width' => (string) ($img['width'] ?? ''),
         ];
 
         $urls = $this->getAdditionalSourceUrls($picture);
