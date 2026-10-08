@@ -71,6 +71,7 @@ final readonly class GalleryContentViewModelFactory
                 ...$this->breadcrumbFactory->createPageAncestors($page),
                 ...$navigation['breadcrumbs'],
             ]),
+            viewer: $galleryViewer,
         );
     }
 

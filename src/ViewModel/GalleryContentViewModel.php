@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\ViewModel;
 
 use Cgoit\ContaoFolderGalleryBundle\Action\GalleryContentAction;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Contao\CoreBundle\Image\Studio\Figure;
 
 final readonly class GalleryContentViewModel
@@ -43,7 +44,13 @@ final readonly class GalleryContentViewModel
         public string|null $backUrl,
         private \Closure|null $schemaOrgData = null,
         private \Closure|null $breadcrumbSchemaOrgData = null,
+        public GalleryViewer $viewer = GalleryViewer::None,
     ) {
+    }
+
+    public function usesPhotoswipe(): bool
+    {
+        return GalleryViewer::Photoswipe === $this->viewer;
     }
 
     /**
