@@ -33,6 +33,7 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
         private GalleryImageLoaderInterface $galleryImageLoader,
         private Slug $slug,
         private DbafsManager $dbafsManager,
+        private string $projectDir = '',
     ) {
     }
 
@@ -109,14 +110,24 @@ final readonly class FilesystemGalleryRepository implements GalleryRepositoryInt
      */
     private function getDirectories(string $directory): array
     {
+        // Gallery directories are relative to the project dir, but the working directory
+        // of a web request is the public dir
+        $base = '' !== $this->projectDir ? Path::makeAbsolute($directory, $this->projectDir) : $directory;
+
         $directories = glob(
-            Path::join($directory, '*'),
+            Path::join($base, '*'),
             GLOB_ONLYDIR,
         );
 
         if (false === $directories) {
             return [];
         }
+
+        // Keep the identifiers in the same (relative) form as the gallery root
+        $directories = array_map(
+            static fn (string $path): string => Path::join($directory, Path::makeRelative($path, $base)),
+            $directories,
+        );
 
         sort($directories, SORT_NATURAL | SORT_FLAG_CASE);
 

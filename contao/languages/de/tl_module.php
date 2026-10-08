@@ -21,6 +21,8 @@ $GLOBALS['TL_LANG']['tl_module']['emptyGalleryMessage'] = ['Meldung für leere G
 $GLOBALS['TL_LANG']['tl_module']['galleryContentTpl'] = ['Inhalts-Template', 'Template für die Inhalte der Galerie.'];
 $GLOBALS['TL_LANG']['tl_module']['galleryFolderTpl'] = ['Ordner-Template', 'Template für die Ordner der Galerie.'];
 $GLOBALS['TL_LANG']['tl_module']['galleryViewer'] = ['Bildbetrachter', 'Wähle den Viewer, der für die Anzeige einzelner Bilder in der Großansicht innerhalb einer Galerie verwendet wird.'];
+$GLOBALS['TL_LANG']['tl_module']['galleryLightboxSize'] = ['Lightbox-Bildgröße', 'Bildgröße der Großansicht im Bildbetrachter. Ohne Angabe wird die Lightbox-Bildgröße des Seitenlayouts verwendet.'];
+$GLOBALS['TL_LANG']['tl_module']['galleryLightboxSizeMissing'] = 'Im Modul ist keine Lightbox-Bildgröße festgelegt. Bitte stelle sicher, dass sie in allen Seitenlayouts gesetzt ist, auf denen das Modul verwendet wird. Andernfalls verlinkt die Großansicht auf das Originalbild. Das ist bei geschützten Ordnern nicht erreichbar und enthält bei öffentlichen Ordnern alle EXIF-Daten (z. B. GPS-Koordinaten).';
 
 $GLOBALS['TL_LANG']['tl_module']['gallery_viewer']['none'] = 'Kein Bildbetrachter';
 $GLOBALS['TL_LANG']['tl_module']['gallery_viewer']['lightbox'] = 'Lightbox (Contao-Standard)';

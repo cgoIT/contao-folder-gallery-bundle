@@ -53,6 +53,7 @@ final readonly class GalleryContentViewModelFactory
                 $model->galleryImageSize,
                 $galleryViewer,
                 'lb-'.$page->id.'-'.$folder->slug,
+                $model->galleryLightboxSize,
             ),
             $images,
         );
@@ -70,6 +71,7 @@ final readonly class GalleryContentViewModelFactory
                 ...$this->breadcrumbFactory->createPageAncestors($page),
                 ...$navigation['breadcrumbs'],
             ]),
+            viewer: $galleryViewer,
         );
     }
 

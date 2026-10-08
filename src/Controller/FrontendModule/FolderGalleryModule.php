@@ -51,8 +51,6 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
 
     protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
     {
-        $GLOBALS['TL_CSS'][] = 'bundles/cgoitfoldergallery/folder-gallery.css|static';
-
         $rootDir = FilesModel::findById($model->galleryRoot);
         if (null === $rootDir) {
             throw new PageNotFoundException();
@@ -130,8 +128,8 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         : null;
 
         if (GalleryViewer::Photoswipe === $viewer) {
-            $GLOBALS['TL_CSS']['folder-gallery_photoswipe'] = $this->packages->getUrl('folder-gallery-js.css', 'cgoit_folder_gallery');
-            $GLOBALS['TL_JAVASCRIPT']['folder-gallery_photoswipe'] = $this->packages->getUrl('folder-gallery-js.js', 'cgoit_folder_gallery');
+            $GLOBALS['TL_CSS']['folder-gallery_photoswipe_css'] = $this->packages->getUrl('folder-gallery-js.css', 'cgoit_folder_gallery');
+            $GLOBALS['TL_JAVASCRIPT']['folder-gallery_photoswipe_js'] = $this->packages->getUrl('folder-gallery-js.js', 'cgoit_folder_gallery');
         }
 
         return $template->getResponse();

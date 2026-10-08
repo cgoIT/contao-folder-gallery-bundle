@@ -16,6 +16,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\OverviewMode;
 use Cgoit\ContaoFolderGalleryBundle\Model\SortOrder;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -40,14 +41,24 @@ final readonly class GalleryMetadataReader
 
     private \DateTimeZone $installationTimezone;
 
-    public function __construct(private LoggerInterface|null $logger = null)
-    {
+    /**
+     * @param string $projectDir Gallery directories are relative to the project dir, but
+     *                           the working directory of a web request is the public dir
+     */
+    public function __construct(
+        private LoggerInterface|null $logger = null,
+        private string $projectDir = '',
+    ) {
         $this->installationTimezone = $this->getInstallationTimezone();
     }
 
     public function read(string $directory): GalleryMetadata
     {
         $filename = rtrim($directory, '/').'/'.GalleryMetadata::METADATA_FILE_NAME;
+
+        if ('' !== $this->projectDir) {
+            $filename = Path::makeAbsolute($filename, $this->projectDir);
+        }
 
         if (!is_file($filename)) {
             return new GalleryMetadata();

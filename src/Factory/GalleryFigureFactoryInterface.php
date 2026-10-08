@@ -21,8 +21,9 @@ interface GalleryFigureFactoryInterface
 {
     /**
      * @param PictureConfiguration|array<mixed>|int|string|null $size
+     * @param string|null                                       $lightboxSize Serialized size of the module, falls back to the page layout
      */
-    public function create(GalleryImage $image, PictureConfiguration|array|int|string|null $size, GalleryViewer $galleryViewer = GalleryViewer::None, string|null $lightboxGroupIdentifier = null): Figure|null;
+    public function create(GalleryImage $image, PictureConfiguration|array|int|string|null $size, GalleryViewer $galleryViewer = GalleryViewer::None, string|null $lightboxGroupIdentifier = null, string|null $lightboxSize = null): Figure|null;
 
     /**
      * @param PictureConfiguration|array<mixed>|int|string|null $size
