@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.12.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.11.0...v1.12.0) (2026-10-10)
+
+
+### Features
+
+* allow disabling the default stylesheet per module ([f8bdd4f](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/f8bdd4fe17aef4cbb86432a53152f3de2c576448))
+* allow highlighting single images in the gallery ([b012f95](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/b012f95b29ee4dbb3dc040f3f0b62bc03636017d))
+* restrict the metadata editor by module permission and file mounts ([4489a15](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/4489a157f7e6a604f124f997b9b5fe261164dd44))
+* translate the PhotoSwipe labels ([85ca748](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/85ca7488424ec890f424a4958057c497f20a8971))
+* use the gallery title and description for the page head ([ddb6e97](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/ddb6e9774bd73c7dbefb7b77b89740225794a887))
+
+
+### Bug Fixes
+
+* validate the folder id and the cover in the metadata editor ([70b8483](https://github.com/cgoIT/contao-folder-gallery-bundle/commit/70b8483391b135e0e8c9050c9e1c77d2bdec7c9e))
+
 ## [1.11.0](https://github.com/cgoIT/contao-folder-gallery-bundle/compare/v1.10.1...v1.11.0) (2026-10-08)
 
 
