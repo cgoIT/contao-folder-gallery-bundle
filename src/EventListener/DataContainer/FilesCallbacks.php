@@ -39,15 +39,15 @@ final readonly class FilesCallbacks
         }
 
         return PaletteManipulator::create()
-            ->addField('hideInGallery', 'importantPartHeight', PaletteManipulator::POSITION_AFTER)
+            ->addField(['hideInGallery', 'highlightInGallery'], 'importantPartHeight', PaletteManipulator::POSITION_AFTER)
             ->applyToString($palette)
         ;
     }
 
     /**
      * The gallery overview cache is keyed by a filesystem fingerprint (paths and mtimes) and
-     * otherwise only invalidated on real DBAFS filesystem changes. Saving hideInGallery (a plain
-     * tl_files column) is neither, so without this callback the cache would keep serving the
+     * otherwise only invalidated on real DBAFS filesystem changes. Saving hideInGallery or highlightInGallery
+     * (plain tl_files columns) is neither, so without this callback the cache would keep serving the
      * previous image list until an unrelated filesystem change happens to bust it.
      */
     #[AsCallback(table: 'tl_files', target: 'config.onsubmit')]

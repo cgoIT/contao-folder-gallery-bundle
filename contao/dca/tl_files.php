@@ -15,3 +15,9 @@ $GLOBALS['TL_DCA']['tl_files']['fields']['hideInGallery'] = [
     'eval' => ['tl_class' => 'clr w50 m12'],
     'sql' => ['type' => 'boolean', 'default' => false],
 ];
+
+$GLOBALS['TL_DCA']['tl_files']['fields']['highlightInGallery'] = [
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'w50 m12'],
+    'sql' => ['type' => 'boolean', 'default' => false],
+];

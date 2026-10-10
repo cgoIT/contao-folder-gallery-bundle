@@ -65,6 +65,7 @@ final readonly class ContaoGalleryImageLoader implements GalleryImageLoaderInter
                     path: $file->path,
                     filename: $file->name,
                     isCover: $file->name === $coverImageName,
+                    isHighlighted: (bool) $file->highlightInGallery,
                 );
             }
         }

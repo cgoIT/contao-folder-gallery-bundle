@@ -103,7 +103,7 @@
 
             <div{{ images_attributes }}>
                 {% for image in content.images %}
-                    <div class="gallery-content__image">
+                    <div class="gallery-content__image{{ content.isHighlighted(image) ? ' gallery-content__image--highlighted' }}">
                         {% with {figure: image} %}
                             {{ block('figure_component') }}
                         {% endwith %}

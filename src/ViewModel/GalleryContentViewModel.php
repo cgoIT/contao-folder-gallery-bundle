@@ -21,6 +21,7 @@ final readonly class GalleryContentViewModel
     /**
      * @param list<Figure>                           $images
      * @param list<GalleryContentAction>             $actions
+     * @param list<Figure>                           $highlightedImages       The figures of $images that are shown large
      * @param list<GalleryBreadcrumbViewModel>       $breadcrumbs
      * @param (\Closure():array<string, mixed>)|null $schemaOrgData           Built lazily, like
      *                                                                        Figure::$metadata, so
@@ -45,7 +46,13 @@ final readonly class GalleryContentViewModel
         private \Closure|null $schemaOrgData = null,
         private \Closure|null $breadcrumbSchemaOrgData = null,
         public GalleryViewer $viewer = GalleryViewer::None,
+        private array $highlightedImages = [],
     ) {
+    }
+
+    public function isHighlighted(Figure $figure): bool
+    {
+        return \in_array($figure, $this->highlightedImages, true);
     }
 
     public function usesPhotoswipe(): bool

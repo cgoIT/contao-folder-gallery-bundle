@@ -557,6 +557,31 @@ selbst bleibt dabei unverändert im Dateisystem erhalten, sie wird lediglich bei
 > [`contao-folder-gallery-download-extension-bundle`](https://github.com/cgoIT/contao-folder-gallery-download-extension-bundle)
 > verwendet, ist ein verborgenes Bild automatisch auch nicht im ZIP-Download der Galerie enthalten.
 
+### Einzelne Bilder hervorheben
+
+Einzelne Bilder können in der Galerieansicht größer dargestellt werden, etwa um ein besonders gelungenes Foto
+zwischen vielen Aufnahmen zu betonen.
+
+Dazu steht in der Contao-Dateiverwaltung für jedes Bild die Option **In Ordner-Galerie groß zeigen** zur Verfügung.
+Wie bei [In Ordner-Galerie verbergen](#einzelne-bilder-aus-der-galerie-ausblenden) wird sie direkt am Bild
+(`tl_files`) gespeichert, die Datei selbst bleibt unverändert.
+
+Ein hervorgehobenes Bild erhält im Template `gallery_content` zusätzlich die Klasse
+`gallery-content__image--highlighted`. Das mitgelieferte Stylesheet zeigt es ab 768 px Breite über 2 × 2 Rasterfelder
+an, die Anzahl lässt sich mit der CSS-Variable `--gallery-highlight-span` ändern. Die Reihenfolge der Bilder bleibt
+erhalten, nachfolgende Bilder rücken in entstehende Lücken nach (`grid-auto-flow: dense`).
+
+Projekte mit eigenem Template können die Hervorhebung mit `content.isHighlighted(image)` abfragen:
+
+```twig
+<div class="gallery-content__image{{ content.isHighlighted(image) ? ' gallery-content__image--highlighted' }}">
+```
+
+> 💡 **Hinweis**
+>
+> Wählen Sie für die Galerie eine Bildgröße, die auch bei der doppelten Kachelbreite scharf genug ist, sonst wirken
+> hervorgehobene Bilder unscharf.
+
 ## Frontend
 
 ### Routing
@@ -727,6 +752,7 @@ Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert un
 |-----------|--------------|--------------|
 | `--gallery-border-radius` | `0.5rem` | Abrundung der Vorschaubilder. |
 | `--gallery-image-aspect-ratio` | `1` | Seitenverhältnis der Vorschaubilder (z. B. `1`, `4 / 3` oder `16 / 9`). |
+| `--gallery-highlight-span` | `2` | Anzahl der Rasterspalten und -zeilen, über die ein [hervorgehobenes Bild](#einzelne-bilder-hervorheben) reicht. |
 
 ##### Typografie
 

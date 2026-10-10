@@ -18,7 +18,8 @@ final class GalleryCache
 
     public const string TAG_OVERVIEWS = self::PREFIX.'.overviews';
 
-    public const string KEY_OVERVIEWS = self::PREFIX.'.overviews';
+    // The version suffix keeps entries cached with an older GalleryImage structure from being read
+    public const string KEY_OVERVIEWS = self::PREFIX.'.overviews.v2';
 
     public const string TAG_FILESYSTEM = self::PREFIX.'.filesystem';
 
