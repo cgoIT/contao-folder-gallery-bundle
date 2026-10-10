@@ -1,6 +1,6 @@
 {% import '@Contao/backend/folder_gallery/_macros.html.twig' as gallery %}
 
-{% macro folder_node(folder, id) %}
+{% macro folder_node(folder, id, editable_paths) %}
 <li>
     {% set icon_map = {
         gallery: 'image.svg',
@@ -8,14 +8,17 @@
         hidden: 'invisible.svg',
     } %}
 
+    {% set is_editable = editable_paths[folder.filesystemDirectory] is defined %}
     {% set folder_link_attributes = attrs()
         .addClass('node')
         .addClass(folder.isPublished ? 'node--published' : 'node--unpublished')
         .addClass('node--' ~ folder.overviewMode.value)
         .addClass(id == folder.filesystemDirectory ? 'node--active')
-        .set('href', path('cgoit_folder_gallery', {id: folder.filesystemDirectory}))
+        .addClass(not is_editable ? 'node--locked')
+        .set('href', is_editable ? path('cgoit_folder_gallery', {id: folder.filesystemDirectory}))
+        .set('aria-disabled', not is_editable ? 'true')
     %}
-    <a{{ folder_link_attributes }}>
+    <{{ is_editable ? 'a' : 'span' }}{{ folder_link_attributes }}>
         <span class="node__icon">
             {{ gallery.icon(folder.overviewMode.value) }}
         </span>
@@ -23,12 +26,12 @@
         <span class="node__label">
             {{ folder.title }}
         </span>
-    </a>
+    </{{ is_editable ? 'a' : 'span' }}>
 
     {% if folder.folders %}
         <ol>
             {% for child in folder.folders %}
-                {{ _self.folder_node(child, id) }}
+                {{ _self.folder_node(child, id, editable_paths) }}
             {% endfor %}
         </ol>
     {% endif %}
@@ -44,7 +47,7 @@
 
             {% for folder in overview.folders %}
             <ol>
-                {{ _self.folder_node(folder, id) }}
+                {{ _self.folder_node(folder, id, editable_paths) }}
             </ol>
             {% endfor %}
         </section>

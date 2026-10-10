@@ -15,6 +15,7 @@ namespace Cgoit\ContaoFolderGalleryBundle\Controller\Backend;
 use Cgoit\ContaoFolderGalleryBundle\Drivers\DC_GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryMetadata;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
+use Cgoit\ContaoFolderGalleryBundle\Security\GalleryBackendAccess;
 use Contao\CoreBundle\Controller\Backend\AbstractBackendController;
 use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
 use Contao\CoreBundle\DataContainer\ButtonsBuilder;
@@ -44,6 +45,7 @@ final class GalleryBackendController extends AbstractBackendController
         private readonly GalleryProviderInterface $galleryProvider,
         private readonly GalleryMetadataAjaxHandler $ajaxHandler,
         private readonly DC_GalleryMetadata $dataContainer,
+        private readonly GalleryBackendAccess $access,
     ) {
     }
 
@@ -54,6 +56,8 @@ final class GalleryBackendController extends AbstractBackendController
     )]
     public function __invoke(Request $request): Response
     {
+        $this->access->denyAccessUnlessModuleGranted();
+
         $this->framework
             ->getAdapter(System::class)
             ->loadLanguageFile(GalleryMetadata::DCA_TABLE_NAME)
@@ -73,7 +77,13 @@ final class GalleryBackendController extends AbstractBackendController
             return new RedirectResponse($this->router->generate('contao_backend_confirm'));
         }
 
-        $this->dataContainer->initialize(Input::get('id', true));
+        $id = Input::get('id', true);
+
+        if ($id) {
+            $this->access->denyAccessUnlessFolderGranted($id);
+        }
+
+        $this->dataContainer->initialize($id);
 
         // Ajax request
         $action = Input::post('action');
@@ -101,9 +111,12 @@ final class GalleryBackendController extends AbstractBackendController
             $this->dataContainer,
         );
 
+        $overviews = $this->access->filterOverviews($this->galleryProvider->findAllOverviews());
+
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
             'id' => $this->dataContainer->id,
-            'overviews' => $this->galleryProvider->findAllOverviews(),
+            'overviews' => $overviews,
+            'editable_paths' => $this->access->findEditablePaths($overviews),
 
             'table' => GalleryMetadata::DCA_TABLE_NAME,
             'is_upload_form' => false,

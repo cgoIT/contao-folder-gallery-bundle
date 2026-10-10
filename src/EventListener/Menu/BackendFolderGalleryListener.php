@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\EventListener\Menu;
 
+use Cgoit\ContaoFolderGalleryBundle\Security\GalleryBackendAccess;
 use Contao\CoreBundle\Event\MenuEvent;
 use Knp\Menu\Util\MenuManipulator;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -26,12 +27,17 @@ final readonly class BackendFolderGalleryListener
         private RouterInterface $router,
         private RequestStack $requestStack,
         private TranslatorInterface $translator,
+        private GalleryBackendAccess $access,
     ) {
     }
 
     public function __invoke(MenuEvent $event): void
     {
         if ('mainMenu' !== $event->getTree()->getName()) {
+            return;
+        }
+
+        if (!$this->access->canAccessModule()) {
             return;
         }
 

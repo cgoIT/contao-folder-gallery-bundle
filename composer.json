@@ -92,16 +92,7 @@
     "phpunit:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox",
     "unit-tests": "@phpunit",
     "all": [
-      "@ecs",
-      "@rector",
-      "@phpstan",
-      "@twig-cs-fixer",
-      "@yamllint",
-      "@stylelint",
-      "@depcheck",
-      "@eslint",
-      "@biome",
-      "@phpunit"
+      "@fix-tools"
     ]
   }
 }

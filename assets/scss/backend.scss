@@ -143,6 +143,16 @@
                         }
                     }
 
+                    // Folder without file mount, only shown to keep the tree hierarchy
+                    &--locked {
+                        opacity: 0.5;
+                        cursor: default;
+
+                        svg {
+                            color: var(--gray);
+                        }
+                    }
+
                     &--active {
                         .node__label {
                             padding: 3px;
