@@ -77,10 +77,13 @@ final class GalleryBackendController extends AbstractBackendController
             return new RedirectResponse($this->router->generate('contao_backend_confirm'));
         }
 
+        $overviews = $this->access->filterOverviews($this->galleryProvider->findAllOverviews());
+        $editablePaths = $this->access->findEditablePaths($overviews);
+
         $id = Input::get('id', true);
 
         if ($id) {
-            $this->access->denyAccessUnlessFolderGranted($id);
+            $this->access->denyAccessUnlessFolderEditable($id, $editablePaths);
         }
 
         $this->dataContainer->initialize($id);
@@ -111,12 +114,10 @@ final class GalleryBackendController extends AbstractBackendController
             $this->dataContainer,
         );
 
-        $overviews = $this->access->filterOverviews($this->galleryProvider->findAllOverviews());
-
         return $this->render('@Contao/backend/folder_gallery/index.html.twig', [
             'id' => $this->dataContainer->id,
             'overviews' => $overviews,
-            'editable_paths' => $this->access->findEditablePaths($overviews),
+            'editable_paths' => $editablePaths,
 
             'table' => GalleryMetadata::DCA_TABLE_NAME,
             'is_upload_form' => false,

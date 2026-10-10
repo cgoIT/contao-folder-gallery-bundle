@@ -20,6 +20,7 @@ use Cgoit\ContaoFolderGalleryBundle\Security\GalleryBackendAccess;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\CoreBundle\Security\ContaoCorePermissions;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -47,7 +48,61 @@ final class GalleryBackendAccessTest extends TestCase
 
         $this->expectException(AccessDeniedException::class);
 
-        $access->denyAccessUnlessFolderGranted('files/gallery/b');
+        $access->denyAccessUnlessFolderEditable('files/gallery/b', ['files/gallery/a' => true]);
+    }
+
+    #[DataProvider('provideUnsafePaths')]
+    public function testRejectsUnsafePathsEvenInsideFileMounts(string $path): void
+    {
+        // The core compares file mounts by prefix only, so the mount itself would match
+        $access = $this->createAccess(true, [$path]);
+
+        $this->assertFalse(GalleryBackendAccess::isSafePath($path));
+        $this->assertFalse($access->canEditFolder($path));
+
+        $this->expectException(AccessDeniedException::class);
+
+        $access->denyAccessUnlessFolderEditable($path, [$path => true]);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function provideUnsafePaths(): iterable
+    {
+        yield 'parent segment' => ['files/gallery/../../config'];
+        yield 'trailing parent segment' => ['files/gallery/..'];
+        yield 'current segment' => ['files/gallery/./a'];
+        yield 'empty segment' => ['files/gallery//a'];
+        yield 'absolute path' => ['/etc'];
+        yield 'trailing slash' => ['files/gallery/'];
+        yield 'backslash' => ['files\\gallery\\..\\config'];
+        yield 'null byte' => ["files/gallery\0/a"];
+        yield 'empty' => [''];
+    }
+
+    public function testAcceptsSafePaths(): void
+    {
+        $this->assertTrue(GalleryBackendAccess::isSafePath('files/gallery/a b/ä'));
+    }
+
+    public function testFolderMustBeAnEditableGalleryFolder(): void
+    {
+        $access = $this->createAccess(true, ['files/gallery']);
+
+        // Covered by a file mount, but not part of any gallery
+        $this->expectException(AccessDeniedException::class);
+
+        $access->denyAccessUnlessFolderEditable('files/gallery/not-a-gallery', ['files/gallery/a' => true]);
+    }
+
+    public function testAllowsEditableGalleryFolder(): void
+    {
+        $access = $this->createAccess(true, ['files/gallery']);
+
+        $access->denyAccessUnlessFolderEditable('files/gallery/a', ['files/gallery/a' => true]);
+
+        $this->addToAssertionCount(1);
     }
 
     public function testFilterOverviewsKeepsAncestorsOfAccessibleFolders(): void

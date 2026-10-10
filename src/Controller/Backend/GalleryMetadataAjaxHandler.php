@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Cgoit\ContaoFolderGalleryBundle\Controller\Backend;
 
+use Cgoit\ContaoFolderGalleryBundle\Security\GalleryBackendAccess;
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\DataContainer;
 use Contao\Dbafs;
@@ -39,6 +40,11 @@ final readonly class GalleryMetadataAjaxHandler
 
         $dcaField = $GLOBALS['TL_DCA'][$dataContainer->table]['fields'][$strField];
         $varValue = Input::post('value', true);
+
+        // The cover must be located inside the gallery folder that is currently edited
+        if ($varValue && (!GalleryBackendAccess::isSafePath($varValue) || !str_starts_with($varValue, $dataContainer->id.'/'))) {
+            throw new BadRequestHttpException('Invalid path: '.$varValue);
+        }
 
         $file = null;
 

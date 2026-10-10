@@ -118,6 +118,12 @@ class tl_gallery_metadata extends Backend
         if ($cover) {
             $cover = FilesModel::findByUuid($cover);
 
+            if (null === $cover) {
+                $values['cover'] = null;
+
+                return $values;
+            }
+
             if (dirname($cover->path) !== $dc->id) {
                 throw new Exception(sprintf($GLOBALS['TL_LANG']['tl_gallery_metadata']['error']['imageOutsideGalleryFolder'], dirname($cover->path), $dc->id));
             }

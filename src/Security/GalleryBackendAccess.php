@@ -37,9 +37,29 @@ final readonly class GalleryBackendAccess
         return $this->security->isGranted(ContaoCorePermissions::USER_CAN_ACCESS_MODULE, self::MODULE);
     }
 
+    /**
+     * Checks that the path is a plain, normalized relative path. The file mount check of Contao
+     * only compares path prefixes, so a path like "files/mounted/../../config" would pass it.
+     */
+    public static function isSafePath(string $path): bool
+    {
+        if ('' === $path || str_contains($path, "\0") || str_contains($path, '\\')) {
+            return false;
+        }
+
+        foreach (explode('/', $path) as $segment) {
+            if ('' === $segment || '.' === $segment || '..' === $segment) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function canEditFolder(string $path): bool
     {
-        return $this->canAccessModule()
+        return self::isSafePath($path)
+            && $this->canAccessModule()
             && $this->security->isGranted(ContaoCorePermissions::USER_CAN_ACCESS_PATH, $path);
     }
 
@@ -54,12 +74,17 @@ final readonly class GalleryBackendAccess
     }
 
     /**
+     * Only folders that are part of a gallery and covered by the user's file mounts may be edited,
+     * so that metadata files cannot be read or written anywhere else.
+     *
+     * @param array<string, true> $editablePaths see findEditablePaths()
+     *
      * @throws AccessDeniedException
      */
-    public function denyAccessUnlessFolderGranted(string $path): void
+    public function denyAccessUnlessFolderEditable(string $path, array $editablePaths): void
     {
-        if (!$this->canEditFolder($path)) {
-            throw new AccessDeniedException(\sprintf('Not enough permissions to edit the gallery folder "%s".', $path));
+        if (!self::isSafePath($path) || !isset($editablePaths[$path])) {
+            throw new AccessDeniedException('Not enough permissions to edit the gallery folder.');
         }
     }
 
