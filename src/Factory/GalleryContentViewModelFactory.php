@@ -58,6 +58,14 @@ final readonly class GalleryContentViewModelFactory
             $images,
         );
 
+        $highlightedImages = array_values(
+            array_filter(
+                $figures,
+                static fn (Figure|null $figure, int|string $key): bool => null !== $figure && $images[$key]->isHighlighted,
+                ARRAY_FILTER_USE_BOTH,
+            ),
+        );
+
         return new GalleryContentViewModel(
             folder: $folderViewModel,
             images: $figures,
@@ -72,6 +80,7 @@ final readonly class GalleryContentViewModelFactory
                 ...$navigation['breadcrumbs'],
             ]),
             viewer: $galleryViewer,
+            highlightedImages: $highlightedImages,
         );
     }
 

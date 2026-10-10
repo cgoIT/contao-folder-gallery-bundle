@@ -18,6 +18,7 @@
 - [Frontend](#frontend)
 - [Erweiterbarkeit](#erweiterbarkeit)
 - [Sitemap](#sitemap)
+- [Datenschutz und Einwilligungen](#datenschutz-und-einwilligungen)
 - [FAQ](#faq)
 - [Diese Erweiterung im Einsatz](#diese-erweiterung-im-einsatz)
 - [Mitwirken](#mitwirken)
@@ -535,6 +536,23 @@ Backend-Editor und eine manuelle Bearbeitung der Dateien jederzeit beliebig mite
 > Aus Gründen der Datenkonsistenz kann als Coverbild ausschließlich eine Datei aus dem jeweiligen Galerieordner
 > verwendet werden.
 
+#### Berechtigungen
+
+Administratoren haben immer Zugriff auf den Metadaten-Editor. Alle anderen Backend-Benutzer brauchen zwei Dinge:
+
+1. **Das Backend-Modul „Ordner Galerien“.** Es wird in der Benutzergruppe (oder im Benutzer) unter *Backend-Module*
+   freigegeben. Ohne diese Freigabe erscheint der Menüpunkt nicht, und ein direkter Aufruf wird abgelehnt.
+2. **Eine Dateifreigabe für den Galerie-Ordner.** Der Editor zeigt nur Ordner, die von den Dateifreigaben des Benutzers
+   abgedeckt sind, und speichert nur dort. Ordner oberhalb einer freigegebenen Galerie bleiben ausgegraut sichtbar,
+   damit die Struktur erhalten bleibt, lassen sich aber nicht bearbeiten.
+
+Die Felder des Editors müssen **nicht** zusätzlich unter *Erlaubte Felder* freigegeben werden.
+
+> 💡 **Hinweis**
+>
+> Wird das Modul nach einem Update von einer älteren Version nicht in den Benutzergruppen freigegeben, verlieren
+> Redakteure ohne Administratorrechte den Zugriff auf den Editor. Ergänze die Freigabe dann in den Benutzergruppen.
+
 ### Einzelne Bilder aus der Galerie ausblenden
 
 Einzelne Bilder können unabhängig von den Metadaten des jeweiligen Ordners aus der Galerie ausgeblendet werden.
@@ -555,6 +573,31 @@ selbst bleibt dabei unverändert im Dateisystem erhalten, sie wird lediglich bei
 > Wird zusätzlich die Erweiterung
 > [`contao-folder-gallery-download-extension-bundle`](https://github.com/cgoIT/contao-folder-gallery-download-extension-bundle)
 > verwendet, ist ein verborgenes Bild automatisch auch nicht im ZIP-Download der Galerie enthalten.
+
+### Einzelne Bilder hervorheben
+
+Einzelne Bilder können in der Galerieansicht größer dargestellt werden, etwa um ein besonders gelungenes Foto
+zwischen vielen Aufnahmen zu betonen.
+
+Dazu steht in der Contao-Dateiverwaltung für jedes Bild die Option **In Ordner-Galerie groß zeigen** zur Verfügung.
+Wie bei [In Ordner-Galerie verbergen](#einzelne-bilder-aus-der-galerie-ausblenden) wird sie direkt am Bild
+(`tl_files`) gespeichert, die Datei selbst bleibt unverändert.
+
+Ein hervorgehobenes Bild erhält im Template `gallery_content` zusätzlich die Klasse
+`gallery-content__image--highlighted`. Das mitgelieferte Stylesheet zeigt es ab 768 px Breite über 2 × 2 Rasterfelder
+an, die Anzahl lässt sich mit der CSS-Variable `--gallery-highlight-span` ändern. Die Reihenfolge der Bilder bleibt
+erhalten, nachfolgende Bilder rücken in entstehende Lücken nach (`grid-auto-flow: dense`).
+
+Projekte mit eigenem Template können die Hervorhebung mit `content.isHighlighted(image)` abfragen:
+
+```twig
+<div class="gallery-content__image{{ content.isHighlighted(image) ? ' gallery-content__image--highlighted' }}">
+```
+
+> 💡 **Hinweis**
+>
+> Wählen Sie für die Galerie eine Bildgröße, die auch bei der doppelten Kachelbreite scharf genug ist, sonst wirken
+> hervorgehobene Bilder unscharf.
 
 ## Frontend
 
@@ -726,6 +769,7 @@ Alle Variablen werden innerhalb der Klasse `.module-folder-gallery` definiert un
 |-----------|--------------|--------------|
 | `--gallery-border-radius` | `0.5rem` | Abrundung der Vorschaubilder. |
 | `--gallery-image-aspect-ratio` | `1` | Seitenverhältnis der Vorschaubilder (z. B. `1`, `4 / 3` oder `16 / 9`). |
+| `--gallery-highlight-span` | `2` | Anzahl der Rasterspalten und -zeilen, über die ein [hervorgehobenes Bild](#einzelne-bilder-hervorheben) reicht. |
 
 ##### Typografie
 
@@ -791,6 +835,17 @@ Die Änderungen gelten nur für die jeweilige PhotoSwipe-Instanz.
 
 Einige Optionen werden anschließend von Folder Gallery selbst gesetzt, insbesondere `gallery` und `pswpModule`.
 Diese Werte können daher über diesen Extension Point nicht überschrieben werden.
+
+##### Übersetzte Beschriftungen
+
+Die Beschriftungen der PhotoSwipe-Bedienelemente (Schließen, Zoom, Zurück, Weiter, Fehlermeldung) stammen aus den
+Übersetzungen des Bundles (`contao_folder_gallery`, Schlüssel `folder_gallery.photoswipe_*`) und werden vom Template
+als `data-pswp-*`-Attribute am Container ausgegeben. Das Skript übernimmt sie als PhotoSwipe-Optionen `closeTitle`,
+`zoomTitle`, `arrowPrevTitle`, `arrowNextTitle` und `errorMsg`. Eigene Texte lassen sich daher über die
+Übersetzungen oder im Event `folder-gallery:photoswipe:options` setzen, das nach den Übersetzungen ausgelöst wird.
+
+> Projekte mit überschriebenem Template `gallery_content` müssen die `data-pswp-*`-Attribute aus dem Block `images`
+> übernehmen, sonst bleiben die englischen PhotoSwipe-Standardtexte.
 
 ##### PhotoSwipe-Instanz erweitern
 
@@ -992,6 +1047,56 @@ Dadurch können Suchmaschinen sämtliche Galerien ohne weitere Konfiguration fin
 > automatisch.
 
 
+## Datenschutz und Einwilligungen
+
+Eine Galerie macht alle sichtbaren Bilder eines Ordners öffentlich. Das gilt besonders für Schulen, Vereine und
+Veranstaltungen, bei denen Personen erkennbar abgebildet sind.
+
+> ⚠️ **Hinweis**
+>
+> Dieser Abschnitt ist eine technische Orientierung und keine Rechtsberatung. Ob und unter welchen Bedingungen Fotos
+> veröffentlicht werden dürfen, klärt die verantwortliche Stelle, bei Schulen in der Regel zusammen mit dem
+> Datenschutzbeauftragten.
+
+### Was wird veröffentlicht?
+
+Sobald ein Galerie-Ordner veröffentlicht ist, erscheinen seine Bilder
+
+- in der Galerie-Übersicht und in der Galerieansicht,
+- in der [Sitemap](#sitemap) und in den strukturierten Daten (`ImageGallery`), die Suchmaschinen auslesen,
+- als verkleinerte Kopien unter `assets/images/`, die Contao über die Bildpipeline erzeugt.
+
+Auch Bildunterschriften, Alternativtexte und die Beschreibung der Galerie sind öffentlich. Namen von Kindern sollten
+dort nur stehen, wenn eine Einwilligung ausdrücklich dafür vorliegt.
+
+### Nicht öffentliche Ordner
+
+Ein [geschützter Ordner](#öffentliche-und-geschützte-ordner) verhindert nur, dass die **Originaldateien** per URL
+abrufbar sind. Die angezeigten Bilder der Galerie sind trotzdem öffentlich. Wichtig dabei:
+
+- Lege eine [Lightbox-Bildgröße](#lightbox-bildgröße) fest. Ohne sie verlinkt die Großansicht bei öffentlichen
+  Ordnern auf das Originalbild, einschließlich aller EXIF-Daten (z. B. GPS-Koordinaten).
+- Um Bilder vor Besuchern zu verbergen, eignen sich der
+  [Veröffentlichungszeitraum](#unterstützte-felder) und die Option
+  [In Ordner-Galerie verbergen](#einzelne-bilder-aus-der-galerie-ausblenden), nicht der geschützte Ordner.
+
+### Fotos von Kindern und Einwilligungen
+
+Bei Fotos von Minderjährigen ist in der Regel die Einwilligung der Erziehungsberechtigten erforderlich, und sie lässt
+sich jederzeit widerrufen. Aus dem Aufbau des Bundles ergibt sich ein praktischer Ablauf:
+
+1. **Erst prüfen, dann veröffentlichen.** Lege für neue Galerien zunächst ein
+   `published_from` in der Zukunft fest oder lade die Fotos in einen Ordner außerhalb der Galerie-Wurzel hoch. Prüfe sie
+   auf fehlende Einwilligungen und veröffentliche die Galerie erst danach.
+2. **Einzelne Bilder sofort entfernen.** Aktiviere für ein Bild **In Ordner-Galerie verbergen**. Es verschwindet aus
+   Galerie, Sitemap und strukturierten Daten, ohne dass die Datei gelöscht werden muss.
+3. **Befristet veröffentlichen.** Mit `published_until` lässt sich eine Galerie nach Ablauf einer Einwilligung (z. B.
+   am Ende des Schuljahres) automatisch ausblenden.
+4. **Dauerhaft löschen.** Hat jemand die Einwilligung widerrufen, lösche die Datei in der Dateiverwaltung. Leere
+   anschließend den Bildcache (Systemwartung), damit auch die verkleinerten Kopien unter `assets/images/` verschwinden.
+   Bereits von Suchmaschinen oder anderen Diensten zwischengespeicherte Kopien lassen sich so nicht entfernen, dort
+   muss die Löschung ggf. gesondert beantragt werden.
+
 ## FAQ
 
 ### Im Metadaten-Editor werden keine Galerien angezeigt.
@@ -999,6 +1104,9 @@ Dadurch können Suchmaschinen sämtliche Galerien ohne weitere Konfiguration fin
 Prüfe, ob mindestens ein [Frontend-Modul](#frontend-modul) vom Typ **Folder Gallery** konfiguriert wurde und eine Galerie-Wurzel ausgewählt ist.
 
 Der [Metadaten-Editor](#metadaten-editor) ermittelt seine Galerie-Struktur ausschließlich aus den konfigurierten Frontend-Modulen.
+
+Benutzer ohne Administratorrechte sehen außerdem nur Galerien, die von ihren Dateifreigaben abgedeckt sind, und brauchen das
+Backend-Modul „Ordner Galerien“ (siehe [Berechtigungen](#berechtigungen)).
 
 ### Meine Galerie wird im Frontend nicht angezeigt.
 

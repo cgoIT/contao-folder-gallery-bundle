@@ -24,7 +24,7 @@ use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 $GLOBALS['TL_DCA']['tl_module']['palettes'][FolderGalleryModule::TYPE]
     = '{title_legend},name,headline,type;'
     .'{config_legend},galleryRoot,galleryCoverImageSize,galleryImageSize,galleryOverviewMessage,showEmptyGalleryMessage;'
-    .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl;'
+    .'{template_legend:collapsed},customTpl,galleryFolderTpl,galleryContentTpl,galleryDisableStylesheet;'
     .'{viewer_legend:collapsed},galleryViewer,galleryLightboxSize;'
     .'{protected_legend:collapsed},protected;'
     .'{expert_legend:collapsed},guests,cssID;'
@@ -105,4 +105,11 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['galleryViewer'] = [
     'enum' => GalleryViewer::class,
     'eval' => ['chosen' => true, 'tl_class' => 'w50'],
     'sql' => "varchar(64) COLLATE ascii_bin NOT NULL default 'lightbox'",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['galleryDisableStylesheet'] = [
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'clr w50'],
+    'sql' => ['type' => 'boolean', 'default' => false],
 ];

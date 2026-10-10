@@ -29,6 +29,7 @@
   },
   "require": {
     "php": "^8.3",
+    "ext-mbstring": "*",
     "contao/core-bundle": "^5.7",
     "contao/image": "^1.2",
     "doctrine/dbal": "^3.7 || ^4.3",
@@ -92,15 +93,7 @@
     "phpunit:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox",
     "unit-tests": "@phpunit",
     "all": [
-      "@ecs",
-      "@rector",
-      "@phpstan",
-      "@twig-cs-fixer",
-      "@yamllint",
-      "@stylelint",
-      "@depcheck",
-      "@eslint",
-      "@biome",
+      "@fix-tools",
       "@phpunit"
     ]
   }

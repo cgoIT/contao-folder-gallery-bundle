@@ -13,12 +13,14 @@ declare(strict_types=1);
 namespace Cgoit\ContaoFolderGalleryBundle\Tests\EventListener\Menu;
 
 use Cgoit\ContaoFolderGalleryBundle\EventListener\Menu\BackendFolderGalleryListener;
+use Cgoit\ContaoFolderGalleryBundle\Security\GalleryBackendAccess;
 use Contao\CoreBundle\Event\MenuEvent;
 use Contao\TestCase\ContaoTestCase;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\MenuFactory;
 use Knp\Menu\MenuItem;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
@@ -49,6 +51,20 @@ final class BackendFolderGalleryListenerTest extends ContaoTestCase
         $listener(new MenuEvent($factory, $menu));
 
         $this->assertNotInstanceOf(ItemInterface::class, $menu->getChild('folder-gallery'));
+    }
+
+    public function testDoesNothingWithoutModulePermission(): void
+    {
+        $factory = new MenuFactory();
+
+        $menu = new MenuItem('mainMenu', $factory);
+        $content = $menu->addChild('content');
+
+        $listener = $this->createListener(null, false);
+
+        $listener(new MenuEvent($factory, $menu));
+
+        $this->assertNotInstanceOf(ItemInterface::class, $content->getChild('folder-gallery'));
     }
 
     public function testAddsMenuEntry(): void
@@ -101,7 +117,7 @@ final class BackendFolderGalleryListenerTest extends ContaoTestCase
         $this->assertFalse($content->getChild('folder-gallery')->isCurrent());
     }
 
-    private function createListener(string|null $route = null): BackendFolderGalleryListener
+    private function createListener(string|null $route = null, bool $granted = true): BackendFolderGalleryListener
     {
         $router = $this->createMock(RouterInterface::class);
         $router
@@ -125,10 +141,17 @@ final class BackendFolderGalleryListenerTest extends ContaoTestCase
 
         $requestStack = new RequestStack([$request]);
 
+        $security = $this->createStub(Security::class);
+        $security
+            ->method('isGranted')
+            ->willReturn($granted)
+        ;
+
         return new BackendFolderGalleryListener(
             $router,
             $requestStack,
             $translator,
+            new GalleryBackendAccess($security),
         );
     }
 }

@@ -6,6 +6,30 @@ const defaultOptions = {
     children: 'a',
 };
 
+// Maps the PhotoSwipe options for the UI texts to the data attributes the gallery template renders
+// from the translations (data-pswp-close-title, ...).
+const translatedOptions = {
+    closeTitle: 'pswpCloseTitle',
+    zoomTitle: 'pswpZoomTitle',
+    arrowPrevTitle: 'pswpArrowPrevTitle',
+    arrowNextTitle: 'pswpArrowNextTitle',
+    errorMsg: 'pswpErrorMsg',
+};
+
+const readTranslatedOptions = (gallery) => {
+    const options = {};
+
+    Object.entries(translatedOptions).forEach(([option, dataKey]) => {
+        const text = gallery.dataset[dataKey];
+
+        if (text) {
+            options[option] = text;
+        }
+    });
+
+    return options;
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     const e = document.querySelectorAll('[data-photoswipe]');
 
@@ -13,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionsEvent = new CustomEvent('folder-gallery:photoswipe:options', {
             detail: {
                 ...defaultOptions,
+                ...readTranslatedOptions(e[i]),
             },
         });
         document.dispatchEvent(optionsEvent);

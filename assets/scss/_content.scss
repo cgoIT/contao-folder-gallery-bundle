@@ -1,3 +1,5 @@
+@use 'breakpoints';
+
 .gallery-content {
     &__navigation {
         display: flex;
@@ -94,5 +96,13 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(var(--gallery-content-column-width), 1fr));
         gap: var(--gallery-content-gap);
+        grid-auto-flow: dense;
+    }
+
+    &__image--highlighted {
+        @media (width >= #{breakpoints.$md}) {
+            grid-column: span var(--gallery-highlight-span);
+            grid-row: span var(--gallery-highlight-span);
+        }
     }
 }

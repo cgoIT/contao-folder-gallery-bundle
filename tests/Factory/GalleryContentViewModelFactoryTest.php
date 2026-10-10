@@ -357,6 +357,129 @@ final class GalleryContentViewModelFactoryTest extends ContaoTestCase
         $this->assertCount(2, $result->breadcrumbs);
     }
 
+    public function testMarksHighlightedImages(): void
+    {
+        $container = $this->createStub(ContainerInterface::class);
+
+        $childFolder = new GalleryFolder(
+            slug: 'child',
+            title: 'Child Folder',
+            filesystemDirectory: '/files/gallery/parent/child',
+            trail: ['parent', 'child'],
+            metadata: new GalleryMetadata(),
+        );
+
+        $imageA = new GalleryImage(
+            uuid: 'uuid-a',
+            path: '/gallery/image-a.jpg',
+            filename: 'image-a.jpg',
+            isCover: false,
+            isHighlighted: false,
+        );
+        $figureA = new Figure(new ImageResult($container, 'project-dir', 'image-a.jpg'));
+
+        $imageB = new GalleryImage(
+            uuid: 'uuid-b',
+            path: '/gallery/image-b.jpg',
+            filename: 'image-b.jpg',
+            isCover: false,
+            isHighlighted: true,
+        );
+        $figureB = new Figure(new ImageResult($container, 'project-dir', 'image-b.jpg'));
+
+        $folder = new GalleryFolder(
+            slug: 'parent',
+            title: 'Parent Folder',
+            filesystemDirectory: '/files/gallery/parent',
+            trail: ['parent'],
+            metadata: new GalleryMetadata(),
+            folders: [$childFolder],
+            images: [$imageA, $imageB],
+        );
+
+        $overview = new GalleryOverview(
+            root: new GalleryRoot('folderGallery', 1, '/files/gallery'),
+            folders: [$folder],
+            folderIndex: ['parent' => $folder],
+        );
+
+        $figureFactory = $this->createMock(GalleryFigureFactoryInterface::class);
+        $figureFactory
+            ->expects($this->exactly(2))
+            ->method('create')
+            ->willReturnCallback(
+                function ($image, PictureConfiguration|array|int|string|null $size, $viewer, string|null $group) use ($imageA, $imageB, $figureA, $figureB): Figure|null {
+                    $this->assertIsString($size);
+                    $this->assertSame(GalleryViewer::None, $viewer);
+
+                    return match ($image) {
+                        $imageA => $figureA,
+                        $imageB => $figureB,
+                        default => null,
+                    };
+                },
+            )
+        ;
+
+        $urlGenerator = $this->createMock(GalleryUrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->exactly(4))
+            ->method('generate')
+            ->willReturnOnConsecutiveCalls(
+                '/gallery',
+                '/gallery/parent',
+                '/gallery/parent',
+                '/gallery/parent/child',
+            )
+        ;
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator
+            ->method('trans')
+            ->willReturn('The alt text')
+        ;
+
+        $page = $this->createStub(PageModel::class);
+        $page
+            ->method('__get')
+            ->willReturnMap([
+                ['title', 'Gallery'],
+            ])
+        ;
+
+        $model = $this->createStub(ModuleModel::class);
+        $model
+            ->method('__get')
+            ->willReturnMap([
+                ['galleryImageSize', 'image-size'],
+                ['galleryCoverImageSize', 'cover-size'],
+                ['showEmptyGalleryMessage', true],
+                ['emptyGalleryMessage', 'This is the empty message'],
+            ])
+        ;
+
+        $folderViewModelFactory = new GalleryFolderViewModelFactory($figureFactory, $urlGenerator, $translator);
+
+        $galleryBreadcrumbFactory = new GalleryBreadcrumbFactory($urlGenerator, $this->createContaoFrameworkStub());
+
+        $actionsProvider = new GalleryContentActionProvider([]);
+
+        $schemaOrgFactory = $this->createStub(GallerySchemaOrgFactoryInterface::class);
+
+        $factory = new GalleryContentViewModelFactory($figureFactory, $folderViewModelFactory, $galleryBreadcrumbFactory, $actionsProvider, $schemaOrgFactory);
+
+        $result = $factory->create(
+            $overview,
+            $folder,
+            $page,
+            $model,
+        );
+
+        $this->assertCount(2, $result->images);
+        $this->assertFalse($result->isHighlighted($figureA));
+        $this->assertTrue($result->isHighlighted($figureB));
+    }
+
     public function testShowsEmptyGalleryMessageForEmptyGallery(): void
     {
         $folder = new GalleryFolder(

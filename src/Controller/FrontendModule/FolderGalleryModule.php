@@ -14,6 +14,8 @@ namespace Cgoit\ContaoFolderGalleryBundle\Controller\FrontendModule;
 
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryContentViewModelFactory;
 use Cgoit\ContaoFolderGalleryBundle\Factory\GalleryOverviewViewModelFactory;
+use Cgoit\ContaoFolderGalleryBundle\Metadata\GalleryMetaDescription;
+use Cgoit\ContaoFolderGalleryBundle\Model\GalleryFolder;
 use Cgoit\ContaoFolderGalleryBundle\Model\GalleryViewer;
 use Cgoit\ContaoFolderGalleryBundle\Provider\GalleryProviderInterface;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
@@ -72,7 +74,9 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
             ->setUnusedRouteParameters([])
         ;
 
-        $GLOBALS['TL_CSS']['folder-gallery'] = $this->packages->getUrl('folder-gallery-css.css', 'cgoit_folder_gallery');
+        if (!$model->galleryDisableStylesheet) {
+            $GLOBALS['TL_CSS']['folder-gallery'] = $this->packages->getUrl('folder-gallery-css.css', 'cgoit_folder_gallery');
+        }
 
         if ('' === $path) {
             return $this->renderOverview($template, $model, $page, $rootDir);
@@ -105,6 +109,8 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
             throw new PageNotFoundException();
         }
 
+        $this->updateHtmlHeadBag($folder);
+
         $contentTemplateName = $model->galleryContentTpl ?: 'component/gallery_content';
         $folderTemplateName = $model->galleryFolderTpl ?: 'component/gallery_folder';
 
@@ -133,5 +139,29 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
         }
 
         return $template->getResponse();
+    }
+
+    /**
+     * Uses the gallery title and description for the page title and the meta description instead
+     * of the data of the page the module is placed on. The canonical URI needs no change, because
+     * it is derived from the request path, which already is the URL of the gallery.
+     */
+    private function updateHtmlHeadBag(GalleryFolder $folder): void
+    {
+        $htmlHeadBag = $this->getHtmlHeadBag();
+
+        if (null === $htmlHeadBag) {
+            return;
+        }
+
+        if ('' !== trim($folder->title)) {
+            $htmlHeadBag->setTitle($folder->title);
+        }
+
+        $description = GalleryMetaDescription::fromHtml($folder->metadata->description);
+
+        if ('' !== $description) {
+            $htmlHeadBag->setMetaDescription($description);
+        }
     }
 }

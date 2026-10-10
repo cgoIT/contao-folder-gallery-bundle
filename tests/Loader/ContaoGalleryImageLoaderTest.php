@@ -118,6 +118,34 @@ final class ContaoGalleryImageLoaderTest extends ContaoTestCase
         $this->assertSame('image.jpg', $images[0]->filename);
     }
 
+    public function testMarksHighlightedImages(): void
+    {
+        $normal = $this->createClassWithPropertiesStub(FilesModel::class, [
+            'uuid' => StringUtil::uuidToBin('00000000-0000-0000-0000-000000000001'),
+            'path' => '/gallery/normal.jpg',
+            'name' => 'normal.jpg',
+            'extension' => 'jpg',
+            'highlightInGallery' => false,
+        ]);
+
+        $highlighted = $this->createClassWithPropertiesStub(FilesModel::class, [
+            'uuid' => StringUtil::uuidToBin('00000000-0000-0000-0000-000000000002'),
+            'path' => '/gallery/big.jpg',
+            'name' => 'big.jpg',
+            'extension' => 'jpg',
+            'highlightInGallery' => true,
+        ]);
+
+        $adapter = $this->createConfiguredAdapterStub(['findMultipleFilesByFolder' => [$normal, $highlighted]]);
+        $framework = $this->createContaoFrameworkStub([FilesModel::class => $adapter]);
+
+        $images = (new ContaoGalleryImageLoader($framework))->loadImages('/gallery', null);
+
+        $this->assertCount(2, $images);
+        $this->assertFalse($images[0]->isHighlighted);
+        $this->assertTrue($images[1]->isHighlighted);
+    }
+
     public function testIgnoresMetadataAndDotFiles(): void
     {
         $dot = $this->createClassWithPropertiesStub(FilesModel::class, ['name' => '.', 'extension' => '']);

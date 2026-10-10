@@ -16,3 +16,9 @@ $GLOBALS['TL_LANG']['folder_gallery']['getting-started'] = ['Erste Schritte', 'W
 $GLOBALS['TL_LANG']['folder_gallery']['back'] = 'zurück';
 
 $GLOBALS['TL_LANG']['folder_gallery']['cover_image_alt'] = 'Galerie %s öffnen';
+
+$GLOBALS['TL_LANG']['folder_gallery']['photoswipe_close'] = 'Schließen';
+$GLOBALS['TL_LANG']['folder_gallery']['photoswipe_zoom'] = 'Zoom';
+$GLOBALS['TL_LANG']['folder_gallery']['photoswipe_previous'] = 'Zurück';
+$GLOBALS['TL_LANG']['folder_gallery']['photoswipe_next'] = 'Weiter';
+$GLOBALS['TL_LANG']['folder_gallery']['photoswipe_error'] = 'Das Bild konnte nicht geladen werden.';

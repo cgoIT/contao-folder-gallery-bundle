@@ -8,4 +8,5 @@
  * @license    LGPL-3.0-or-later
  */
 
+$GLOBALS['TL_LANG']['tl_files']['highlightInGallery'] = ['Show large in Folder Gallery', 'Enable this option to highlight this image in the gallery view. The template adds the class gallery-content__image--highlighted to the image and the default stylesheet displays it larger.'];
 $GLOBALS['TL_LANG']['tl_files']['hideInGallery'] = ['Hide in Folder Gallery', 'Enable this option to hide this image in the folder gallery. It will then neither be shown in the frontend nor be included in the gallery ZIP download (provided that the "contao-folder-gallery-download-extension-bundle" extension is installed).'];

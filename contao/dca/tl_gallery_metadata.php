@@ -28,13 +28,17 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
         'transparent' => '{general_legend},title,overviewMode',
     ],
 
+    // Access is controlled by the "folder_gallery" module permission and the file mounts, so the
+    // fields must not additionally need to be allowed in the user groups ("exclude" => true).
     'fields' => [
         'title' => [
+            'exclude' => false,
             'inputType' => 'text',
             'eval' => ['mandatory' => false, 'maxlength' => 255, 'tl_class' => 'w50'],
         ],
 
         'overviewMode' => [
+            'exclude' => false,
             'inputType' => 'select',
             'enum' => OverviewMode::class,
             'explanation' => 'folderGalleryOverviewMode',
@@ -42,11 +46,13 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
         ],
 
         'description' => [
+            'exclude' => false,
             'inputType' => 'text',
             'eval' => ['tl_class' => 'clr', 'rte' => 'tinyMCE'],
         ],
 
         'cover' => [
+            'exclude' => false,
             'inputType' => 'fileTree',
             'eval' => ['fieldType' => 'radio', 'filesOnly' => true, 'extensions' => '%contao.image.valid_extensions%', 'tl_class' => 'clr w100'],
             'attributes_callback' => [['tl_gallery_metadata', 'getPathForCoverImage']],
@@ -54,23 +60,27 @@ $GLOBALS['TL_DCA']['tl_gallery_metadata'] = [
         ],
 
         'hideCoverInGallery' => [
+            'exclude' => false,
             'inputType' => 'checkbox',
             'explanation' => 'folderGalleryHideCoverInGallery',
             'eval' => ['helpwizard' => true, 'tl_class' => 'clr w50 m12'],
         ],
 
         'sortOrder' => [
+            'exclude' => false,
             'inputType' => 'select',
             'enum' => SortOrder::class,
             'eval' => ['tl_class' => 'w50'],
         ],
 
         'publishedFrom' => [
+            'exclude' => false,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'clr w50 wizard'],
         ],
 
         'publishedUntil' => [
+            'exclude' => false,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
         ],
@@ -107,6 +117,12 @@ class tl_gallery_metadata extends Backend
 
         if ($cover) {
             $cover = FilesModel::findByUuid($cover);
+
+            if (null === $cover) {
+                $values['cover'] = null;
+
+                return $values;
+            }
 
             if (dirname($cover->path) !== $dc->id) {
                 throw new Exception(sprintf($GLOBALS['TL_LANG']['tl_gallery_metadata']['error']['imageOutsideGalleryFolder'], dirname($cover->path), $dc->id));

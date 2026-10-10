@@ -19,6 +19,7 @@ final readonly class GalleryImage
         public string $path,
         public string $filename,
         public bool $isCover,
+        public bool $isHighlighted = false,
     ) {
     }
 }

@@ -42,6 +42,7 @@ final class FilesCallbacksTest extends TestCase
         $palette = $callbacks->addHideInGalleryField('name,importantPartX,importantPartHeight', $dc);
 
         $this->assertStringContainsString('hideInGallery', $palette);
+        $this->assertStringContainsString('highlightInGallery', $palette);
     }
 
     public function testDoesNotAddFieldForNonImageFiles(): void
