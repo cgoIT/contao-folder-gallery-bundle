@@ -74,7 +74,9 @@ final class FolderGalleryModule extends AbstractFrontendModuleController
             ->setUnusedRouteParameters([])
         ;
 
-        $GLOBALS['TL_CSS']['folder-gallery'] = $this->packages->getUrl('folder-gallery-css.css', 'cgoit_folder_gallery');
+        if (!$model->galleryDisableStylesheet) {
+            $GLOBALS['TL_CSS']['folder-gallery'] = $this->packages->getUrl('folder-gallery-css.css', 'cgoit_folder_gallery');
+        }
 
         if ('' === $path) {
             return $this->renderOverview($template, $model, $page, $rootDir);
