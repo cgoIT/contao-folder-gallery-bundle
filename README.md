@@ -536,6 +536,23 @@ Backend-Editor und eine manuelle Bearbeitung der Dateien jederzeit beliebig mite
 > Aus Gründen der Datenkonsistenz kann als Coverbild ausschließlich eine Datei aus dem jeweiligen Galerieordner
 > verwendet werden.
 
+#### Berechtigungen
+
+Administratoren haben immer Zugriff auf den Metadaten-Editor. Alle anderen Backend-Benutzer brauchen zwei Dinge:
+
+1. **Das Backend-Modul „Ordner Galerien“.** Es wird in der Benutzergruppe (oder im Benutzer) unter *Backend-Module*
+   freigegeben. Ohne diese Freigabe erscheint der Menüpunkt nicht, und ein direkter Aufruf wird abgelehnt.
+2. **Eine Dateifreigabe für den Galerie-Ordner.** Der Editor zeigt nur Ordner, die von den Dateifreigaben des Benutzers
+   abgedeckt sind, und speichert nur dort. Ordner oberhalb einer freigegebenen Galerie bleiben ausgegraut sichtbar,
+   damit die Struktur erhalten bleibt, lassen sich aber nicht bearbeiten.
+
+Die Felder des Editors müssen **nicht** zusätzlich unter *Erlaubte Felder* freigegeben werden.
+
+> 💡 **Hinweis**
+>
+> Wird das Modul nach einem Update von einer älteren Version nicht in den Benutzergruppen freigegeben, verlieren
+> Redakteure ohne Administratorrechte den Zugriff auf den Editor. Ergänze die Freigabe dann in den Benutzergruppen.
+
 ### Einzelne Bilder aus der Galerie ausblenden
 
 Einzelne Bilder können unabhängig von den Metadaten des jeweiligen Ordners aus der Galerie ausgeblendet werden.
@@ -1087,6 +1104,9 @@ sich jederzeit widerrufen. Aus dem Aufbau des Bundles ergibt sich ein praktische
 Prüfe, ob mindestens ein [Frontend-Modul](#frontend-modul) vom Typ **Folder Gallery** konfiguriert wurde und eine Galerie-Wurzel ausgewählt ist.
 
 Der [Metadaten-Editor](#metadaten-editor) ermittelt seine Galerie-Struktur ausschließlich aus den konfigurierten Frontend-Modulen.
+
+Benutzer ohne Administratorrechte sehen außerdem nur Galerien, die von ihren Dateifreigaben abgedeckt sind, und brauchen das
+Backend-Modul „Ordner Galerien“ (siehe [Berechtigungen](#berechtigungen)).
 
 ### Meine Galerie wird im Frontend nicht angezeigt.
 
