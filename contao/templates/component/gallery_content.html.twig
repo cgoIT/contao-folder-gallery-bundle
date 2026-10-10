@@ -89,7 +89,19 @@
                 {% do add_schema_org(content.getSchemaOrgData()) %}
             {% endblock %}
 
-            <div class="gallery-content__images"{% if content.usesPhotoswipe %} data-photoswipe="pswp"{% endif %}>
+            {% set images_attributes = attrs().addClass('gallery-content__images') %}
+            {% if content.usesPhotoswipe %}
+                {% set images_attributes = images_attributes
+                    .set('data-photoswipe', 'pswp')
+                    .set('data-pswp-close-title', 'folder_gallery.photoswipe_close'|trans)
+                    .set('data-pswp-zoom-title', 'folder_gallery.photoswipe_zoom'|trans)
+                    .set('data-pswp-arrow-prev-title', 'folder_gallery.photoswipe_previous'|trans)
+                    .set('data-pswp-arrow-next-title', 'folder_gallery.photoswipe_next'|trans)
+                    .set('data-pswp-error-msg', 'folder_gallery.photoswipe_error'|trans)
+                %}
+            {% endif %}
+
+            <div{{ images_attributes }}>
                 {% for image in content.images %}
                     <div class="gallery-content__image">
                         {% with {figure: image} %}

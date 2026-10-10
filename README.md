@@ -792,6 +792,17 @@ Die Änderungen gelten nur für die jeweilige PhotoSwipe-Instanz.
 Einige Optionen werden anschließend von Folder Gallery selbst gesetzt, insbesondere `gallery` und `pswpModule`.
 Diese Werte können daher über diesen Extension Point nicht überschrieben werden.
 
+##### Übersetzte Beschriftungen
+
+Die Beschriftungen der PhotoSwipe-Bedienelemente (Schließen, Zoom, Zurück, Weiter, Fehlermeldung) stammen aus den
+Übersetzungen des Bundles (`contao_folder_gallery`, Schlüssel `folder_gallery.photoswipe_*`) und werden vom Template
+als `data-pswp-*`-Attribute am Container ausgegeben. Das Skript übernimmt sie als PhotoSwipe-Optionen `closeTitle`,
+`zoomTitle`, `arrowPrevTitle`, `arrowNextTitle` und `errorMsg`. Eigene Texte lassen sich daher über die
+Übersetzungen oder im Event `folder-gallery:photoswipe:options` setzen, das nach den Übersetzungen ausgelöst wird.
+
+> Projekte mit überschriebenem Template `gallery_content` müssen die `data-pswp-*`-Attribute aus dem Block `images`
+> übernehmen, sonst bleiben die englischen PhotoSwipe-Standardtexte.
+
 ##### PhotoSwipe-Instanz erweitern
 
 Nachdem die `PhotoSwipeLightbox`-Instanz erzeugt wurde, wird das Event
