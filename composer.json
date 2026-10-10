@@ -93,7 +93,8 @@
     "phpunit:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testdox",
     "unit-tests": "@phpunit",
     "all": [
-      "@fix-tools"
+      "@fix-tools",
+      "@phpunit"
     ]
   }
 }
