@@ -18,6 +18,7 @@
 - [Frontend](#frontend)
 - [Erweiterbarkeit](#erweiterbarkeit)
 - [Sitemap](#sitemap)
+- [Datenschutz und Einwilligungen](#datenschutz-und-einwilligungen)
 - [FAQ](#faq)
 - [Diese Erweiterung im Einsatz](#diese-erweiterung-im-einsatz)
 - [Mitwirken](#mitwirken)
@@ -1002,6 +1003,56 @@ Dadurch können Suchmaschinen sämtliche Galerien ohne weitere Konfiguration fin
 > Es ist keine zusätzliche Konfiguration erforderlich. Die Erweiterung ergänzt die von Contao erzeugte Sitemap
 > automatisch.
 
+
+## Datenschutz und Einwilligungen
+
+Eine Galerie macht alle sichtbaren Bilder eines Ordners öffentlich. Das gilt besonders für Schulen, Vereine und
+Veranstaltungen, bei denen Personen erkennbar abgebildet sind.
+
+> ⚠️ **Hinweis**
+>
+> Dieser Abschnitt ist eine technische Orientierung und keine Rechtsberatung. Ob und unter welchen Bedingungen Fotos
+> veröffentlicht werden dürfen, klärt die verantwortliche Stelle, bei Schulen in der Regel zusammen mit dem
+> Datenschutzbeauftragten.
+
+### Was wird veröffentlicht?
+
+Sobald ein Galerie-Ordner veröffentlicht ist, erscheinen seine Bilder
+
+- in der Galerie-Übersicht und in der Galerieansicht,
+- in der [Sitemap](#sitemap) und in den strukturierten Daten (`ImageGallery`), die Suchmaschinen auslesen,
+- als verkleinerte Kopien unter `assets/images/`, die Contao über die Bildpipeline erzeugt.
+
+Auch Bildunterschriften, Alternativtexte und die Beschreibung der Galerie sind öffentlich. Namen von Kindern sollten
+dort nur stehen, wenn eine Einwilligung ausdrücklich dafür vorliegt.
+
+### Nicht öffentliche Ordner
+
+Ein [geschützter Ordner](#öffentliche-und-geschützte-ordner) verhindert nur, dass die **Originaldateien** per URL
+abrufbar sind. Die angezeigten Bilder der Galerie sind trotzdem öffentlich. Wichtig dabei:
+
+- Lege eine [Lightbox-Bildgröße](#lightbox-bildgröße) fest. Ohne sie verlinkt die Großansicht bei öffentlichen
+  Ordnern auf das Originalbild, einschließlich aller EXIF-Daten (z. B. GPS-Koordinaten).
+- Um Bilder vor Besuchern zu verbergen, eignen sich der
+  [Veröffentlichungszeitraum](#unterstützte-felder) und die Option
+  [In Ordner-Galerie verbergen](#einzelne-bilder-aus-der-galerie-ausblenden), nicht der geschützte Ordner.
+
+### Fotos von Kindern und Einwilligungen
+
+Bei Fotos von Minderjährigen ist in der Regel die Einwilligung der Erziehungsberechtigten erforderlich, und sie lässt
+sich jederzeit widerrufen. Aus dem Aufbau des Bundles ergibt sich ein praktischer Ablauf:
+
+1. **Erst prüfen, dann veröffentlichen.** Lege für neue Galerien zunächst ein
+   `published_from` in der Zukunft fest oder lade die Fotos in einen Ordner außerhalb der Galerie-Wurzel hoch. Prüfe sie
+   auf fehlende Einwilligungen und veröffentliche die Galerie erst danach.
+2. **Einzelne Bilder sofort entfernen.** Aktiviere für ein Bild **In Ordner-Galerie verbergen**. Es verschwindet aus
+   Galerie, Sitemap und strukturierten Daten, ohne dass die Datei gelöscht werden muss.
+3. **Befristet veröffentlichen.** Mit `published_until` lässt sich eine Galerie nach Ablauf einer Einwilligung (z. B.
+   am Ende des Schuljahres) automatisch ausblenden.
+4. **Dauerhaft löschen.** Hat jemand die Einwilligung widerrufen, lösche die Datei in der Dateiverwaltung. Leere
+   anschließend den Bildcache (Systemwartung), damit auch die verkleinerten Kopien unter `assets/images/` verschwinden.
+   Bereits von Suchmaschinen oder anderen Diensten zwischengespeicherte Kopien lassen sich so nicht entfernen, dort
+   muss die Löschung ggf. gesondert beantragt werden.
 
 ## FAQ
 
